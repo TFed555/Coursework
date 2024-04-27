@@ -1,0 +1,17 @@
+@startuml
+boundary "Окно редактирования работ" as working_table
+boundary "Окно создания новой работы" as edit_work
+boundary "Окно ошибки" as err_table
+actor "Организатор" as user
+
+control "Внесение данных в новую работу" as elem_ctrl
+control "Отобразить окно ошибки" as err_ctrl
+
+user -- edit_work
+
+edit_work --> elem_ctrl : Вносит данные в новую работу
+elem_ctrl --> working_table : Нажимает на кнопку "Подтвердить" или "Отмена"
+edit_work --> err_ctrl : Введены некорректные данные
+err_ctrl-->err_table
+
+@enduml

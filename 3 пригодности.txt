@@ -1,0 +1,25 @@
+@startuml
+boundary "Окно списка сотрудников" as employees_table
+boundary "Окно ошибки" as err_table
+boundary "Окно редактирования сотрудника" as edit_employee_table
+actor "Заведующий" as user
+control "Подтвердить статус сотрудника" as status_ctrl
+control "Отобразить окно ошибки" as err_ctrl
+control "Изменение статуса" as edit_status_ctrl
+control "Назначить организатором" as select_ctrl
+control "Просмотр сотрудника" as elem_ctrl
+
+user -- employees_table
+user -- edit_employee_table
+
+employees_table -->  elem_ctrl: Нажат элемент из списка сотрудников
+elem_ctrl --> edit_employee_table
+edit_employee_table --> edit_status_ctrl : Изменяет/оставляет отдел, нажимает чекбокс
+edit_status_ctrl-->edit_employee_table : Нажата кнопка "Подтвердить"
+edit_employee_table --> status_ctrl : Заполнено дополнительное поле в зависимости от выбранного отдела
+status_ctrl-->employees_table : Нажата кнопка "Подтвердить" или "Назад"
+edit_employee_table --> err_ctrl : Введены неверные данные
+err_ctrl --> err_table : Ошибка ввода данных
+edit_employee_table --> select_ctrl : Нажата кнопка "Назначить организатором"
+
+@enduml

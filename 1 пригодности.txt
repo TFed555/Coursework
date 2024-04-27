@@ -1,0 +1,19 @@
+@startuml
+boundary "Окно авторизации" as entry_window
+boundary "Окно ошибки" as err_window
+boundary "Стартовое окно" as start_window
+actor "Пользователь" as user
+
+control "Отобразить окно предупреждения" as warning_control
+control "Подтверждение данных" as validation_control
+
+user -- entry_window
+
+entry_window-->warning_control
+entry_window --> validation_control : Вводит данные и нажимает кнопку "Вход"
+validation_control --> start_window : Успех
+validation_control --> err_window : Ошибка ввода данных
+
+warning_control --> err_window
+
+@enduml

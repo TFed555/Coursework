@@ -1,0 +1,19 @@
+@startuml
+
+boundary "Окно просмотра работы" as edit_table
+boundary "Окно ошибки" as err_table
+boundary "Окно списка дополнительных работ" as work_table
+
+actor "Сотрудник" as user
+
+control "Подтверждение выполнения" as confirm_ctrl
+control "Отобразить окно ошибки" as err_ctrl
+
+user -- edit_table
+
+edit_table --> confirm_ctrl : Нажата кнопка "Подтвердить выполнение"
+edit_table --> err_ctrl : Пользователь не является организатором работы
+err_ctrl --> err_table : Действие невозможно
+confirm_ctrl --> work_table : Статус работы изменен
+
+@enduml
