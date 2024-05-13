@@ -28,6 +28,7 @@ public:
     void deleteTable(const QString &tableName);
     bool tableExists(const QString &tableName);
     int getRole(QString login);
+    void closeDataBase();
 
 public:
     QSqlDatabase db;
@@ -41,7 +42,6 @@ private:
     void insertIntoStatusTable(QString data);
     bool openDataBase();
     bool restoreDataBase();
-    void closeDataBase();
     bool createUsersTable();
     bool createRolesTable();
     bool createWorksTable();

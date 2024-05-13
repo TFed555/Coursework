@@ -1,9 +1,9 @@
-#include "workswindow.h"
-#include "ui_workswindow.h"
+#include "editworkswindow.h"
+#include "ui_editworkswindow.h"
 
-WorksWindow::WorksWindow(QWidget *parent) :
+EditWorksWindow::EditWorksWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::WorksWindow)
+    ui(new Ui::EditWorksWindow)
 {
     ui->setupUi(this);
     db = new DataBase();
@@ -20,7 +20,7 @@ WorksWindow::WorksWindow(QWidget *parent) :
     this->createUI();
 }
 
-WorksWindow::~WorksWindow()
+EditWorksWindow::~EditWorksWindow()
 {
     delete ui;
 //    db->closeDataBase();
@@ -28,7 +28,7 @@ WorksWindow::~WorksWindow()
 //    delete model;
 }
 
-void WorksWindow::setupModel(const QStringList &headers)
+void EditWorksWindow::setupModel(const QStringList &headers)
 {
    DataBase conn;
    model = new QSqlQueryModel(this);
@@ -48,7 +48,7 @@ void WorksWindow::setupModel(const QStringList &headers)
 
 }
 
-void WorksWindow::createUI()
+void EditWorksWindow::createUI()
 {
     ui->tableView->setModel(model);
     ui->tableView->setColumnHidden(0, true);

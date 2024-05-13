@@ -10,6 +10,8 @@ CONFIG += c++11
 
 SOURCES += \
     db.cpp \
+    edituser.cpp \
+    editworkswindow.cpp \
     main.cpp \
     autho.cpp \
     registration.cpp \
@@ -18,9 +20,12 @@ SOURCES += \
     workswindow.cpp
 
 HEADERS += \
+    abstractmodel.h \
     autho.h \
     custombox.h \
     db.h \
+    edituser.h \
+    editworkswindow.h \
     registration.h \
     test.h \
     userswindow.h \
@@ -28,6 +33,8 @@ HEADERS += \
 
 FORMS += \
     autho.ui \
+    edituser.ui \
+    editworkswindow.ui \
     registration.ui \
     test.ui \
     userswindow.ui \

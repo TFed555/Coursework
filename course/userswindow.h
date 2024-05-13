@@ -7,6 +7,7 @@
 
 #include "db.h"
 #include "registration.h"
+#include "edituser.h"
 
 namespace Ui {
 class UsersWindow;
@@ -22,6 +23,9 @@ public:
 
 public:
     void updateModel();
+private slots:
+    void showUser(const QModelIndex &index);
+
 private:
     void setupModel(const QStringList &headers);
     void createUI();
@@ -30,6 +34,7 @@ private:
     DataBase *db;
     QSqlQueryModel *model;
     Registration *regUi;
+    EditUser *editUi;
 };
 
 #endif // USERSWINDOW_H

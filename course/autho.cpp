@@ -10,14 +10,20 @@ Autho::Autho(QWidget *parent)
 
     usersUi = new UsersWindow();
     worksUi = new WorksWindow();
+    editUi = new EditWorksWindow();
     regUi = new Registration();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
     ui->loginEdit->setValidator(&phoneValidator);
+
 }
 
 Autho::~Autho()
 {
     delete ui;
+//    delete usersUi;
+//    delete worksUi;
+//    delete editUi;
+//    delete regUi;
 }
 
 
@@ -38,7 +44,8 @@ void Autho::on_authButton_clicked()
               this->hide();
               break;
           case 2:
-               qDebug()<<"not ready yet";
+              editUi->show();
+              this->hide();
               break;
           case 3:
                 usersUi->updateModel();

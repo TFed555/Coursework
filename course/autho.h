@@ -10,6 +10,7 @@
 #include "db.h"
 #include "userswindow.h"
 #include "workswindow.h"
+#include "editworkswindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Autho; }
@@ -37,5 +38,6 @@ private:
     QRegExpValidator phoneValidator;
     UsersWindow *usersUi;
     WorksWindow *worksUi;
+    EditWorksWindow *editUi;
 };
 #endif // AUTHO_H

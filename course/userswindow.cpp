@@ -6,6 +6,11 @@ UsersWindow::UsersWindow(QWidget *parent) :
     ui(new Ui::UsersWindow)
 {
     ui->setupUi(this);
+    //editUi = new EditUser(0, this);
+
+//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
+    connect(ui->tableView, &QTableView::clicked, this, &UsersWindow::showUser);
+
     db = new DataBase();
     db->connectToDataBase();
     this->setupModel(
@@ -24,17 +29,22 @@ UsersWindow::UsersWindow(QWidget *parent) :
 UsersWindow::~UsersWindow()
 {
     delete ui;
+//    delete editUi;
+//    db->closeDataBase();
+//    delete db;
+//    delete regUi;
+//    delete model;
 }
 
 void UsersWindow::setupModel(const QStringList &headers)
 {
-    DataBase conn;
+   DataBase conn;
    model = new QSqlQueryModel(this);
    QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
                    " From Users join Roles on Roles.Role_ID = Users.Role" );
     if(!query->exec()){
-        qDebug()<<"";
+        qDebug()<<"err";
         return;
     }
     model->setQuery(*query);
@@ -55,7 +65,7 @@ void UsersWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
+//    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(UsersWindow::showUser()));
 
 }
 
@@ -69,5 +79,14 @@ void UsersWindow::updateModel(){
         return;
     }
     model->setQuery(*query);
+}
+
+void UsersWindow::showUser(const QModelIndex &index){
+    int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
+    EditUser *editUi = new EditUser(userID, this);
+    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
+    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::updateModel);
+    this->close();
+    editUi->show();
 }
 
