@@ -1,0 +1,37 @@
+#ifndef EDITUSER_H
+#define EDITUSER_H
+
+#include <QDialog>
+#include <QSqlQuery>
+#include <QDebug>
+
+#include "db.h"
+
+namespace Ui {
+class EditUser;
+}
+
+class EditUser : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit EditUser(int userID, QWidget *parent = nullptr);
+    ~EditUser();
+
+signals:
+    void UsersWindow();
+
+private slots:
+    void on_backButton_clicked();
+    void on_confirmButton_clicked();
+
+private:
+    void setupFields(int userID);
+    void updateUser(int userID);
+private:
+    Ui::EditUser *ui;
+    DataBase *db;
+};
+
+#endif // EDITUSER_H
