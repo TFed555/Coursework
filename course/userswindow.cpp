@@ -84,8 +84,12 @@ void UsersWindow::updateModel(){
 void UsersWindow::showUser(const QModelIndex &index){
     int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
     EditUser *editUi = new EditUser(userID, this);
-    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
-    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::updateModel);
+//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::updateModel);
+//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
+    connect(editUi, &EditUser::UsersWindow, [this](){
+        this->updateModel();
+        this->show();
+    });
     this->close();
     editUi->show();
 }

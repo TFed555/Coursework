@@ -29,6 +29,7 @@ private slots:
 private:
     void setupFields(int userID);
     void updateUser(int userID);
+    void fillCheckbox(int userID);
 private:
     Ui::EditUser *ui;
     DataBase *db;
