@@ -30,6 +30,7 @@ private:
     void setupFields(int userID);
     void updateUser(int userID);
     void fillCheckbox(int userID);
+    void confirmStatus(int userID);
 private:
     Ui::EditUser *ui;
     DataBase *db;

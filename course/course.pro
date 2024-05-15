@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     db.cpp \
+    descwork.cpp \
     edituser.cpp \
     editworkswindow.cpp \
     main.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     autho.h \
     custombox.h \
     db.h \
+    descwork.h \
     edituser.h \
     editworkswindow.h \
     registration.h \
@@ -33,6 +35,7 @@ HEADERS += \
 
 FORMS += \
     autho.ui \
+    descwork.ui \
     edituser.ui \
     editworkswindow.ui \
     registration.ui \

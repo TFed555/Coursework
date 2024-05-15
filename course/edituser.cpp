@@ -11,8 +11,13 @@ EditUser::EditUser(int userID, QWidget *parent) :
     this->setupFields(userID);
     connect(ui->confirmButton, &QPushButton::clicked, this, [this, userID](){
         updateUser(userID);
-        emit UsersWindow();
+        confirmStatus(userID);
+        ui->checkBox->setChecked(false);
+        ui->checkBox_2->setChecked(false);
+       // emit UsersWindow();
     });
+
+//    connect(ui->confirmButton, &QPushButton::clicked, this, [this, us])
 }
 
 EditUser::~EditUser()
@@ -32,7 +37,7 @@ void EditUser::setupFields(int userID)
 {
     DataBase conn;
     QSqlQuery* query = new QSqlQuery(conn.db);
-     query->prepare("Select Surname, Name, Patronymic, phoneNumber "
+     query->prepare("Select Surname, Name, Patronymic, phoneNumber, Post "
                     " From Users Where ID = :userID" );
      query->bindValue(":userID", userID);
      if(!query->exec()){
@@ -44,7 +49,9 @@ void EditUser::setupFields(int userID)
          ui->name->setText(query->value(1).toString());
          ui->patronymic->setText(query->value(2).toString());
          ui->phoneNumber->setText(query->value(3).toString());
+         ui->post->setText(query->value(4).toString());
          fillCheckbox(userID);
+         //confirmStatus(userID);
      }
 
 }
@@ -73,13 +80,13 @@ void EditUser::updateUser(int userID){
         if (!query->exec()){
             qDebug()<< query->lastError().text();
         }
-//    ui->checkBox->setEnabled(false);
+        fillCheckbox(userID);
     }
 }
 
 void EditUser::on_confirmButton_clicked()
 {
-    this->close();
+   // this->close();
 }
 
 void EditUser::fillCheckbox(int userID){
@@ -102,3 +109,19 @@ void EditUser::fillCheckbox(int userID){
     else ui->checkBox->setText("Назначить организатором");
 }
 
+void EditUser::confirmStatus(int userID){
+    DataBase conn;
+    if (ui->checkBox_2->isChecked()){
+        QSqlQuery* query = new QSqlQuery(conn.db);
+        QString post = ui->comboBox->currentText();
+        query->prepare("Update Users "
+                       "Set Post = :post "
+                       "Where ID = :userID ");
+        query->bindValue(":userID", userID);
+        query->bindValue(":post", post);
+        if(!query->exec()){
+            qDebug()<<query->lastError().text();
+        }
+        ui->post->setText(post);
+    }
+}

@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "db.h"
+#include "descwork.h"
 
 namespace Ui {
 class WorksWindow;
@@ -22,11 +23,13 @@ public:
 private:
     void setupModel(const QStringList &headers);
     void createUI();
-
+private slots:
+    void showWork(const QModelIndex &index);
 private:
     Ui::WorksWindow *ui;
     DataBase *db;
     QSqlQueryModel *model;
+    DescWork *itemUi;
 };
 
 #endif // WORKSWINDOW_H
