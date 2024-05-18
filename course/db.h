@@ -29,6 +29,7 @@ public:
     bool tableExists(const QString &tableName);
     int getRole(QString login);
     void closeDataBase();
+    QString getStatusName(int ID);
 
 public:
     QSqlDatabase db;

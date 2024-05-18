@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "db.h"
+#include "worksmodel.h"
 #include "descwork.h"
 
 namespace Ui {
@@ -30,6 +31,7 @@ private:
     DataBase *db;
     QSqlQueryModel *model;
     DescWork *itemUi;
+    WorksModel *mymodel;
 };
 
 #endif // WORKSWINDOW_H

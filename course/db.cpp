@@ -329,4 +329,16 @@ bool DataBase::insertIntoWorksTable(const QVariantList &data)
         return false;
 }
 
+QString DataBase::getStatusName(int ID){
+    QSqlQuery query;
+    query.prepare("Select Name "
+                  "From Status Where ID = :id");
+    query.bindValue(":id", ID);
+    if (!query.exec()){
+        qDebug()<<query.lastError().text();
+    }
+    query.next();
+    return query.value(0).toString();
+}
+
 

@@ -20,12 +20,17 @@ public:
     ~DescWork();
 
 signals:
-    void WorksWindow();
+//    void WorksWindow();
+    void updatedWorkStatus(int id, int status);
+
 private slots:
     void on_buttonBox_accepted();
 
+    void on_buttonBox_rejected();
+
 private:
     void setupData(int workID);
+    void confirmChange(int workID);
 private:
     Ui::DescWork *ui;
     DataBase *db;

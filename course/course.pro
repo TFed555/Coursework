@@ -16,12 +16,13 @@ SOURCES += \
     main.cpp \
     autho.cpp \
     registration.cpp \
+    tablemodel.cpp \
     test.cpp \
     userswindow.cpp \
+    worksmodel.cpp \
     workswindow.cpp
 
 HEADERS += \
-    abstractmodel.h \
     autho.h \
     custombox.h \
     db.h \
@@ -29,8 +30,10 @@ HEADERS += \
     edituser.h \
     editworkswindow.h \
     registration.h \
+    tablemodel.h \
     test.h \
     userswindow.h \
+    worksmodel.h \
     workswindow.h
 
 FORMS += \

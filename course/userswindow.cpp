@@ -8,11 +8,16 @@ UsersWindow::UsersWindow(QWidget *parent) :
     ui->setupUi(this);
     //editUi = new EditUser(0, this);
 
-//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
-    connect(ui->tableView, &QTableView::clicked, this, &UsersWindow::showUser);
+    regUi = new Registration();
+
+
+    connect(ui->tableView, &QTableView::doubleClicked, this, &UsersWindow::showUser);
+    connect(ui->delButton, &QPushButton::clicked, this, &UsersWindow::removeUser);
 
     db = new DataBase();
     db->connectToDataBase();
+
+    connect(regUi, &Registration::UpdateData, this, &UsersWindow::updateModel);
     this->setupModel(
                      QStringList() << trUtf8("ID")
                                    << trUtf8("Role")
@@ -70,7 +75,7 @@ void UsersWindow::createUI()
 }
 
 void UsersWindow::updateModel(){
-    DataBase conn;
+   DataBase conn;
    QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post"
                    " From Users join Roles on Roles.Role_ID = Users.Role;" );
@@ -92,5 +97,38 @@ void UsersWindow::showUser(const QModelIndex &index){
     });
     this->close();
     editUi->show();
+}
+
+
+
+void UsersWindow::removeUser(){
+    int rowNumber;
+    QModelIndexList selection = ui->tableView->selectionModel()->selection().indexes();
+    if (selection.isEmpty()){
+       qDebug()<<"gg";
+    }
+    foreach(QModelIndex index, selection) {
+        QSqlRecord record = model->record(index.row());
+        rowNumber = record.value("id").toInt();
+    }
+
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
+    query->prepare("Delete from Users "
+                   "Where Users.ID = :userID");
+    query->bindValue(":userID", rowNumber);
+    if (!query->exec()){
+        qDebug()<<query->lastError().text();
+    }
+    else {
+        qDebug()<<endl<<"deleted";
+        this->updateModel();
+    }
+}
+
+void UsersWindow::on_backButton_clicked()
+{
+    this->close();
+    emit AuthoWindow();
 }
 

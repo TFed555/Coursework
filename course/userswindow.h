@@ -5,6 +5,7 @@
 #include <QSqlQueryModel>
 #include <QDebug>
 
+#include "custombox.h"
 #include "db.h"
 #include "registration.h"
 #include "edituser.h"
@@ -25,10 +26,17 @@ public:
     void updateModel();
 private slots:
     void showUser(const QModelIndex &index);
+//    void updateModel();
 
+    //void on_delButton_clicked(const QModelIndex &index);
+
+    void on_backButton_clicked();
+signals:
+    void AuthoWindow();
 private:
     void setupModel(const QStringList &headers);
     void createUI();
+    void removeUser();
 private:
     Ui::UsersWindow *ui;
     DataBase *db;
