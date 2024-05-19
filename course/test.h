@@ -7,6 +7,7 @@
 
 #include "db.h"
 #include "registration.h"
+#include "tablemodel.h"
 
 namespace Ui {
 class Test;
@@ -28,6 +29,7 @@ private:
     DataBase *db;
     QSqlQueryModel *model;
     Registration *regUi;
+//    tablemodel *mymodel;
 private:
     void setupModel(const QStringList &headers);
     void createUI();

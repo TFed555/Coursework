@@ -9,7 +9,7 @@ Registration::Registration(QWidget *parent) :
     textValidator(QRegExp("^[А-я]{20}"))
 {
     ui->setupUi(this);
-    connect(ui->confirmButton, &QPushButton::clicked, this, &Registration::clearFields);
+    connect(this, &Registration::clearValid, this, &Registration::clearFields);
     connect(ui->backButton, &QPushButton::clicked, this, &Registration::clearFields);
     ui->phoneEdit->setValidator(&phoneValidator);
     ui->nameEdit->setValidator(&textValidator);
@@ -33,6 +33,7 @@ void Registration::on_backButton_clicked()
 }
 
 void Registration::clearFields(){
+
     ui->nameEdit->clear();
     ui->surnameEdit->clear();
     ui->patronymicEdit->clear();
@@ -43,14 +44,12 @@ void Registration::clearFields(){
 
 
 //Занесение данных пользователя в бд
-void Registration::on_confirmButton_clicked()
+bool Registration::on_confirmButton_clicked()
 {
     CustomBox msgbx;
-    db = new DataBase();
-    db->connectToDataBase();
     if (db->loginExists(ui->phoneEdit->text())){
         msgbx.showErrorBox("Такой телефон уже существует");
-        qDebug()<<"phone exists";
+        return false;
     }
     else{
         if (validateFields()){
@@ -65,13 +64,17 @@ void Registration::on_confirmButton_clicked()
             data.append(ui->comboBox->currentText());
             if(db->insertIntoUsersTable(data)){
                 this->close();
-                emit AuthoWindow();
+                //???
+                emit UpdateData(), emit clearValid(), emit AuthoWindow();
+                return true;
             }
             else{
                 qDebug()<<"err";
+                return false;
             }
         }
     }
+    return false;
 }
 
 bool Registration::validateFields(){

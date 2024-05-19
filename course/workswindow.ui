@@ -23,6 +23,19 @@
     </rect>
    </property>
   </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>530</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Назад</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

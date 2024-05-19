@@ -3,39 +3,40 @@
 WorksModel::WorksModel(QObject* parent)
 {
     setParent(parent);
+    this->setupModel();
 
-        db = new DataBase;
-        db->connectToDataBase();
-        DataBase conn;
-        QSqlQuery* query = new QSqlQuery(conn.db);
-         query->prepare("Select Works.ID, Title, Description, Deadline, Pay, Status.Name, Users.Name, Users.Surname, Users.Patronymic "
-                        " From Works JOIN Status ON Status.ID = Works.Status "
-                        " JOIN Users ON Users.ID = Works.Responsible" );
-         if(!query->exec()){
-             qDebug()<<"err";
-         }
-         else {
-             while (query->next()){
-             QString responsible = query->value(6).toString()+" "+query->value(7).toString()+" "+query->value(8).toString();
-             appendWork(query->value(0).toString(), query->value(1).toString(), query->value(2).toString(),
-                          query->value(3).toString(), query->value(4).toString(), query->value(5).toString(),
-                          responsible);
-                 //qDebug()<<" 0";
-             }
-         }
 }
 
 WorksModel::~WorksModel(){
 
 }
 
+void WorksModel::setupModel(){
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
+     query->prepare("Select Works.ID, Title, Description, Deadline, Pay, Status.Name, Users.Name, Users.Surname, Users.Patronymic "
+                    " From Works JOIN Status ON Status.ID = Works.Status "
+                    " JOIN Users ON Users.ID = Works.Responsible" );
+     if(!query->exec()){
+         qDebug()<<"err";
+     }
+     else {
+         while (query->next()){
+         QString responsible = query->value(6).toString()+" "+query->value(7).toString()+" "+query->value(8).toString();
+         appendWork(query->value(0).toString(), query->value(1).toString(), query->value(2).toString(),
+                      query->value(3).toString(), query->value(4).toString(), query->value(5).toString(),
+                      responsible);
+         }
+     }
+}
+
 int WorksModel::rowCount( const QModelIndex& parent ) const {
-    //Q_UNUSED( parent )
+    Q_UNUSED( parent )
     return works.count();
 }
 
 int WorksModel::columnCount( const QModelIndex& parent ) const {
-    //Q_UNUSED( parent )
+    Q_UNUSED( parent )
     return LAST;
 }
 
@@ -52,17 +53,17 @@ QVariant WorksModel::headerData( int section, Qt::Orientation orientation, int r
     case ID:
         return trUtf8( "ID" );
     case TITLE:
-        return trUtf8( "Title" );
+        return trUtf8( "Название" );
     case DESC:
-        return trUtf8( "Description" );
+        return trUtf8( "Описание" );
     case DEADLINE:
-        return trUtf8( "Deadline" );
+        return trUtf8( "Срок" );
     case PAY:
-        return trUtf8( "Pay" );
+        return trUtf8( "Оплата" );
     case STATUS:
-        return trUtf8("Status");
+        return trUtf8("Статус");
     case RESPONSIBLE:
-        return trUtf8("Responsible");
+        return trUtf8("Ответственный");
 }
     return QVariant();
 }

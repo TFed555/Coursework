@@ -12,6 +12,8 @@
 #include "workswindow.h"
 #include "editworkswindow.h"
 
+#include "test.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class Autho; }
 QT_END_NAMESPACE
@@ -39,5 +41,7 @@ private:
     UsersWindow *usersUi;
     WorksWindow *worksUi;
     EditWorksWindow *editUi;
+    Test *test;
+
 };
 #endif // AUTHO_H

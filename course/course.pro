@@ -16,7 +16,6 @@ SOURCES += \
     main.cpp \
     autho.cpp \
     registration.cpp \
-    tablemodel.cpp \
     test.cpp \
     userswindow.cpp \
     worksmodel.cpp \
@@ -30,7 +29,6 @@ HEADERS += \
     edituser.h \
     editworkswindow.h \
     registration.h \
-    tablemodel.h \
     test.h \
     userswindow.h \
     worksmodel.h \

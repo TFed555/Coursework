@@ -184,7 +184,7 @@ bool DataBase::loginExists(QString login){
         return false;
     }
     else {
-        qDebug() << "Selected from table Users";
+        //qDebug() << "Selected from table Users";
         return query.next();
     }
 

@@ -16,7 +16,11 @@ public:
 
 public:
     void updateWorkStatus(int id, int status);
+//    QList<QHash<WorksModel::Column, QVariant>> getList(){
+//        return works;
+//    }
 private:
+    void setupModel();
     int rowCount( const QModelIndex& parent ) const;
     int columnCount( const QModelIndex& parent ) const;
     QVariant data( const QModelIndex& index, int role ) const;

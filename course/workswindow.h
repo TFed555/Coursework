@@ -21,15 +21,16 @@ public:
     explicit WorksWindow(QWidget *parent = nullptr);
     ~WorksWindow();
 
+signals:
+    void AuthoWindow();
 private:
-    void setupModel(const QStringList &headers);
     void createUI();
 private slots:
     void showWork(const QModelIndex &index);
+    void on_backButton_clicked();
+
 private:
     Ui::WorksWindow *ui;
-    DataBase *db;
-    QSqlQueryModel *model;
     DescWork *itemUi;
     WorksModel *mymodel;
 };

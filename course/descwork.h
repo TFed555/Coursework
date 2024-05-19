@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "db.h"
+#include "worksmodel.h"
 
 namespace Ui {
 class DescWork;
@@ -34,6 +35,7 @@ private:
 private:
     Ui::DescWork *ui;
     DataBase *db;
+//    WorksModel *model;
 };
 
 #endif // DESCWORK_H

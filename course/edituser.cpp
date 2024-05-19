@@ -6,8 +6,6 @@ EditUser::EditUser(int userID, QWidget *parent) :
     ui(new Ui::EditUser)
 {
     ui->setupUi(this);
-    db = new DataBase();
-    db->connectToDataBase();
     this->setupFields(userID);
     connect(ui->confirmButton, &QPushButton::clicked, this, [this, userID](){
         updateUser(userID);

@@ -6,8 +6,6 @@ EditWorksWindow::EditWorksWindow(QWidget *parent) :
     ui(new Ui::EditWorksWindow)
 {
     ui->setupUi(this);
-    db = new DataBase();
-    db->connectToDataBase();
     this->setupModel(
                      QStringList() << trUtf8("ID")
                                    << trUtf8("Title")

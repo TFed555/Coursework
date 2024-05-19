@@ -6,18 +6,21 @@ Test::Test(QWidget *parent) :
     ui(new Ui::Test)
 {
     ui->setupUi(this);
-    db = new DataBase();
-    db->connectToDataBase();
-    this->setupModel(
-                     QStringList() << trUtf8("ID")
-                                   << trUtf8("Role")
-                                   << trUtf8("Surname")
-                                   << trUtf8("Name")
-                                   << trUtf8("Patronymic")
-                                   << trUtf8("phoneNumber")
-                                   << trUtf8("Password")
-                                   << trUtf8("Post")
-                     );
+   // db = new DataBase();
+   // db->connectToDataBase();
+
+ //   mymodel = new tablemodel();
+
+//    this->setupModel(
+//                     QStringList() << trUtf8("ID")
+//                                   << trUtf8("Role")
+//                                   << trUtf8("Surname")
+//                                   << trUtf8("Name")
+//                                   << trUtf8("Patronymic")
+//                                   << trUtf8("phoneNumber")
+//                                   << trUtf8("Password")
+//                                   << trUtf8("Post")
+//                     );
     this->createUI();
 
 }
@@ -51,7 +54,7 @@ void Test::setupModel(const QStringList &headers)
 
 void Test::createUI()
 {
-    ui->tableView->setModel(model);
+//    ui->tableView->setModel(mymodel);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);

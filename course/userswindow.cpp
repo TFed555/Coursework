@@ -6,27 +6,22 @@ UsersWindow::UsersWindow(QWidget *parent) :
     ui(new Ui::UsersWindow)
 {
     ui->setupUi(this);
-    //editUi = new EditUser(0, this);
 
     regUi = new Registration();
 
-
+    connect(regUi, &Registration::UpdateData, this, &UsersWindow::updateModel);
     connect(ui->tableView, &QTableView::doubleClicked, this, &UsersWindow::showUser);
     connect(ui->delButton, &QPushButton::clicked, this, &UsersWindow::removeUser);
 
-    db = new DataBase();
-    db->connectToDataBase();
-
-    connect(regUi, &Registration::UpdateData, this, &UsersWindow::updateModel);
     this->setupModel(
                      QStringList() << trUtf8("ID")
-                                   << trUtf8("Role")
-                                   << trUtf8("Surname")
-                                   << trUtf8("Name")
-                                   << trUtf8("Patronymic")
-                                   << trUtf8("phoneNumber")
-                                   << trUtf8("Password")
-                                   << trUtf8("Post")
+                                   << trUtf8("Роль")
+                                   << trUtf8("Фамилия")
+                                   << trUtf8("Имя")
+                                   << trUtf8("Отчество")
+                                   << trUtf8("Телефон")
+                                   << trUtf8("Пароль")
+                                   << trUtf8("Должность")
                      );
     this->createUI();
 }
@@ -43,16 +38,18 @@ UsersWindow::~UsersWindow()
 
 void UsersWindow::setupModel(const QStringList &headers)
 {
-   DataBase conn;
+   //DataBase conn;
    model = new QSqlQueryModel(this);
-   QSqlQuery* query = new QSqlQuery(conn.db);
-    query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
-                   " From Users join Roles on Roles.Role_ID = Users.Role" );
-    if(!query->exec()){
-        qDebug()<<"err";
-        return;
-    }
-    model->setQuery(*query);
+   //QSqlQuery* query = new QSqlQuery(conn.db);
+//    query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
+//                   " From Users join Roles on Roles.Role_ID = Users.Role" );
+//    if(!query->exec()){
+//        qDebug()<<"err";
+//        return;
+//    }
+//    model->setQuery(*query);
+   model->setQuery("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
+                                      " From Users join Roles on Roles.Role_ID = Users.Role");
 
 
     for(int i = 0, j = 0; i < model->columnCount(); i++, j++){
@@ -105,7 +102,7 @@ void UsersWindow::removeUser(){
     int rowNumber;
     QModelIndexList selection = ui->tableView->selectionModel()->selection().indexes();
     if (selection.isEmpty()){
-       qDebug()<<"gg";
+       //qDebug()<<"gg";
     }
     foreach(QModelIndex index, selection) {
         QSqlRecord record = model->record(index.row());

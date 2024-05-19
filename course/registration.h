@@ -21,12 +21,14 @@ public:
 
 signals:
    void AuthoWindow();
+   void UpdateData();
+   void clearValid();
 
 private slots:
 
    void clearFields();
 
-   void on_confirmButton_clicked();
+   bool on_confirmButton_clicked();
 
    void on_backButton_clicked();
 
