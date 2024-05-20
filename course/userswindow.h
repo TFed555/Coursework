@@ -7,7 +7,6 @@
 
 #include "custombox.h"
 #include "db.h"
-#include "registration.h"
 #include "edituser.h"
 
 namespace Ui {
@@ -41,7 +40,6 @@ private:
     Ui::UsersWindow *ui;
     DataBase *db;
     QSqlQueryModel *model;
-    Registration *regUi;
     EditUser *editUi;
 };
 

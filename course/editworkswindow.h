@@ -2,11 +2,11 @@
 #define EDITWORKSWINDOW_H
 
 #include <QDialog>
-#include <QSqlQueryModel>
 #include <QDebug>
 
 #include "db.h"
-
+#include "worksmodel.h"
+#include "creatework.h"
 
 namespace Ui {
 class EditWorksWindow;
@@ -20,15 +20,22 @@ public:
     explicit EditWorksWindow(QWidget *parent = nullptr);
     ~EditWorksWindow();
 
+signals:
+    void AuthoWindow();
+private slots:
+    void on_backButton_clicked();
+    void on_addButton_clicked();
+    void on_delButton_clicked();
 
 private:
-    void setupModel(const QStringList &headers);
+
     void createUI();
 
 private:
     Ui::EditWorksWindow *ui;
     DataBase *db;
-    QSqlQueryModel *model;
+    WorksModel *model;
+    CreateWork *newWork;
 };
 
 #endif // EDITWORKSWINDOW_H

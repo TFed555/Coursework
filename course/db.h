@@ -21,18 +21,21 @@ public:
     ~DataBase();
 
     void connectToDataBase();
+    void closeDataBase();
     bool insertIntoUsersTable(const QVariantList &data);
     bool insertIntoWorksTable(const QVariantList &data);
+    bool insertIntoTasksTable(const int userID, const int workID);
     bool loginExists(QString login);
     bool pswdCompare(QString login, QString pswd);
     void deleteTable(const QString &tableName);
     bool tableExists(const QString &tableName);
     int getRole(QString login);
-    void closeDataBase();
     QString getStatusName(int ID);
+    int getLastWorkID();
 
 public:
     QSqlDatabase db;
+
 
 private:
     const QString dbName = "./DB.db";
@@ -47,6 +50,7 @@ private:
     bool createRolesTable();
     bool createWorksTable();
     bool createStatusTable();
+    bool createTasksTable();
 };
 
 #endif // DB_H

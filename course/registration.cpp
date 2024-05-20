@@ -64,7 +64,7 @@ bool Registration::on_confirmButton_clicked()
             data.append(ui->comboBox->currentText());
             if(db->insertIntoUsersTable(data)){
                 this->close();
-                //???
+                //
                 emit UpdateData(), emit clearValid(), emit AuthoWindow();
                 return true;
             }
@@ -116,6 +116,7 @@ void Registration::on_pswdEdit_textChanged(const QString &arg1)
     validatePassword(ui->pswdEdit->text());
 }
 
+//дописать
 void Registration::validatePassword(QString pswd){
     if (pswd.length()<6){
         ui->pswdLabel->setText("Пароль должен содержать\n 6 символов");

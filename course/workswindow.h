@@ -2,10 +2,8 @@
 #define WORKSWINDOW_H
 
 #include <QDialog>
-#include <QSqlQueryModel>
 #include <QDebug>
 
-#include "db.h"
 #include "worksmodel.h"
 #include "descwork.h"
 

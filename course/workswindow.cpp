@@ -35,9 +35,8 @@ void WorksWindow::createUI()
 
 void WorksWindow::showWork(const QModelIndex &index){
     int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    DescWork *itemUi = new DescWork(workID, this);
+    itemUi = new DescWork(workID, this);
     connect(itemUi, &DescWork::accepted, [this](){
-        //this->updateModel();
         this->show();
     });
     connect(itemUi, &DescWork::rejected, this, &WorksWindow::show);

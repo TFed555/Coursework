@@ -59,6 +59,9 @@ bool DataBase::openDataBase()
         if (!tableExists("Works")){
             createWorksTable();
         }
+        if (!tableExists("Tasks")){
+            createTasksTable();
+        }
         return true;
     } else {
         return false;
@@ -279,13 +282,11 @@ bool DataBase::createWorksTable()
     if(!query.exec( "CREATE TABLE Works ("
                             "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
                             "Title                     NVARCHAR(255)            NOT NULL,"
-                            "Status                    INTEGER                  NOT NULL,"
                             "Deadline                  DATE                     NOT NULL,"
                             "Pay                       INTEGER                    NOT NULL,"
                             "Description              NVARCHAR(255)             NULL,"
-                            "Responsible              INTEGER                   NOT NULL,"
-                            "FOREIGN KEY  (Status)     REFERENCES  Status(ID),"
-                            "FOREIGN KEY (Responsible) REFERENCES  Users(ID)"
+                            "Status                    INTEGER                  NOT NULL,"
+                            "FOREIGN KEY  (Status)     REFERENCES  Status(ID) "
                         ")"
                     )){
         qDebug() << "DataBase: error of create " << "Works";
@@ -293,8 +294,8 @@ bool DataBase::createWorksTable()
         return false;
     }
     else{
-        if (!query.exec("INSERT INTO Works( Title, Status, Deadline, Pay, Description, Responsible )"
-                            "VALUES ( 'Тест', 1, '2024-04-04', 5500, '00', 2 )"
+        if (!query.exec("INSERT INTO Works( Title, Deadline, Pay, Description, Status )"
+                            "VALUES ( 'Тест', '2024-04-04', 5500, '00', 1 )"
                         )){
                 qDebug() << "error insert work";
                 return false;
@@ -309,15 +310,14 @@ bool DataBase::createWorksTable()
 bool DataBase::insertIntoWorksTable(const QVariantList &data)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO Works( Title, Status, Deadline, Pay, Description, Responsible ) "
-                  "   VALUES( :title, :status, :deadline, :pay, :description, :responsible )"
+    query.prepare("INSERT INTO Works( Title, Deadline, Pay, Description, Status ) "
+                  "   VALUES( :title, :deadline, :pay, :description, :status )"
     );
     query.bindValue(":title",  data[0].toString());
-    query.bindValue(":status", data[1].toInt());
-    query.bindValue(":deadline", data[2].toDate());
-    query.bindValue(":pay", data[3].toInt());
-    query.bindValue(":description", data[4].toString());
-    query.bindValue(":responsible", data[5].toInt());
+    query.bindValue(":deadline", data[1].toDate());
+    query.bindValue(":pay", data[2].toInt());
+    query.bindValue(":description", data[3].toString());
+    query.bindValue(":status", data[4].toInt());
 
     if(!query.exec()){
             qDebug() << "Error insert into " << "Works";
@@ -341,4 +341,53 @@ QString DataBase::getStatusName(int ID){
     return query.value(0).toString();
 }
 
+bool DataBase::createTasksTable(){
+    QSqlQuery query;
+    if(!query.exec( "CREATE TABLE Tasks ("
+                            "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                            "Responsible       INTEGER            NOT NULL,"
+                            "Work              INTEGER            NOT NULL,"
+                            "FOREIGN KEY  (Responsible)     REFERENCES  Users(ID),"
+                            "FOREIGN KEY (Work) REFERENCES Works(ID) "
+                        ")"
+                    )){
+        qDebug() << "DataBase: error of create " << "Tasks";
+        qDebug() << query.lastError().text();
+        return false;
+    }
+    else{
+        return true;
+    }
+    return false;
+}
+
+bool DataBase::insertIntoTasksTable(const int userID, const int workID)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO Tasks( Responsible, Work ) "
+                  "   VALUES( :userID, :workID )"
+    );
+    query.bindValue(":userID",  userID);
+    query.bindValue(":workID", workID);
+
+    if(!query.exec()){
+            qDebug() << "Error insert into " << "Tasks";
+            qDebug() << query.lastError().text();
+            return false;
+        } else {
+            return true;
+        }
+        return false;
+}
+
+int DataBase::getLastWorkID()
+{
+    QSqlQuery query;
+    query.prepare("Select ID From Works");
+    if (!query.exec()){
+        qDebug()<<query.lastError().text();
+    }
+    query.last();
+    return query.value(0).toInt();
+}
 

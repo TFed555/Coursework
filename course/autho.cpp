@@ -13,9 +13,12 @@ Autho::Autho(QWidget *parent)
     editUi = new EditWorksWindow();
     regUi = new Registration();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
+    connect(regUi, &Registration::UpdateData, usersUi, &UsersWindow::updateModel);
     //Временно
     connect(usersUi, &UsersWindow::AuthoWindow, this, &Autho::show);
     connect(worksUi, &WorksWindow::AuthoWindow, this, &Autho::show);
+    connect(editUi, &EditWorksWindow::AuthoWindow, this, &Autho::show);
+    ui->loginEdit->setText("+7");
     ui->loginEdit->setValidator(&phoneValidator);
 
    test = new Test();
@@ -34,16 +37,11 @@ Autho::~Autho()
 void Autho::on_authButton_clicked()
 {
     CustomBox msgbx;
-//  db->deleteTable("Users");
-//   db->deleteTable("Roles");
-//   db->deleteTable("Works");
-//   db->deleteTable("Status");
     if(db->loginExists(ui->loginEdit->text())){
         if (db->pswdCompare(ui->loginEdit->text(), ui->pswdEdit->text())){
           switch(db->getRole(ui->loginEdit->text())){
           case 1:
               worksUi->show();
-              //test->show();
               this->hide();
               break;
           case 2:
@@ -51,11 +49,9 @@ void Autho::on_authButton_clicked()
               this->hide();
               break;
           case 3:
-               usersUi->updateModel();
                usersUi->show();
-              //  test->show();
-                this->hide();
-                break;
+               this->hide();
+               break;
           }
         }
         else{

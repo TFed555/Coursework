@@ -6,10 +6,6 @@ UsersWindow::UsersWindow(QWidget *parent) :
     ui(new Ui::UsersWindow)
 {
     ui->setupUi(this);
-
-    regUi = new Registration();
-
-    connect(regUi, &Registration::UpdateData, this, &UsersWindow::updateModel);
     connect(ui->tableView, &QTableView::doubleClicked, this, &UsersWindow::showUser);
     connect(ui->delButton, &QPushButton::clicked, this, &UsersWindow::removeUser);
 
@@ -20,7 +16,6 @@ UsersWindow::UsersWindow(QWidget *parent) :
                                    << trUtf8("Имя")
                                    << trUtf8("Отчество")
                                    << trUtf8("Телефон")
-                                   << trUtf8("Пароль")
                                    << trUtf8("Должность")
                      );
     this->createUI();
@@ -41,14 +36,14 @@ void UsersWindow::setupModel(const QStringList &headers)
    //DataBase conn;
    model = new QSqlQueryModel(this);
    //QSqlQuery* query = new QSqlQuery(conn.db);
-//    query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
+//    query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post "
 //                   " From Users join Roles on Roles.Role_ID = Users.Role" );
 //    if(!query->exec()){
 //        qDebug()<<"err";
 //        return;
 //    }
 //    model->setQuery(*query);
-   model->setQuery("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post "
+   model->setQuery("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post "
                                       " From Users join Roles on Roles.Role_ID = Users.Role");
 
 
@@ -74,7 +69,7 @@ void UsersWindow::createUI()
 void UsersWindow::updateModel(){
    DataBase conn;
    QSqlQuery* query = new QSqlQuery(conn.db);
-    query->prepare("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Password, Post"
+    query->prepare("Select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post"
                    " From Users join Roles on Roles.Role_ID = Users.Role;" );
     if(!query->exec()){
         qDebug()<<"Error updating model";
@@ -86,9 +81,7 @@ void UsersWindow::updateModel(){
 void UsersWindow::showUser(const QModelIndex &index){
     int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
     EditUser *editUi = new EditUser(userID, this);
-//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::updateModel);
-//    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
-    connect(editUi, &EditUser::UsersWindow, [this](){
+    connect(editUi, &EditUser::UsersWindow, this, [this](){
         this->updateModel();
         this->show();
     });
@@ -102,7 +95,7 @@ void UsersWindow::removeUser(){
     int rowNumber;
     QModelIndexList selection = ui->tableView->selectionModel()->selection().indexes();
     if (selection.isEmpty()){
-       //qDebug()<<"gg";
+       qDebug()<<"строка не выбрана";
     }
     foreach(QModelIndex index, selection) {
         QSqlRecord record = model->record(index.row());

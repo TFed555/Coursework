@@ -9,6 +9,7 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    creatework.cpp \
     db.cpp \
     descwork.cpp \
     edituser.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     autho.h \
+    creatework.h \
     custombox.h \
     db.h \
     descwork.h \
@@ -36,6 +38,7 @@ HEADERS += \
 
 FORMS += \
     autho.ui \
+    creatework.ui \
     descwork.ui \
     edituser.ui \
     editworkswindow.ui \

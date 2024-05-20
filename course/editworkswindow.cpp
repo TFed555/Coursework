@@ -6,15 +6,7 @@ EditWorksWindow::EditWorksWindow(QWidget *parent) :
     ui(new Ui::EditWorksWindow)
 {
     ui->setupUi(this);
-    this->setupModel(
-                     QStringList() << trUtf8("ID")
-                                   << trUtf8("Title")
-                                   << trUtf8("Description")
-                                   << trUtf8("Deadline")
-                                   << trUtf8("Pay")
-                                   << trUtf8("Description")
-                                   << trUtf8("Responsible")
-                     );
+    model = new WorksModel();
     this->createUI();
 }
 
@@ -26,35 +18,53 @@ EditWorksWindow::~EditWorksWindow()
 //    delete model;
 }
 
-void EditWorksWindow::setupModel(const QStringList &headers)
-{
-   DataBase conn;
-   model = new QSqlQueryModel(this);
-   QSqlQuery* query = new QSqlQuery(conn.db);
-    query->prepare("select * "
-                   " From Works" );
-    if(!query->exec()){
-        qDebug()<<"";
-        return;
-    }
-    model->setQuery(*query);
 
-
-    for(int i = 0, j = 0; i < model->columnCount(); i++, j++){
-        model->setHeaderData(i,Qt::Horizontal, headers[j]);
-    }
-
-}
 
 void EditWorksWindow::createUI()
 {
     ui->tableView->setModel(model);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
-
 }
+
+void EditWorksWindow::on_backButton_clicked()
+{
+    this->close();
+    emit AuthoWindow();
+}
+
+
+void EditWorksWindow::on_addButton_clicked()
+{
+    newWork = new CreateWork();
+    this->close();
+    newWork->show();
+    connect(newWork, &CreateWork::MainWindow, this, [this](){
+        model->updateTable();
+        this->show(); }
+    );
+}
+
+
+void EditWorksWindow::on_delButton_clicked()
+{
+//    int rowNumber;
+    QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
+     std::sort(selection.rbegin(), selection.rend());
+    if (selection.isEmpty()){
+       qDebug()<<"Строка не выбрана";
+    }
+    else{
+        model->removeWorks(selection);
+    }
+//    foreach(QModelIndex index, selection) {
+//        QSqlRecord record = model->record(index.row());
+
+//        rowNumber = record.value("id").toInt();
+//    }
+}
+

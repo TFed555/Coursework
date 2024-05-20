@@ -32,6 +32,7 @@ private slots:
 private:
     void setupData(int workID);
     void confirmChange(int workID);
+    void cancelChange(int workID, int status);
 private:
     Ui::DescWork *ui;
     DataBase *db;

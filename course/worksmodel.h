@@ -16,17 +16,16 @@ public:
 
 public:
     void updateWorkStatus(int id, int status);
-//    QList<QHash<WorksModel::Column, QVariant>> getList(){
-//        return works;
-//    }
+    void updateTable();
+    void removeWorks(const QModelIndexList &indexes);
 private:
     void setupModel();
     int rowCount( const QModelIndex& parent ) const;
     int columnCount( const QModelIndex& parent ) const;
     QVariant data( const QModelIndex& index, int role ) const;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
-    void appendWork(  const QString& id, const QString& title, const QString& desc,
-                          const QString& deadline, const QString& pay, const QString& status, const QString& responsible );
+    void appendWork(  const int& id, const QString& title, const QString& desc,
+                          const QString& deadline, const QString& pay, const QString& status, const QString& responsible);
 
 
 private:
