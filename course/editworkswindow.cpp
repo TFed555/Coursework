@@ -3,10 +3,11 @@
 
 EditWorksWindow::EditWorksWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::EditWorksWindow)
+    ui(new Ui::EditWorksWindow),
+    mymodel(WorksModel::instance())
 {
     ui->setupUi(this);
-    model = new WorksModel();
+   // mymodel = new WorksModel(this);
     this->createUI();
 }
 
@@ -15,14 +16,14 @@ EditWorksWindow::~EditWorksWindow()
     delete ui;
 //    db->closeDataBase();
 //    delete db;
-//    delete model;
+    //delete mymodel;
 }
 
 
 
 void EditWorksWindow::createUI()
 {
-    ui->tableView->setModel(model);
+    ui->tableView->setModel(mymodel);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -44,7 +45,7 @@ void EditWorksWindow::on_addButton_clicked()
     this->close();
     newWork->show();
     connect(newWork, &CreateWork::MainWindow, this, [this](){
-        model->updateTable();
+        mymodel->updateAddWork();
         this->show(); }
     );
 }
@@ -52,19 +53,16 @@ void EditWorksWindow::on_addButton_clicked()
 
 void EditWorksWindow::on_delButton_clicked()
 {
-//    int rowNumber;
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
-     std::sort(selection.rbegin(), selection.rend());
-    if (selection.isEmpty()){
-       qDebug()<<"Строка не выбрана";
+    if (!selection.isEmpty()){
+        int reply = msgbx.showWarningBox("Вы уверены что хотите завершить эти задания?");
+        if (reply==QMessageBox::Ok){
+            std::sort(selection.rbegin(), selection.rend());
+            mymodel->removeWorks(selection);
+        }
     }
     else{
-        model->removeWorks(selection);
+        msgbx.showWarningBox("Выберите хотя бы 1 задание");
     }
-//    foreach(QModelIndex index, selection) {
-//        QSqlRecord record = model->record(index.row());
-
-//        rowNumber = record.value("id").toInt();
-//    }
 }
 

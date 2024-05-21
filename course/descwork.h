@@ -17,7 +17,7 @@ class DescWork : public QDialog
     Q_OBJECT
 
 public:
-    explicit DescWork(int workID, QWidget *parent = nullptr);
+    explicit DescWork(QString currentLogin, int workID, QWidget *parent = nullptr);
     ~DescWork();
 
 signals:
@@ -33,10 +33,13 @@ private:
     void setupData(int workID);
     void confirmChange(int workID);
     void cancelChange(int workID, int status);
+    bool checkUserID(int workID);
 private:
     Ui::DescWork *ui;
     DataBase *db;
 //    WorksModel *model;
+private:
+    const QString login;
 };
 
 #endif // DESCWORK_H

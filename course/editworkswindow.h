@@ -3,9 +3,11 @@
 
 #include <QDialog>
 #include <QDebug>
+#include <QMessageBox>
 
 #include "db.h"
 #include "worksmodel.h"
+#include "custombox.h"
 #include "creatework.h"
 
 namespace Ui {
@@ -34,8 +36,9 @@ private:
 private:
     Ui::EditWorksWindow *ui;
     DataBase *db;
-    WorksModel *model;
+    WorksModel *mymodel;
     CreateWork *newWork;
+    CustomBox msgbx;
 };
 
 #endif // EDITWORKSWINDOW_H

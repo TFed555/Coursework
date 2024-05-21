@@ -16,9 +16,8 @@ class WorksWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit WorksWindow(QWidget *parent = nullptr);
+    explicit WorksWindow(QString currentLogin, QWidget *parent = nullptr);
     ~WorksWindow();
-
 signals:
     void AuthoWindow();
 private:
@@ -31,6 +30,8 @@ private:
     Ui::WorksWindow *ui;
     DescWork *itemUi;
     WorksModel *mymodel;
+private:
+    const QString login;
 };
 
 #endif // WORKSWINDOW_H

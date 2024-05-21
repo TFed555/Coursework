@@ -15,17 +15,16 @@ public:
 
 public:
     const int width = 400, height = 200;
-    void showWarningBox(const QString &msg){
-        QMessageBox::StandardButton reply;
-          setFixedSize(width, height);
-          setSizeGripEnabled(true);
-          reply = QMessageBox::warning(this, "Предупреждение", msg);
-          if (reply == QMessageBox::Yes) {
-            qDebug() << "Yes was clicked";
-            //QApplication::quit();
-          } else {
-            qDebug() << "Yes was *not* clicked";
-          }
+    int showWarningBox(const QString &msg){
+        QMessageBox box;
+        box.setFixedSize(width, height);
+        box.setSizeGripEnabled(true);
+        box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        box.setWindowTitle("Предупреждение");
+        box.setText(msg);
+        box.setIcon(QMessageBox::Warning);
+        int reply = box.exec();
+        return reply;
     }
     void showErrorBox(const QString &msg){
         QMessageBox::StandardButton reply;

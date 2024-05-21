@@ -2,6 +2,7 @@
 #define CREATEWORK_H
 
 #include <QSqlQuery>
+#include <QComboBox>
 #include <QDialog>
 #include <QRegExpValidator>
 #include "db.h"
@@ -25,7 +26,9 @@ private slots:
 signals:
     void MainWindow();
 private:
+    void setUsers(QComboBox* box);
     void setComboBox();
+    void setComboBox_2();
 private:
     Ui::CreateWork *ui;
     DataBase *db;

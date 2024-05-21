@@ -1,14 +1,16 @@
 #include "workswindow.h"
 #include "ui_workswindow.h"
 
-WorksWindow::WorksWindow(QWidget *parent) :
+WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::WorksWindow)
+    ui(new Ui::WorksWindow),
+    mymodel(WorksModel::instance()),
+    login(currentLogin)
 {
     ui->setupUi(this);
+ //   mymodel = new WorksModel(this);
 
     connect(ui->tableView, &QTableView::clicked, this, &WorksWindow::showWork);
-    mymodel = new WorksModel();
     this->createUI();
 }
 
@@ -17,7 +19,7 @@ WorksWindow::~WorksWindow()
     delete ui;
 //    db->closeDataBase();
 //    delete db;
-//    delete model;
+ //   delete mymodel;
 }
 
 
@@ -35,12 +37,12 @@ void WorksWindow::createUI()
 
 void WorksWindow::showWork(const QModelIndex &index){
     int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    itemUi = new DescWork(workID, this);
-    connect(itemUi, &DescWork::accepted, [this](){
+    itemUi = new DescWork(login, workID, this);
+    connect(itemUi, &DescWork::accepted, this, [this](){
         this->show();
     });
     connect(itemUi, &DescWork::rejected, this, &WorksWindow::show);
-    connect(itemUi, &DescWork::updatedWorkStatus, [this](int id, int status){
+    connect(itemUi, &DescWork::updatedWorkStatus, this, [this](int id, int status){
         mymodel->updateWorkStatus(id, status);
     });
     this->close();

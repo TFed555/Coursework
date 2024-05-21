@@ -5,18 +5,17 @@ Autho::Autho(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Autho),
       phoneValidator(QRegExp("^\\+\\d{1}\\d{10}$"))
+//      worksmodel(new WorksModel(this))
 {
     ui->setupUi(this);
 
     usersUi = new UsersWindow();
-    worksUi = new WorksWindow();
     editUi = new EditWorksWindow();
     regUi = new Registration();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
     connect(regUi, &Registration::UpdateData, usersUi, &UsersWindow::updateModel);
     //Временно
     connect(usersUi, &UsersWindow::AuthoWindow, this, &Autho::show);
-    connect(worksUi, &WorksWindow::AuthoWindow, this, &Autho::show);
     connect(editUi, &EditWorksWindow::AuthoWindow, this, &Autho::show);
     ui->loginEdit->setText("+7");
     ui->loginEdit->setValidator(&phoneValidator);
@@ -38,9 +37,12 @@ void Autho::on_authButton_clicked()
 {
     CustomBox msgbx;
     if(db->loginExists(ui->loginEdit->text())){
+        QString currentLogin = ui->loginEdit->text();
         if (db->pswdCompare(ui->loginEdit->text(), ui->pswdEdit->text())){
           switch(db->getRole(ui->loginEdit->text())){
           case 1:
+              worksUi = new WorksWindow(currentLogin);
+              connect(worksUi, &WorksWindow::AuthoWindow, this, &Autho::show);
               worksUi->show();
               this->hide();
               break;

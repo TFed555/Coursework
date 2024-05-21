@@ -59,7 +59,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Удалить</string>
+    <string>Завершить</string>
    </property>
   </widget>
  </widget>

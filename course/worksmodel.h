@@ -11,32 +11,40 @@ class WorksModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    WorksModel(QObject* parent = 0);
-    ~WorksModel();
+//    WorksModel(QObject* parent = 0);
+//    ~WorksModel();
+//    static WorksModel* instance_ptr;
+    static WorksModel* instance(){
+        static WorksModel instance;
+        return &instance;
+    }
+
+   WorksModel(const WorksModel&) = delete;
+   WorksModel& operator = (const WorksModel&) = delete;
 
 public:
     void updateWorkStatus(int id, int status);
-    void updateTable();
+    void updateAddWork();
     void removeWorks(const QModelIndexList &indexes);
 private:
     void setupModel();
-    int rowCount( const QModelIndex& parent ) const;
-    int columnCount( const QModelIndex& parent ) const;
-    QVariant data( const QModelIndex& index, int role ) const;
-    QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
-    void appendWork(  const int& id, const QString& title, const QString& desc,
-                          const QString& deadline, const QString& pay, const QString& status, const QString& responsible);
-
+    int rowCount( const QModelIndex& parent ) const override;
+    int columnCount( const QModelIndex& parent ) const override;
+    QVariant data( const QModelIndex& index, int role ) const override;
+    QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
+    void appendWork( const int& id, const QString& title,
+                          const QString& status );
 
 private:
+    WorksModel(QObject *parent = nullptr);
     enum Column {
         ID = 0,
         TITLE,
-        DESC,
-        DEADLINE,
-        PAY,
+//        DESC,
+//        DEADLINE,
+//        PAY,
         STATUS,
-        RESPONSIBLE,
+//        RESPONSIBLE,
         LAST
     };
 

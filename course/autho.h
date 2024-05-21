@@ -8,6 +8,7 @@
 #include "custombox.h"
 #include "registration.h"
 #include "db.h"
+#include "worksmodel.h"
 #include "userswindow.h"
 #include "workswindow.h"
 #include "editworkswindow.h"
@@ -41,7 +42,7 @@ private:
     UsersWindow *usersUi;
     WorksWindow *worksUi;
     EditWorksWindow *editUi;
+  //  WorksModel *worksmodel;
     Test *test;
-
 };
 #endif // AUTHO_H
