@@ -8,7 +8,6 @@ WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
     login(currentLogin)
 {
     ui->setupUi(this);
- //   mymodel = new WorksModel(this);
 
     connect(ui->tableView, &QTableView::clicked, this, &WorksWindow::showWork);
     this->createUI();
@@ -17,8 +16,6 @@ WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
 WorksWindow::~WorksWindow()
 {
     delete ui;
-//    db->closeDataBase();
-//    delete db;
  //   delete mymodel;
 }
 
@@ -38,14 +35,13 @@ void WorksWindow::createUI()
 void WorksWindow::showWork(const QModelIndex &index){
     int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
     itemUi = new DescWork(login, workID, this);
-    connect(itemUi, &DescWork::accepted, this, [this](){
-        this->show();
-    });
+    connect(itemUi, &DescWork::accepted, this, &WorksWindow::show);
     connect(itemUi, &DescWork::rejected, this, &WorksWindow::show);
     connect(itemUi, &DescWork::updatedWorkStatus, this, [this](int id, int status){
         mymodel->updateWorkStatus(id, status);
     });
     this->close();
+    itemUi->initialize();
     itemUi->show();
 }
 

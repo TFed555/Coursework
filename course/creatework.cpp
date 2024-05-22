@@ -7,20 +7,24 @@ CreateWork::CreateWork(QWidget *parent) :
     payValidator(0, 2147483647, this)
 {
     ui->setupUi(this);
-
     this->setComboBox();
-    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &CreateWork::setComboBox_2);
+    this->setComboBox_2();
+    ui->comboBox_2->setEnabled(false);
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
+            ui->comboBox_2->setEnabled(true);
+    });
     //в другой метод
     ui->dateEdit->setMinimumDate(QDate::currentDate());
     ui->dateEdit->setDisplayFormat("yyyy.MM.dd");
     ui->payEdit->setValidator(&payValidator);
-    ui->comboBox_2->setEnabled(false);
 
 }
 
 CreateWork::~CreateWork()
 {
     delete ui;
+    delete db;
+    delete query;
 }
 
 void CreateWork::on_confirmButton_clicked()
@@ -48,8 +52,6 @@ void CreateWork::on_confirmButton_clicked()
 }
 
 void CreateWork::setUsers(QComboBox* box){
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("Select Name, Surname, Patronymic, ID "
                        "From Users " );
     if(!query->exec()){
@@ -70,7 +72,7 @@ void CreateWork::setComboBox(){
 }
 
 void CreateWork::setComboBox_2(){
-    ui->comboBox_2->setEnabled(true);
+    ui->comboBox_2->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     setUsers(ui->comboBox_2);
 }
 

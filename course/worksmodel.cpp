@@ -1,5 +1,15 @@
 #include "worksmodel.h"
 
+WorksModel* WorksModel::m_instance = nullptr;
+
+WorksModel* WorksModel::instance()
+{
+    if (!m_instance) {
+        m_instance = new WorksModel();
+    }
+    return m_instance;
+}
+
 WorksModel::WorksModel(QObject* parent) : QAbstractTableModel(parent)
 {
     setParent(parent);
@@ -7,18 +17,12 @@ WorksModel::WorksModel(QObject* parent) : QAbstractTableModel(parent)
 
 }
 
-//WorksModel::~WorksModel(){
-
-//}
+WorksModel::~WorksModel(){
+    delete db;
+    delete query;
+}
 
 void WorksModel::updateAddWork(){
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
-//     query->prepare("Select Works.ID, Title, Description, Deadline, Pay, Status.Name, "
-//                    "Users.Name, Users.Surname, Users.Patronymic "
-//                    " From Works JOIN Status ON Status.ID = Works.Status "
-//                            " LEFT  JOIN Tasks On Tasks.Work = Works.ID "
-//                                  "LEFT JOIN Users On Users.ID = Tasks.Responsible" );
     query->prepare("Select Works.ID, Title, Status.Name "
                    " From Works JOIN Status ON Status.ID = Works.Status " );
      if(!query->exec()){
@@ -32,8 +36,6 @@ void WorksModel::updateAddWork(){
 }
 
 void WorksModel::setupModel(){
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("Select Works.ID, Title, Status.Name "
                    " From Works JOIN Status ON Status.ID = Works.Status " );
      if(!query->exec()){
@@ -41,7 +43,6 @@ void WorksModel::setupModel(){
      }
      else {
          while (query->next()){
-         //QString responsible = query->value(6).toString()+" "+query->value(7).toString()+" "+query->value(8).toString();
          appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString());
          }
      }
@@ -71,16 +72,9 @@ QVariant WorksModel::headerData( int section, Qt::Orientation orientation, int r
         return trUtf8( "ID" );
     case TITLE:
         return trUtf8( "Дополнительная работа" );
-//    case DESC:
-//        return trUtf8( "Описание" );
-//    case DEADLINE:
-//        return trUtf8( "Срок" );
-//    case PAY:
-//        return trUtf8( "Оплата" );
     case STATUS:
         return trUtf8("Статус");
-//    case RESPONSIBLE:
-//        return trUtf8("Ответственный");
+
 }
     return QVariant();
 }
@@ -102,11 +96,7 @@ void WorksModel::appendWork(const int& id, const QString& title,
     ListData work;
     work[ ID ] = id;
     work[ TITLE ] = title;
-//    work[ DESC ] = desc;
-//    work[ DEADLINE ] = deadline;
-//    work[ PAY ] = pay;
     work[ STATUS ] = status;
-//    work[ RESPONSIBLE ] = responsible;
 
     int row = works.count();
     beginInsertRows( QModelIndex(), row, row );
@@ -114,7 +104,7 @@ void WorksModel::appendWork(const int& id, const QString& title,
     endInsertRows();
 }
 
-void  WorksModel::updateWorkStatus(int id, int status)
+void WorksModel::updateWorkStatus(int id, int status)
 {
     QString res;
     for (int i = 0;i < works.count();i++){
@@ -138,8 +128,6 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
       for (int i : rows){
           idList.append(i);
       }
-        DataBase conn;
-        QSqlQuery* query = new QSqlQuery(conn.db);
         query->prepare("Delete from Tasks "
                        "Where Tasks.Work = :workID");
         query->bindValue(":workID", idList);

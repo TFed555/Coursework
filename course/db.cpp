@@ -391,3 +391,48 @@ int DataBase::getLastWorkID()
     return query.value(0).toInt();
 }
 
+bool DataBase::updateWorkStatus(int workID, int statusID){
+    QSqlQuery query;
+    query.prepare("Update Works "
+                              "Set Status = :statusID "
+                                 "Where Works.ID = :workID");
+    query.bindValue(":statusID", statusID);
+    query.bindValue(":workID", workID);
+    if (!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+int DataBase::getTaskID(int workID, QString order){
+    QSqlQuery query;
+    query.prepare("Select ID From Tasks Where Work = :workID Order By ROWID " + order+ " LIMIT 1  ");
+    query.bindValue(":workID", workID);
+    query.exec();
+    query.next();
+    qDebug()<<query.value(0).toInt();
+    return query.value(0).toInt();
+}
+
+bool DataBase::updateTaskResponsibles(int workID, int respID, int taskID){
+    QSqlQuery query;
+    query.prepare("Update Tasks Set Responsible = :respID "
+                  " Where Work = :workID And ID = :taskID"
+                  );
+    query.bindValue(":respID", respID);
+    query.bindValue(":workID", workID);
+    query.bindValue(":taskID", taskID);
+    if (!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+int DataBase::getStatus(int workID){
+    QSqlQuery query;
+    query.prepare("Select Status From Works Where Works.ID = :workID");
+    query.bindValue(":workID", workID);
+    query.exec();
+    query.next();
+    return query.value(0).toInt();
+}

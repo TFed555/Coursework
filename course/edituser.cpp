@@ -15,14 +15,13 @@ EditUser::EditUser(int userID, QWidget *parent) :
        // emit UsersWindow();
     });
 
-//    connect(ui->confirmButton, &QPushButton::clicked, this, [this, us])
 }
 
 EditUser::~EditUser()
 {
     delete ui;
-//    db->closeDataBase();
-//    delete db;
+    delete db;
+    delete query;
 }
 
 void EditUser::on_backButton_clicked()
@@ -33,8 +32,6 @@ void EditUser::on_backButton_clicked()
 
 void EditUser::setupFields(int userID)
 {
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
      query->prepare("Select Surname, Name, Patronymic, phoneNumber, Post "
                     " From Users Where ID = :userID" );
      query->bindValue(":userID", userID);
@@ -49,15 +46,12 @@ void EditUser::setupFields(int userID)
          ui->phoneNumber->setText(query->value(3).toString());
          ui->post->setText(query->value(4).toString());
          fillCheckbox(userID);
-         //confirmStatus(userID);
      }
 
 }
 
 void EditUser::updateUser(int userID){
-    DataBase conn;
     if (ui->checkBox->isChecked()){
-        QSqlQuery* query = new QSqlQuery(conn.db);
         query->prepare("Select Role_ID from Users "
                        "Join Roles on Roles.Role_ID = Users.Role "
                         "Where Users.ID = :userID");
@@ -69,7 +63,7 @@ void EditUser::updateUser(int userID){
         QVariant role = query->value(0).toInt();
         if (role == 1) role = 2;
         else if (role == 2) role = 1;
-
+        //перенести в бд
         query->prepare("Update Users "
                        "Set Role = :roleID "
                        "Where ID = :userID");
@@ -88,8 +82,6 @@ void EditUser::on_confirmButton_clicked()
 }
 
 void EditUser::fillCheckbox(int userID){
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("Select Role_ID from Users "
                    "Join Roles on Roles.Role_ID = Users.Role "
                     "Where Users.ID = :userID");
@@ -108,9 +100,7 @@ void EditUser::fillCheckbox(int userID){
 }
 
 void EditUser::confirmStatus(int userID){
-    DataBase conn;
     if (ui->checkBox_2->isChecked()){
-        QSqlQuery* query = new QSqlQuery(conn.db);
         QString post = ui->comboBox->currentText();
         query->prepare("Update Users "
                        "Set Post = :post "

@@ -5,10 +5,10 @@
 #include <QDebug>
 #include <QMessageBox>
 
-#include "db.h"
 #include "worksmodel.h"
 #include "custombox.h"
 #include "creatework.h"
+#include "editwork.h"
 
 namespace Ui {
 class EditWorksWindow;
@@ -28,6 +28,7 @@ private slots:
     void on_backButton_clicked();
     void on_addButton_clicked();
     void on_delButton_clicked();
+    void showWork(const QModelIndex &index);
 
 private:
 
@@ -35,9 +36,9 @@ private:
 
 private:
     Ui::EditWorksWindow *ui;
-    DataBase *db;
     WorksModel *mymodel;
     CreateWork *newWork;
+    EditWork *editWork;
     CustomBox msgbx;
 };
 

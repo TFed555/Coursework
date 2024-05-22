@@ -6,13 +6,14 @@
 #include <QDebug>
 
 #include "db.h"
+#include "abstractwork.h"
 #include "worksmodel.h"
 
 namespace Ui {
 class DescWork;
 }
 
-class DescWork : public QDialog
+class DescWork : public AbstractWork
 {
     Q_OBJECT
 
@@ -20,8 +21,9 @@ public:
     explicit DescWork(QString currentLogin, int workID, QWidget *parent = nullptr);
     ~DescWork();
 
+    void initialize();
+
 signals:
-//    void WorksWindow();
     void updatedWorkStatus(int id, int status);
 
 private slots:
@@ -30,14 +32,14 @@ private slots:
     void on_buttonBox_rejected();
 
 private:
-    void setupData(int workID);
-    void confirmChange(int workID);
-    void cancelChange(int workID, int status);
+    bool setupData(int workID) override;
+    void confirmChange(int workID) override;
+    void cancelChange(int workID, int status) override;
     bool checkUserID(int workID);
+    void setTextBrowser(QList<QString> data) override;
 private:
     Ui::DescWork *ui;
     DataBase *db;
-//    WorksModel *model;
 private:
     const QString login;
 };

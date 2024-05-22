@@ -34,6 +34,8 @@ private:
 private:
     Ui::EditUser *ui;
     DataBase *db;
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
 };
 
 #endif // EDITUSER_H

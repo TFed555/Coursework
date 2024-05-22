@@ -7,15 +7,13 @@ EditWorksWindow::EditWorksWindow(QWidget *parent) :
     mymodel(WorksModel::instance())
 {
     ui->setupUi(this);
-   // mymodel = new WorksModel(this);
+    connect(ui->tableView, &QTableView::doubleClicked, this, &EditWorksWindow::showWork);
     this->createUI();
 }
 
 EditWorksWindow::~EditWorksWindow()
 {
     delete ui;
-//    db->closeDataBase();
-//    delete db;
     //delete mymodel;
 }
 
@@ -30,6 +28,19 @@ void EditWorksWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
+}
+
+void EditWorksWindow::showWork(const QModelIndex &index){
+    int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
+    editWork = new EditWork(workID, this);
+    connect(editWork, &EditWork::accepted, this, &EditWorksWindow::show);
+    connect(editWork, &EditWork::rejected, this, &EditWorksWindow::show);
+    connect(editWork, &EditWork::updatedWorkStatus, this, [this] (int id, int status){
+        mymodel->updateWorkStatus(id, status);
+    } );
+    this->close();
+    editWork->initialize();
+    editWork->show();
 }
 
 void EditWorksWindow::on_backButton_clicked()

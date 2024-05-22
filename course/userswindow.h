@@ -41,6 +41,8 @@ private:
     DataBase *db;
     QSqlQueryModel *model;
     EditUser *editUi;
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
 };
 
 #endif // USERSWINDOW_H

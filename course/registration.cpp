@@ -21,8 +21,7 @@ Registration::Registration(QWidget *parent) :
 Registration::~Registration()
 {
     delete ui;
-//    db->closeDataBase();
-//    delete db;
+    delete db;
 }
 
 //Возврат к окну авторизации

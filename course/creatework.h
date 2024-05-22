@@ -34,6 +34,8 @@ private:
     DataBase *db;
     QIntValidator payValidator;
     QRegExpValidator textValidator;
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
 };
 
 #endif // CREATEWORK_H

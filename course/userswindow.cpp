@@ -26,7 +26,8 @@ UsersWindow::~UsersWindow()
     delete ui;
 //    delete editUi;
 //    db->closeDataBase();
-//    delete db;
+    delete db;
+    delete query;
 //    delete regUi;
 //    delete model;
 }
@@ -43,7 +44,7 @@ void UsersWindow::setupModel(const QStringList &headers)
 //        return;
 //    }
 //    model->setQuery(*query);
-   model->setQuery("select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post "
+   model->setQuery("Select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post "
                                       " From Users join Roles on Roles.Role_ID = Users.Role");
 
 
@@ -67,8 +68,6 @@ void UsersWindow::createUI()
 }
 
 void UsersWindow::updateModel(){
-   DataBase conn;
-   QSqlQuery* query = new QSqlQuery(conn.db);
     query->prepare("Select ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post"
                    " From Users join Roles on Roles.Role_ID = Users.Role;" );
     if(!query->exec()){
@@ -102,8 +101,10 @@ void UsersWindow::removeUser(){
         rowNumber = record.value("id").toInt();
     }
 
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
+    query->prepare("Delete from Tasks "
+                   "Where Tasks.Responsible = :userID");
+    query->bindValue(":userID", rowNumber);
+    query->exec();
     query->prepare("Delete from Users "
                    "Where Users.ID = :userID");
     query->bindValue(":userID", rowNumber);

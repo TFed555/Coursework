@@ -11,16 +11,7 @@ class WorksModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-//    WorksModel(QObject* parent = 0);
-//    ~WorksModel();
-//    static WorksModel* instance_ptr;
-    static WorksModel* instance(){
-        static WorksModel instance;
-        return &instance;
-    }
-
-   WorksModel(const WorksModel&) = delete;
-   WorksModel& operator = (const WorksModel&) = delete;
+   static WorksModel* instance();
 
 public:
     void updateWorkStatus(int id, int status);
@@ -36,15 +27,10 @@ private:
                           const QString& status );
 
 private:
-    WorksModel(QObject *parent = nullptr);
     enum Column {
         ID = 0,
         TITLE,
-//        DESC,
-//        DEADLINE,
-//        PAY,
         STATUS,
-//        RESPONSIBLE,
         LAST
     };
 
@@ -52,7 +38,15 @@ private:
     typedef QList <ListData> Works;
     Works works;
 private:
-     DataBase *db;
+    WorksModel(QObject *parent = nullptr);
+    WorksModel(const WorksModel&) = delete;
+    WorksModel& operator = (const WorksModel&) = delete;
+    static WorksModel* m_instance;
+    DataBase *db;
+    DataBase conn;
+    QSqlQuery* query = new QSqlQuery(conn.db);
+protected:
+    ~WorksModel();
 };
 
 #endif // WORKSMODEL_H

@@ -30,8 +30,12 @@ public:
     void deleteTable(const QString &tableName);
     bool tableExists(const QString &tableName);
     int getRole(QString login);
+    int getStatus(int workID);
     QString getStatusName(int ID);
     int getLastWorkID();
+    bool updateWorkStatus(int workID, int statusID);
+    int getTaskID(int workID, QString order);
+    bool updateTaskResponsibles(int workID, int respID, int taskID);
 
 public:
     QSqlDatabase db;
