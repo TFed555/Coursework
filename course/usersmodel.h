@@ -16,7 +16,9 @@ public:
 public:
    void removeUsers(const QModelIndexList &indexes);
    void updateModel();
-//    QList<QHash<int, QVariant>> getList();
+   void updateUserRole(int id, int role);
+   void updateUserPost(int id, QString post);
+    QList<QList<QVariant>> getList();
 private:
     void setupModel();
     int rowCount( const QModelIndex& parent ) const override;

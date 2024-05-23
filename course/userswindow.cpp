@@ -42,9 +42,12 @@ void UsersWindow::createUI()
 void UsersWindow::showUser(const QModelIndex &index){
     int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
     EditUser *editUi = new EditUser(userID, this);
-    connect(editUi, &EditUser::UsersWindow, this, [this](){
-        //this->updateModel();
-        this->show();
+    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
+    connect(editUi, &EditUser::updatedRole, this, [this](int id, int role){
+        model->updateUserRole(id, role);
+    });
+    connect(editUi, &EditUser::updatedPost, this, [this](int id, QString post){
+        model->updateUserPost(id, post);
     });
     this->close();
     editUi->show();

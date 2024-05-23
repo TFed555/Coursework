@@ -73,6 +73,7 @@ void EditUser::updateUser(int userID){
             qDebug()<< query->lastError().text();
         }
         fillCheckbox(userID);
+        emit updatedRole(userID, role.toInt());
     }
 }
 
@@ -111,5 +112,6 @@ void EditUser::confirmStatus(int userID){
             qDebug()<<query->lastError().text();
         }
         ui->post->setText(post);
+        emit updatedPost(userID, post);
     }
 }

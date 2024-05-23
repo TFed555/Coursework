@@ -4,6 +4,7 @@
 CreateWork::CreateWork(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CreateWork),
+    usersmodel(UsersModel::instance()),
     payValidator(0, 2147483647, this)
 {
     ui->setupUi(this);
@@ -52,17 +53,26 @@ void CreateWork::on_confirmButton_clicked()
 }
 
 void CreateWork::setUsers(QComboBox* box){
-    query->prepare("Select Name, Surname, Patronymic, ID "
-                       "From Users " );
-    if(!query->exec()){
-            qDebug()<<query->lastError().text();
-            return;
-    }
-    while (query->next()){
-        int id = query->value(3).toInt();
-        QString user = query->value(0).toString() + " " + query->value(1).toString() + " "
-                + query->value(2).toString();
-        box->addItem(user, QVariant(id));
+//    query->prepare("Select Name, Surname, Patronymic, ID "
+//                       "From Users " );
+//    if(!query->exec()){
+//            qDebug()<<query->lastError().text();
+//            return;
+//    }
+//    while (query->next()){
+//        int id = query->value(3).toInt();
+//        QString user = query->value(0).toString() + " " + query->value(1).toString() + " "
+//                + query->value(2).toString();
+//        box->addItem(user, QVariant(id));
+//    }
+    QList<QList<QVariant>> users = usersmodel->getList();
+    for(int i = 0; i < users.count(); i++){
+        int id = users[i][0].toInt();
+        QString role = users[i][1].toString();
+        QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
+        if (role!="заведующий" && role!="организатор"){
+            box->addItem(user, QVariant(id));
+        }
     }
 }
 

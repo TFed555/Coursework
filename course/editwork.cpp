@@ -3,7 +3,8 @@
 
 EditWork::EditWork(int workID, QWidget *parent) :
     AbstractWork(workID, parent),
-    ui(new Ui::EditWork)
+    ui(new Ui::EditWork),
+    usersmodel(UsersModel::instance())
 {
     ui->setupUi(this);
 //    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &EditWork::updateResponsibles);
@@ -182,26 +183,18 @@ void EditWork::on_buttonBox_rejected()
 }
 
 void EditWork::setUsers(QComboBox* box, QComboBox* compareBox, int respID){
-    query->prepare("Select Surname, Name, Patronymic, ID "
-                       "From Users " );
-    if(!query->exec()){
-            qDebug()<<query->lastError().text();
-            return;
-    }
-    while (query->next()){
-        int id = query->value(3).toInt();
-        QString user = query->value(0).toString() + " " + query->value(1).toString() + " "
-                + query->value(2).toString();
-
-        box->addItem(user, QVariant(id));
+    QList<QList<QVariant>> users = usersmodel->getList();
+    for(int i = 0; i < users.count(); i++){
+        int id = users[i][0].toInt();
+        QString role = users[i][1].toString();
+        QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
+        if (role!="заведующий" && role!="организатор"){
+            box->addItem(user, QVariant(id));
+        }
         qDebug()<< ui->comboBox->currentIndex() << user << " "<< id;
     }
     int index = box->findData(respID, Qt::UserRole);
     box->setCurrentIndex(index);
-//    QList<QHash<int, QVariant>> users = usersmodel->getList();
-//    for(auto user : users){
-//        qDebug()<<user;
-//    }
 }
 
 void EditWork::updateUser(QComboBox *box, QComboBox *compareBox){

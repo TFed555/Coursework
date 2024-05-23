@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QRegExpValidator>
 #include "db.h"
+#include "usersmodel.h"
 
 namespace Ui {
 class CreateWork;
@@ -32,6 +33,7 @@ private:
 private:
     Ui::CreateWork *ui;
     DataBase *db;
+    UsersModel *usersmodel;
     QIntValidator payValidator;
     QRegExpValidator textValidator;
     DataBase conn;

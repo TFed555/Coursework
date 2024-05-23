@@ -341,6 +341,18 @@ QString DataBase::getStatusName(int ID){
     return query.value(0).toString();
 }
 
+QString DataBase::getRoleName(int role){
+    QSqlQuery query;
+    query.prepare("Select Name "
+                  "From Roles Where Role_ID = :id");
+    query.bindValue(":id", role);
+    if (!query.exec()){
+        qDebug()<<query.lastError().text();
+    }
+    query.next();
+    return query.value(0).toString();
+}
+
 bool DataBase::createTasksTable(){
     QSqlQuery query;
     if(!query.exec( "CREATE TABLE Tasks ("

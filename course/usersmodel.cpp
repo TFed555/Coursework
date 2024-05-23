@@ -134,10 +134,49 @@ void UsersModel::updateModel(){
     setupModel();
 }
 
-//QList<QHash<int, QVariant>> UsersModel::getList()
-//{
+QList<QList<QVariant>> UsersModel::getList()
+{
+    QList<QList<QVariant>> list;
+    ListData user;
+    for (int i = 0; i < users.count(); i++){
+        QList<QVariant> user;
+        qDebug()<<user;
+        user.append(users[i][ID]);
+        user.append(users[i][ROLE]);
+        user.append(users[i][SURNAME]);
+        user.append(users[i][NAME]);
+        user.append(users[i][PATRONYMIC]);
+        user.append(users[i][POST]);
+        list.append(user);
+    }
+    return list;
+}
 
-//}
+void UsersModel::updateUserRole(int id, int role)
+{
+    QString res;
+    for (int i = 0;i < users.count();i++){
+        if (users[i][ID] == id){
+            res = db->getRoleName(role);
+            users[i][ROLE] = res;
+            emit layoutChanged();
+        }
+}
+}
+
+
+void UsersModel::updateUserPost(int id, QString post)
+{
+    for (int i = 0;i < users.count();i++){
+        if (users[i][ID] == id){
+            users[i][POST] = post;
+            emit layoutChanged();
+        }
+}
+}
+
+
+
 
 
 

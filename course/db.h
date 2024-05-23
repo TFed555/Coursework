@@ -35,6 +35,7 @@ public:
     int getLastWorkID();
     bool updateWorkStatus(int workID, int statusID);
     int getTaskID(int workID, QString order);
+    QString getRoleName(int role);
     bool updateTaskResponsibles(int workID, int respID, int taskID);
 
 public:
