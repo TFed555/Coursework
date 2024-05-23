@@ -6,15 +6,13 @@ EditWork::EditWork(int workID, QWidget *parent) :
     ui(new Ui::EditWork)
 {
     ui->setupUi(this);
+//    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &EditWork::updateResponsibles);
+//    connect(ui->comboBox_2, &QComboBox::currentTextChanged, this, &EditWork::updateResponsibles);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [this, workID]{
         this->confirmChange(workID);
     });
-    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
-        this->setUsers(ui->comboBox_2, ui->comboBox);
-    });
-    connect(ui->comboBox_2, &QComboBox::currentTextChanged, this, [this](){
-        this->setUsers(ui->comboBox, ui->comboBox_2);
-    });
+    ui->comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    ui->comboBox_2->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 }
 
 EditWork::~EditWork()
@@ -47,8 +45,16 @@ bool EditWork::setupData(int workID){
     }
     setTextBrowser(data);
     setStatus(statusID);
-    setComboBox(resp);
-    setComboBox_2(resp_2);
+    setUsers(ui->comboBox, ui->comboBox_2, resp);
+//    setComboBox(resp);
+    setUsers(ui->comboBox_2, ui->comboBox, resp_2);
+//    setComboBox_2(resp_2);
+//        connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this, resp_2](){
+//            this->setUsers(ui->comboBox_2, ui->comboBox, resp_2);
+//        });
+//        connect(ui->comboBox_2, &QComboBox::currentTextChanged, this, [this, resp](){
+//            this->setUsers(ui->comboBox, ui->comboBox_2, resp);
+//        });
     return true;
 }
 
@@ -70,22 +76,35 @@ void EditWork::setStatus(int ID){
     ui->statusBox->setCurrentIndex(ID-1);
 }
 
-void EditWork::confirmChange(int workID){
-    int statusID = ui->statusBox->currentIndex();
+bool EditWork::confirmChange(int workID){
+    int statusID = ui->statusBox->currentIndex()+1;
     qDebug()<<ui->comboBox->currentIndex();
-    if (statusID == 1 && (ui->comboBox->currentIndex() == -1 && ui->comboBox_2->currentIndex() == -1)){
+    if (statusID == 1 && updateResponsibles()){
+        statusID = 2;
+    }
+    if (statusID == 2 && (ui->comboBox->currentIndex() == -1 && ui->comboBox_2->currentIndex() == -1)){
         int reply = msgbx.showErrorBox("Вы не можете назначить этот статус. Выберите ответственных.");
         if (reply == QMessageBox::Ok){
-            return;
+            qDebug() << "Error Box: OK button pressed.";
+            return false;
         }
     }
-    else{
-        if (db->updateWorkStatus(workID, statusID+1)){
-            emit updatedWorkStatus(workID, statusID+1);
-        }
+    else if (statusID != 1 && (ui->comboBox->currentIndex() == ui->comboBox_2->currentIndex())){
+        msgbx.showErrorBox("Вы не можете назначить одинаковых ответственных.");
+//        if (reply == QMessageBox::Ok){
+//            qDebug() << "Error Box: OK button pressed.";
+//            return false;
+//        }
+    }
+    else {
         updateResponsibles();
+        if (db->updateWorkStatus(workID, statusID)){
+            emit updatedWorkStatus(workID, statusID);
+        }
+        //updateResponsibles();
         accept();
     }
+    return true;
 }
 
 void EditWork::cancelChange(int workID, int status){
@@ -96,7 +115,7 @@ void EditWork::cancelChange(int workID, int status){
 bool EditWork::insertResponsible1(){
     int ind = ui->comboBox->currentIndex();
     qDebug()<<ind;
-    if (ind!=-1 && ind !=0){
+    if (ind!=-1){
         int user = ui->comboBox->itemData(ind).toInt();
         qDebug()<<" "<<user;
         db->insertIntoTasksTable(user, workID);
@@ -115,18 +134,18 @@ bool EditWork::insertResponsible2(){
     return false;
 }
 
-void EditWork::updateResponsibles(){
+bool EditWork::updateResponsibles(){
     int status = db->getStatus(workID);
     if (status == 1){
         insertResponsible1();
         insertResponsible2();
+        return true;
     }
     else if (status == 2){
         query->prepare("Select Count(ID) From Tasks where Work = :workID");
         query->bindValue(":workID", workID);
         query->exec();
         query->next();
-        int tt = query->value(0).toInt();
         if (query->value(0).toInt()==1){
             insertResponsible2();
         }
@@ -145,6 +164,7 @@ void EditWork::updateResponsibles(){
         int taskId = db->getTaskID(workID, "DESC");
         db->updateTaskResponsibles(workID, user_2, taskId);
     }
+    return true;
 }
 
 void EditWork::on_buttonBox_accepted()
@@ -161,7 +181,7 @@ void EditWork::on_buttonBox_rejected()
     }
 }
 
-void EditWork::setUsers(QComboBox* box, QComboBox* compareBox){
+void EditWork::setUsers(QComboBox* box, QComboBox* compareBox, int respID){
     query->prepare("Select Surname, Name, Patronymic, ID "
                        "From Users " );
     if(!query->exec()){
@@ -172,17 +192,25 @@ void EditWork::setUsers(QComboBox* box, QComboBox* compareBox){
         int id = query->value(3).toInt();
         QString user = query->value(0).toString() + " " + query->value(1).toString() + " "
                 + query->value(2).toString();
-        if (compareBox->currentIndex() == compareBox->findData(id, Qt::UserRole)){
-            continue;
-        }
+
         box->addItem(user, QVariant(id));
         qDebug()<< ui->comboBox->currentIndex() << user << " "<< id;
     }
+    int index = box->findData(respID, Qt::UserRole);
+    box->setCurrentIndex(index);
+//    QList<QHash<int, QVariant>> users = usersmodel->getList();
+//    for(auto user : users){
+//        qDebug()<<user;
+//    }
+}
+
+void EditWork::updateUser(QComboBox *box, QComboBox *compareBox){
+    qDebug()<<box->currentData();
+    qDebug()<<compareBox->currentData();
 }
 
 void EditWork::setComboBox(int resp){
     ui->comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    setUsers(ui->comboBox, ui->comboBox_2);
     int index = ui->comboBox->findData(resp, Qt::UserRole);
     ui->comboBox->setCurrentIndex(index);
 
@@ -190,7 +218,6 @@ void EditWork::setComboBox(int resp){
 
 void EditWork::setComboBox_2(int resp_2){
     ui->comboBox_2->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    setUsers(ui->comboBox_2, ui->comboBox);
     int index = ui->comboBox_2->findData(resp_2, Qt::UserRole);
     ui->comboBox_2->setCurrentIndex(index);
 }

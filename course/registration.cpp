@@ -63,12 +63,10 @@ bool Registration::on_confirmButton_clicked()
             data.append(ui->comboBox->currentText());
             if(db->insertIntoUsersTable(data)){
                 this->close();
-                //
                 emit UpdateData(), emit clearValid(), emit AuthoWindow();
                 return true;
             }
             else{
-                qDebug()<<"err";
                 return false;
             }
         }

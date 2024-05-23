@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include "custombox.h"
+#include "usersmodel.h"
 #include "db.h"
 #include "abstractwork.h"
 
@@ -33,19 +34,21 @@ signals:
     void updatedWorkStatus(int id, int status);
 private:
     bool setupData(int workID) override;
-    void confirmChange(int workID) override;
+    bool confirmChange(int workID) override;
     void cancelChange(int workID, int status) override;
     void setTextBrowser(QList<QString> data) override;
     void setStatus(int ID);
-    void setUsers(QComboBox* box, QComboBox* compareBox);
+    void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
     void setComboBox(int resp);
     void setComboBox_2(int resp_2);
-    void updateResponsibles();
+    bool updateResponsibles();
+    void updateUser(QComboBox* box, QComboBox* compareBox);
 
 private:
     Ui::EditWork *ui;
     DataBase *db;
     CustomBox msgbx;
+    UsersModel *usersmodel;
 };
 
 #endif // EDITWORK_H

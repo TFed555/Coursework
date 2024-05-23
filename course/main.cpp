@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     db = new DataBase();
     db->connectToDataBase();
     QApplication a(argc, argv);
+//    a.setQuitOnLastWindowClosed(false);
     Autho w;
     w.show();
     return a.exec();

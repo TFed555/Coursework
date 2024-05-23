@@ -5,7 +5,6 @@ Autho::Autho(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Autho),
       phoneValidator(QRegExp("^\\+\\d{1}\\d{10}$"))
-//      worksmodel(new WorksModel(this))
 {
     ui->setupUi(this);
 

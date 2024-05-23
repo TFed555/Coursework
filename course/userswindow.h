@@ -6,7 +6,7 @@
 #include <QDebug>
 
 #include "custombox.h"
-#include "db.h"
+#include "usersmodel.h"
 #include "edituser.h"
 
 namespace Ui {
@@ -33,16 +33,17 @@ private slots:
 signals:
     void AuthoWindow();
 private:
-    void setupModel(const QStringList &headers);
+    //void setupModel(const QStringList &headers);
     void createUI();
     void removeUser();
 private:
     Ui::UsersWindow *ui;
-    DataBase *db;
-    QSqlQueryModel *model;
+//    DataBase *db;
+    UsersModel *model;
     EditUser *editUi;
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
+    CustomBox msgbx;
+//    DataBase conn;
+//    QSqlQuery* query = new QSqlQuery(conn.db);
 };
 
 #endif // USERSWINDOW_H

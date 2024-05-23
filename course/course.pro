@@ -20,6 +20,7 @@ SOURCES += \
     autho.cpp \
     registration.cpp \
     test.cpp \
+    usersmodel.cpp \
     userswindow.cpp \
     worksmodel.cpp \
     workswindow.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     editworkswindow.h \
     registration.h \
     test.h \
+    usersmodel.h \
     userswindow.h \
     worksmodel.h \
     workswindow.h

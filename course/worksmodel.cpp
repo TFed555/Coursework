@@ -30,7 +30,6 @@ void WorksModel::updateAddWork(){
      }
      else {
          query->last();
-         //QString responsible = query->value(6).toString()+" "+query->value(7).toString()+" "+query->value(8).toString();
          appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString());
      }
 }
@@ -128,6 +127,7 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
       for (int i : rows){
           idList.append(i);
       }
+      //метод в бд
         query->prepare("Delete from Tasks "
                        "Where Tasks.Work = :workID");
         query->bindValue(":workID", idList);

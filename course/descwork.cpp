@@ -92,14 +92,14 @@ bool DescWork::checkUserID(int workID){
    return false;
 }
 
-void DescWork::confirmChange(int workID){
+bool DescWork::confirmChange(int workID){
     query->prepare("Update Works "
                        "Set Status = 3 "
                        "Where Works.ID = :workID" );
     query->bindValue(":workID", workID);
     if(!query->exec()){
             qDebug()<<query->lastError().text();
-            return;
+            return false;
     }
     ui->acceptButton->setEnabled(false);
     emit updatedWorkStatus(workID, 3);

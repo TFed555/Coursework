@@ -40,7 +40,7 @@ void EditWorksWindow::showWork(const QModelIndex &index){
     } );
     this->close();
     editWork->initialize();
-    editWork->show();
+    editWork->open();
 }
 
 void EditWorksWindow::on_backButton_clicked()

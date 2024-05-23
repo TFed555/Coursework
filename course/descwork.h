@@ -33,7 +33,7 @@ private slots:
 
 private:
     bool setupData(int workID) override;
-    void confirmChange(int workID) override;
+    bool confirmChange(int workID) override;
     void cancelChange(int workID, int status) override;
     bool checkUserID(int workID);
     void setTextBrowser(QList<QString> data) override;
