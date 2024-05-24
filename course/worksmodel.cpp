@@ -149,5 +149,17 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
         }
 }
 
+QList<QList<QVariant>> WorksModel::getList()
+{
+    QList<QList<QVariant>> list;
+    for (int i = 0; i < works.count(); i++){
+        QList<QVariant> work;
+        work.append(works[i][ID]);
+        work.append(works[i][TITLE]);
+        work.append(works[i][STATUS]);
+        list.append(work);
+    }
+    return list;
+}
 
 

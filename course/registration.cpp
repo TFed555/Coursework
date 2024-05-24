@@ -110,6 +110,7 @@ bool Registration::validateFields(){
 
 void Registration::on_pswdEdit_textChanged(const QString &arg1)
 {
+    Q_UNUSED(arg1);
     validatePassword(ui->pswdEdit->text());
 }
 

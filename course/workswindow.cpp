@@ -5,9 +5,11 @@ WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WorksWindow),
     mymodel(WorksModel::instance()),
+    proxyModel(new QSortFilterProxyModel(this)),
     login(currentLogin)
 {
     ui->setupUi(this);
+    proxyModel->setSourceModel(mymodel);
 
     connect(ui->tableView, &QTableView::clicked, this, &WorksWindow::showWork);
     this->createUI();
@@ -22,7 +24,8 @@ WorksWindow::~WorksWindow()
 
 void WorksWindow::createUI()
 {
-    ui->tableView->setModel(mymodel);
+    ui->tableView->setModel(proxyModel);
+    ui->tableView->setSortingEnabled(true);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -33,6 +36,7 @@ void WorksWindow::createUI()
 }
 
 void WorksWindow::showWork(const QModelIndex &index){
+    //QModelIndex sourceIndex = proxyModel->mapToSource(index);
     int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
     itemUi = new DescWork(login, workID, this);
     connect(itemUi, &DescWork::accepted, this, &WorksWindow::show);

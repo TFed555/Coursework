@@ -53,18 +53,6 @@ void CreateWork::on_confirmButton_clicked()
 }
 
 void CreateWork::setUsers(QComboBox* box){
-//    query->prepare("Select Name, Surname, Patronymic, ID "
-//                       "From Users " );
-//    if(!query->exec()){
-//            qDebug()<<query->lastError().text();
-//            return;
-//    }
-//    while (query->next()){
-//        int id = query->value(3).toInt();
-//        QString user = query->value(0).toString() + " " + query->value(1).toString() + " "
-//                + query->value(2).toString();
-//        box->addItem(user, QVariant(id));
-//    }
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();

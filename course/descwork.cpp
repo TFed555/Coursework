@@ -72,20 +72,8 @@ void DescWork::setTextBrowser(QList<QString> data){
 }
 
 bool DescWork::checkUserID(int workID){
-    int userId;
-    query->prepare("Select Users.ID "
-                    "From Users Where Users.phoneNumber = :login");
-    query->bindValue(":login", login);
-    query->exec();
-    query->next();
-    userId = query->value(0).toInt();
-    query->prepare("Select Tasks.Responsible "
-                   "From Tasks LEFT JOIN Users On Users.ID = Tasks.Responsible "
-                                "Where Tasks.Work = :workID");
-    query->bindValue(":workID", workID);
-    query->exec();
-    query->next();
-   int respId = query->value(0).toInt();
+   int userId = db->checkUserID(login);
+   int respId = db->getResponsible(workID);
    if (respId == userId){
         return true;
    }
@@ -93,16 +81,12 @@ bool DescWork::checkUserID(int workID){
 }
 
 bool DescWork::confirmChange(int workID){
-    query->prepare("Update Works "
-                       "Set Status = 3 "
-                       "Where Works.ID = :workID" );
-    query->bindValue(":workID", workID);
-    if(!query->exec()){
-            qDebug()<<query->lastError().text();
-            return false;
+    if (!db->updateWorkStatus(workID, 3)){
+        return false;
     }
     ui->acceptButton->setEnabled(false);
     emit updatedWorkStatus(workID, 3);
+    return true;
 }
 
 void DescWork::on_buttonBox_accepted()
@@ -117,15 +101,8 @@ void DescWork::on_buttonBox_rejected()
 }
 
 void DescWork::cancelChange(int workID, int status){
-    query->prepare("Update Works "
-                       "Set Status = :status "
-                       "Where Works.ID = :workID" );
-    query->bindValue(":status", status);
-    query->bindValue(":workID", workID);
-    if(!query->exec()){
-            qDebug()<<query->lastError().text();
-            return;
+    if (db->updateWorkStatus(workID, status)){
+        ui->acceptButton->setEnabled(true);
+        emit updatedWorkStatus(workID, status);
     }
-    ui->acceptButton->setEnabled(true);
-    emit updatedWorkStatus(workID, status);
 }

@@ -30,6 +30,7 @@ HEADERS += \
     autho.h \
     creatework.h \
     custombox.h \
+    customproxymodel.h \
     db.h \
     descwork.h \
     edituser.h \

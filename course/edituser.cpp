@@ -3,7 +3,8 @@
 
 EditUser::EditUser(int userID, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::EditUser)
+    ui(new Ui::EditUser),
+    model(UsersModel::instance())
 {
     ui->setupUi(this);
     this->setupFields(userID);
@@ -12,7 +13,6 @@ EditUser::EditUser(int userID, QWidget *parent) :
         confirmStatus(userID);
         ui->checkBox->setChecked(false);
         ui->checkBox_2->setChecked(false);
-       // emit UsersWindow();
     });
 
 }
@@ -32,49 +32,44 @@ void EditUser::on_backButton_clicked()
 
 void EditUser::setupFields(int userID)
 {
-     query->prepare("Select Surname, Name, Patronymic, phoneNumber, Post "
-                    " From Users Where ID = :userID" );
-     query->bindValue(":userID", userID);
-     if(!query->exec()){
-         qDebug()<<"err";
-     }
-     else{
-         query->next();
-         ui->surname->setText(query->value(0).toString());
-         ui->name->setText(query->value(1).toString());
-         ui->patronymic->setText(query->value(2).toString());
-         ui->phoneNumber->setText(query->value(3).toString());
-         ui->post->setText(query->value(4).toString());
-         fillCheckbox(userID);
-     }
+    QString surname, name, patronymic, phone, post;
+       QList<QList<QVariant>> users = model->getList();
+       for (int i = 0; i < users.count(); i++){
+           if (users[i][0].toInt() == userID){
+               surname = users[i][2].toString();
+               name = users[i][3].toString();
+               patronymic = users[i][4].toString();
+               phone = users[i][5].toString();
+               post = users[i][7].toString();
+               break;
+           }
+       }
+       ui->surname->setText(surname);
+       ui->name->setText(name);
+       ui->patronymic->setText(patronymic);
+       ui->phoneNumber->setText(phone);
+       ui->post->setText(post);
+       fillCheckbox(userID);
 
 }
 
 void EditUser::updateUser(int userID){
+    int role = 0;
+    QList<QList<QVariant>> users = model->getList();
     if (ui->checkBox->isChecked()){
-        query->prepare("Select Role_ID from Users "
-                       "Join Roles on Roles.Role_ID = Users.Role "
-                        "Where Users.ID = :userID");
-        query->bindValue(":userID", userID);
-        if(!query->exec()){
-            qDebug()<< query->lastError().text();
-        }
-        query->next();
-        QVariant role = query->value(0).toInt();
-        if (role == 1) role = 2;
-        else if (role == 2) role = 1;
-        //перенести в бд
-        query->prepare("Update Users "
-                       "Set Role = :roleID "
-                       "Where ID = :userID");
-        query->bindValue(":userID", userID);
-        query->bindValue(":roleID", role);
-        if (!query->exec()){
-            qDebug()<< query->lastError().text();
-        }
-        fillCheckbox(userID);
-        emit updatedRole(userID, role.toInt());
-    }
+        for (int i = 0; i < users.count(); i++){
+            if (users[i][0].toInt() == userID){
+                role = users[i][6].toInt();
+                break;
+            }
+         }
+            if (role == 1) role = 2;
+            else if (role == 2) role = 1;
+            if(db->updateUserRole(userID, role)){
+                emit updatedRole(userID, role);
+                fillCheckbox(userID);
+            }
+       }
 }
 
 void EditUser::on_confirmButton_clicked()
@@ -83,34 +78,30 @@ void EditUser::on_confirmButton_clicked()
 }
 
 void EditUser::fillCheckbox(int userID){
-    query->prepare("Select Role_ID from Users "
-                   "Join Roles on Roles.Role_ID = Users.Role "
-                    "Where Users.ID = :userID");
-    query->bindValue(":userID", userID);
-    if(!query->exec()){
-        qDebug()<< query->lastError().text();
-    }
-    query->next();
-    QVariant role = query->value(0).toInt();
+    int role = 0;
+    QList<QList<QVariant>> users = model->getList();
+    for (int i = 0; i < users.count(); i++){
+                if (users[i][0].toInt() == userID){
+                    role = users[i][6].toInt();
+                    break;
+                }
+     }
     if (role==3) {
         ui->checkBox->setText("Назначить организатором");
         ui->checkBox->setEnabled(false);
     }
-    if (role==2) ui->checkBox->setText("Назначить сотрудником");
-    else ui->checkBox->setText("Назначить организатором");
+    if (role==2){
+        ui->checkBox->setText("Назначить сотрудником");
+    }
+    else {
+        ui->checkBox->setText("Назначить организатором");
+    }
 }
 
 void EditUser::confirmStatus(int userID){
     if (ui->checkBox_2->isChecked()){
         QString post = ui->comboBox->currentText();
-        query->prepare("Update Users "
-                       "Set Post = :post "
-                       "Where ID = :userID ");
-        query->bindValue(":userID", userID);
-        query->bindValue(":post", post);
-        if(!query->exec()){
-            qDebug()<<query->lastError().text();
-        }
+        db->updateUserPost(userID, post);
         ui->post->setText(post);
         emit updatedPost(userID, post);
     }

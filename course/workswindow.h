@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QDebug>
+//#include <QSortFilterProxyModel>
+#include "customproxymodel.h"
 
 #include "worksmodel.h"
 #include "descwork.h"
@@ -30,6 +32,7 @@ private:
     Ui::WorksWindow *ui;
     DescWork *itemUi;
     WorksModel *mymodel;
+    QSortFilterProxyModel *proxyModel;
 private:
     const QString login;
 };

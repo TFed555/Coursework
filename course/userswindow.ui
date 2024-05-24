@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QTableView" name="tableView">
    <property name="geometry">
     <rect>
@@ -21,6 +24,9 @@
      <width>781</width>
      <height>501</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(233, 243, 255);</string>
    </property>
   </widget>
   <widget class="QPushButton" name="backButton">

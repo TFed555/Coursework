@@ -448,3 +448,73 @@ int DataBase::getStatus(int workID){
     query.next();
     return query.value(0).toInt();
 }
+
+int DataBase::checkUserID(QString login){
+    QSqlQuery query;
+    query.prepare("Select Users.ID "
+                    "From Users Where Users.phoneNumber = :login");
+    query.bindValue(":login", login);
+    query.exec();
+    query.next();
+    return query.value(0).toInt();
+}
+
+int DataBase::getResponsible(int workID){
+    QSqlQuery query;
+    query.prepare("Select Tasks.Responsible "
+                   "From Tasks LEFT JOIN Users On Users.ID = Tasks.Responsible "
+                                "Where Tasks.Work = :workID");
+    query.bindValue(":workID", workID);
+    query.exec();
+    query.next();
+    return query.value(0).toInt();
+}
+
+bool DataBase::updateUserRole(int userID, int role){
+    QSqlQuery query;
+    query.prepare("Update Users "
+                   "Set Role = :roleID "
+                   "Where ID = :userID");
+    query.bindValue(":userID", userID);
+    query.bindValue(":roleID", role);
+    if (!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+bool DataBase::updateUserPost(int userID, QString post){
+    QSqlQuery query;
+    query.prepare("Update Users "
+                   "Set Post = :post "
+                   "Where ID = :userID ");
+    query.bindValue(":userID", userID);
+    query.bindValue(":post", post);
+    if(!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+QList<QList<QVariant>> DataBase::selectAllStatus(){
+    QSqlQuery query;
+     QList<QList<QVariant>> list;
+     query.exec("Select Status.Name, Status.ID "
+                     "From Status");
+     while(query.next()){
+         QList<QVariant> status;
+         status.append(query.value(1).toInt());
+         status.append(query.value(0).toString());
+         list.append(status);
+     }
+     return list;
+}
+
+int DataBase::getCountTasks(int workID){
+    QSqlQuery query;
+    query.prepare("Select Count(ID) From Tasks where Work = :workID");
+    query.bindValue(":workID", workID);
+    query.exec();
+    query.next();
+    return query.value(0).toInt();
+}

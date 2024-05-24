@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "db.h"
+#include "usersmodel.h"
 
 namespace Ui {
 class EditUser;
@@ -35,6 +36,7 @@ private:
     void confirmStatus(int userID);
 private:
     Ui::EditUser *ui;
+    UsersModel *model;
     DataBase *db;
     DataBase conn;
     QSqlQuery* query = new QSqlQuery(conn.db);

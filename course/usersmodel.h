@@ -25,8 +25,8 @@ private:
     int columnCount( const QModelIndex& parent ) const override;
     QVariant data( const QModelIndex& index, int role ) const override;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
-    void appendUser( const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic,
-                          const QString& post );
+    void appendUser( const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
+                          const QString& post, const int& role_id );
 
 private:
     enum Column {
@@ -35,7 +35,10 @@ private:
         SURNAME,
         NAME,
         PATRONYMIC,
+        PHONE,
+        PASSWORD,
         POST,
+        ROLE_ID,
         LAST
     };
 

@@ -39,8 +39,6 @@ private:
     void setTextBrowser(QList<QString> data) override;
     void setStatus(int ID);
     void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
-    void setComboBox(int resp);
-    void setComboBox_2(int resp_2);
     bool updateResponsibles();
     void updateUser(QComboBox* box, QComboBox* compareBox);
 

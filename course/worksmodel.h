@@ -17,6 +17,7 @@ public:
     void updateWorkStatus(int id, int status);
     void updateAddWork();
     void removeWorks(const QModelIndexList &indexes);
+    QList<QList<QVariant>> getList();
 private:
     void setupModel();
     int rowCount( const QModelIndex& parent ) const override;

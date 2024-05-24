@@ -24,7 +24,7 @@ UsersModel::~UsersModel(){
 
 
 void UsersModel::setupModel(){
-    query->prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, Post "
+    query->prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post, Roles.Role_ID "
                    " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
      if(!query->exec()){
          qDebug()<<query->lastError().text();
@@ -32,7 +32,7 @@ void UsersModel::setupModel(){
      else {
          while (query->next()){
          appendUser(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toString(),
-                    query->value(4).toString(), query->value(5).toString());
+                    query->value(4).toString(), query->value(5).toString(), query->value(6).toString(), query->value(7).toInt());
          }
      }
 }
@@ -85,15 +85,17 @@ QVariant UsersModel::data( const QModelIndex& index, int role ) const {
     return users[ index.row() ][ Column( index.column() ) ];
 }
 
-void UsersModel::appendUser(const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic,
-                            const QString& post) {
+void UsersModel::appendUser(const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
+                                const QString& post, const int& role_id) {
     ListData user;
     user[ ID ] = id;
     user[ ROLE ] = role;
     user[ SURNAME ] = surname;
     user[ NAME ] = name;
     user[ PATRONYMIC ] = patronymic;
+    user[ PHONE ] = phone;
     user[ POST ] = post;
+    user[ ROLE_ID ] = role_id;
 
     int row = users.count();
     beginInsertRows( QModelIndex(), row, row );
@@ -130,22 +132,32 @@ void UsersModel::removeUsers(const QModelIndexList &indexes){
         }
 }
 
+
 void UsersModel::updateModel(){
-    setupModel();
+    query->prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post, Roles.Role_ID "
+                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
+     if(!query->exec()){
+         qDebug()<<query->lastError().text();
+     }
+     else {
+         query->last();
+         appendUser(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toString(),
+                    query->value(4).toString(), query->value(5).toString(), query->value(6).toString(), query->value(7).toInt());
+     }
 }
 
 QList<QList<QVariant>> UsersModel::getList()
 {
     QList<QList<QVariant>> list;
-    ListData user;
     for (int i = 0; i < users.count(); i++){
         QList<QVariant> user;
-        qDebug()<<user;
         user.append(users[i][ID]);
         user.append(users[i][ROLE]);
         user.append(users[i][SURNAME]);
         user.append(users[i][NAME]);
         user.append(users[i][PATRONYMIC]);
+        user.append(users[i][PHONE]);
+        user.append(users[i][ROLE_ID]);
         user.append(users[i][POST]);
         list.append(user);
     }
@@ -159,6 +171,7 @@ void UsersModel::updateUserRole(int id, int role)
         if (users[i][ID] == id){
             res = db->getRoleName(role);
             users[i][ROLE] = res;
+            users[i][ROLE_ID] = role;
             emit layoutChanged();
         }
 }

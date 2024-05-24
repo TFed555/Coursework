@@ -19,24 +19,34 @@ class DataBase : public QObject
 public:
     explicit DataBase(QObject *parent = 0);
     ~DataBase();
-
+//методы для бд
     void connectToDataBase();
     void closeDataBase();
     bool insertIntoUsersTable(const QVariantList &data);
     bool insertIntoWorksTable(const QVariantList &data);
     bool insertIntoTasksTable(const int userID, const int workID);
-    bool loginExists(QString login);
-    bool pswdCompare(QString login, QString pswd);
     void deleteTable(const QString &tableName);
     bool tableExists(const QString &tableName);
+//методы для окна авторизации
+    bool loginExists(QString login);
+    bool pswdCompare(QString login, QString pswd);
+//геттеры
     int getRole(QString login);
     int getStatus(int workID);
     QString getStatusName(int ID);
     int getLastWorkID();
-    bool updateWorkStatus(int workID, int statusID);
+    int getResponsible(int workID);
     int getTaskID(int workID, QString order);
     QString getRoleName(int role);
+    QList<QList<QVariant>> selectAllStatus();
+    int getCountTasks(int workID);
+//методы для обновления
+    bool updateWorkStatus(int workID, int statusID);
+    bool updateUserRole(int userID, int role);
+    bool updateUserPost(int userID, QString post);
     bool updateTaskResponsibles(int workID, int respID, int taskID);
+
+    int checkUserID(QString login);
 
 public:
     QSqlDatabase db;
@@ -44,6 +54,7 @@ public:
 
 private:
     const QString dbName = "./DB.db";
+    QSqlQuery query;
 
 
 private:
