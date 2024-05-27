@@ -7,11 +7,13 @@ EditWork::EditWork(int workID, QWidget *parent) :
     usersmodel(UsersModel::instance())
 {
     ui->setupUi(this);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &EditWork::rejectAction);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [this, workID]{
         this->confirmChange(workID);
     });
     ui->comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     ui->comboBox_2->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
 }
 
 EditWork::~EditWork()
@@ -29,23 +31,26 @@ bool EditWork::setupData(int workID){
     if(!AbstractWork::setupData(workID)){
         return false;
     }
-    query->next();
-    QString title = "<b>Название</b> " + QString("%1").arg(query->value(0).toString());
-    QString desc = "<b>Описание</b> " + QString("%1").arg(query->value(1).toString());
-    QString deadline = "<b>Срок</b> " + QString("%1").arg(query->value(2).toString());
-    QString pay = "<b>Оплата</b> " + QString("%1").arg(query->value(3).toString());
-    int statusID = query->value(8).toInt();
+    //формирование textbrowser
+    QString title = "<b>Название</b> " + QString("%1").arg(tasks[0][0].toString());
+    QString desc = "<b>Описание</b> " + QString("%1").arg(tasks[0][1].toString());
+    QString deadline = "<b>Срок</b> " + QString("%1").arg(tasks[0][2].toString());
+    QString pay = "<b>Оплата</b> " + QString("%1").arg(tasks[0][3].toString());
+    int statusID = tasks[0][4].toInt();
     QList <QString> data = {title, desc, deadline, pay};
-    if (!query->value(9).isNull()){
-        resp = query->value(9).toInt();
+    if (!tasks[0][8].isNull()){
+        resp = tasks[0][8].toInt();
      }
-    if (query->next()){
-        resp_2 = query->value(9).toInt();
+    if (tasks.length()>1){
+        resp_2 = tasks[1][8].toInt();
     }
     setTextBrowser(data);
     setStatus(statusID);
     setUsers(ui->comboBox, ui->comboBox_2, resp);
     setUsers(ui->comboBox_2, ui->comboBox, resp_2);
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this, resp_2]{
+        this->setUsers(ui->comboBox_2, ui->comboBox, resp_2);
+    });
     return true;
 }
 
@@ -66,26 +71,18 @@ void EditWork::setStatus(int ID){
 }
 
 bool EditWork::confirmChange(int workID){
+    bool updated = updateResponsibles();
     int statusID = ui->statusBox->currentIndex()+1;
-    if (statusID == 1 && updateResponsibles()){
+    if (statusID == 1 && updated){
         statusID = 2;
     }
     if (statusID == 2 && (ui->comboBox->currentIndex() == -1 && ui->comboBox_2->currentIndex() == -1)){
         int reply = msgbx.showErrorBox("Вы не можете назначить этот статус. Выберите ответственных.");
         if (reply == QMessageBox::Ok){
-            qDebug() << "Error Box: OK button pressed.";
             return false;
         }
     }
-    else if (statusID != 1 && (ui->comboBox->currentIndex() == ui->comboBox_2->currentIndex())){
-        msgbx.showErrorBox("Вы не можете назначить одинаковых ответственных.");
-//        if (reply == QMessageBox::Ok){
-//            qDebug() << "Error Box: OK button pressed.";
-//            return false;
-//        }
-    }
     else {
-        updateResponsibles();
         if (db->updateWorkStatus(workID, statusID)){
             emit updatedWorkStatus(workID, statusID);
         }
@@ -99,49 +96,45 @@ void EditWork::cancelChange(int workID, int status){
     Q_UNUSED(status);
 }
 
-bool EditWork::insertResponsible1(){
-    int ind = ui->comboBox->currentIndex();
-    qDebug()<<ind;
+bool EditWork::insertResponsible(QComboBox* box){
+    int ind = box->currentIndex();
     if (ind!=-1){
-        int user = ui->comboBox->itemData(ind).toInt();
+        int user = box->itemData(ind).toInt();
         db->insertIntoTasksTable(user, workID);
         return true;
     }
     return false;
 }
 
-bool EditWork::insertResponsible2(){
-    int ind_2 = ui->comboBox_2->currentIndex();
-    if(ind_2 != -1 && ind_2 != 0){
-        int user_2 = ui->comboBox_2->itemData(ind_2).toInt();
-        db->insertIntoTasksTable(user_2, workID);
-        return true;
-    }
-    return false;
-}
+
 
 bool EditWork::updateResponsibles(){
     int status = db->getStatus(workID);
-    if (status == 1){
-        insertResponsible1();
-        insertResponsible2();
+    if (status == 1 && ui->comboBox->currentIndex()!=-1 && ui->comboBox_2->currentIndex()!=-1){
+        insertResponsible(ui->comboBox);
+        insertResponsible(ui->comboBox_2);
+        return true;
+    }
+    else if (status == 1 && ui->comboBox_2->currentIndex()==-1){
+        insertResponsible(ui->comboBox);
         return true;
     }
     else if (status == 2){
         if (db->getCountTasks(workID) == 1){
-            insertResponsible2();
+            insertResponsible(ui->comboBox_2);
+        }
+        if (ui->comboBox_2->currentIndex() == -1 && db->getCountTasks(workID)!=1){
+            deleteResponsible(ui->comboBox_2);
         }
     }
     int ind = ui->comboBox->currentIndex();
-    qDebug()<<ind;
     int ind_2 = ui->comboBox_2->currentIndex();
-    if (ind!=-1 && ind !=0){
+    if (ind!=-1){
         int user = ui->comboBox->itemData(ind).toInt();
-        qDebug()<<" "<<user;
         int taskId = db->getTaskID(workID, "ASC");
         db->updateTaskResponsibles(workID, user, taskId);
     }
-    if(ind_2!=-1 && ind != 0){
+    if(ind_2!=-1){
         int user_2 = ui->comboBox_2->itemData(ind_2).toInt();
         int taskId = db->getTaskID(workID, "DESC");
         db->updateTaskResponsibles(workID, user_2, taskId);
@@ -149,38 +142,36 @@ bool EditWork::updateResponsibles(){
     return true;
 }
 
-void EditWork::on_buttonBox_accepted()
-{
-//    accept();
-}
 
-
-void EditWork::on_buttonBox_rejected()
-{
-    int reply = msgbx.showWarningBox("Изменения не были сохранены, продолжить?");
-    if (reply==QMessageBox::Ok){
-        reject();
+bool EditWork::deleteResponsible(QComboBox* box){
+    int index = box->currentIndex();
+    if (index == -1){
+        int taskID = db->getTaskID(workID, "DESC");
+        db->deleteResponsible(taskID);
+        return true;
     }
+    return false;
 }
+
 
 void EditWork::setUsers(QComboBox* box, QComboBox* compareBox, int respID){
+    if (box->count()!=0){
+        box->clear();
+    }
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();
         QString role = users[i][1].toString();
         QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
-        if (role!="заведующий" && role!="организатор"){
-            box->addItem(user, QVariant(id));
+        if(compareBox->currentIndex() != compareBox->findData(id)){
+            if (role!="заведующий" && role!="организатор"){
+                box->addItem(user, QVariant(id));
+            }
         }
-        qDebug()<< ui->comboBox->currentIndex() << user << " "<< id;
     }
     int index = box->findData(respID, Qt::UserRole);
     box->setCurrentIndex(index);
 }
 
-void EditWork::updateUser(QComboBox *box, QComboBox *compareBox){
-    qDebug()<<box->currentData();
-    qDebug()<<compareBox->currentData();
-}
 
 

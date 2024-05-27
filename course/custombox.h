@@ -20,9 +20,12 @@ public:
         box.setFixedSize(width, height);
         box.setSizeGripEnabled(true);
         box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        box.setDefaultButton(QMessageBox::Cancel);
         box.setWindowTitle("Предупреждение");
         box.setText(msg);
         box.setIcon(QMessageBox::Warning);
+//        box.setWindowModality(Qt::NonModal);
+        //box.show();
         int reply = box.exec();
         return reply;
     }

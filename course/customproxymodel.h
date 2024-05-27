@@ -18,8 +18,8 @@ public:
 protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
     {
-        QString leftData = sourceModel()->data(left.siblingAtColumn(2)).toString();
-        QString rightData = sourceModel()->data(right.siblingAtColumn(2)).toString();
+        QDate leftData = sourceModel()->data(left.siblingAtColumn(3)).toDate();
+        QDate rightData = sourceModel()->data(right.siblingAtColumn(3)).toDate();
         if (leftData != rightData){
             return leftData<rightData;
         }

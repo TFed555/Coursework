@@ -37,7 +37,7 @@ private:
         PATRONYMIC,
         PHONE,
         PASSWORD,
-        POST,
+        UNIT,
         ROLE_ID,
         LAST
     };

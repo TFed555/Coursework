@@ -24,17 +24,11 @@ UsersModel::~UsersModel(){
 
 
 void UsersModel::setupModel(){
-    query->prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post, Roles.Role_ID "
-                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
-     if(!query->exec()){
-         qDebug()<<query->lastError().text();
-     }
-     else {
-         while (query->next()){
-         appendUser(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toString(),
-                    query->value(4).toString(), query->value(5).toString(), query->value(6).toString(), query->value(7).toInt());
-         }
-     }
+    QList<QList<QVariant>> list = db->selectUsers();
+    for (int i = 0; i < list.count(); i++){
+        appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
+                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt());
+    }
 }
 
 int UsersModel::rowCount( const QModelIndex& parent ) const {
@@ -67,7 +61,7 @@ QVariant UsersModel::headerData( int section, Qt::Orientation orientation, int r
         return trUtf8("Имя");
     case PATRONYMIC:
         return trUtf8("Отчество");
-    case POST:
+    case UNIT:
         return trUtf8("Должность");
 
 }
@@ -86,7 +80,7 @@ QVariant UsersModel::data( const QModelIndex& index, int role ) const {
 }
 
 void UsersModel::appendUser(const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
-                                const QString& post, const int& role_id) {
+                                const QString& unit, const int& role_id) {
     ListData user;
     user[ ID ] = id;
     user[ ROLE ] = role;
@@ -94,7 +88,7 @@ void UsersModel::appendUser(const int& id, const QString& role, const QString& s
     user[ NAME ] = name;
     user[ PATRONYMIC ] = patronymic;
     user[ PHONE ] = phone;
-    user[ POST ] = post;
+    user[ UNIT ] = unit;
     user[ ROLE_ID ] = role_id;
 
     int row = users.count();
@@ -113,37 +107,23 @@ void UsersModel::removeUsers(const QModelIndexList &indexes){
       for (int i : rows){
           idList.append(i);
       }
-      //метод в бд
-        query->prepare("Delete from Tasks "
-                         "Where Tasks.Responsible = :userID");
-        query->bindValue(":userID", idList);
-        query->execBatch();
-        query->prepare("Delete from Users "
-                         "Where Users.ID = :userID");
-        query->bindValue(":userID", idList);
-        if(!query->execBatch()){
-            qDebug()<<query->lastError().text();
-        }
-        else {
-            for (const QModelIndex &index : indexes) {
-                   users.removeAt(index.row());
-            }
-            emit layoutChanged();
-        }
+      if(db->deleteUsers(idList)){
+          for (const QModelIndex &index : indexes) {
+                     users.removeAt(index.row());
+                }
+         emit layoutChanged();
+      }
 }
 
 
 void UsersModel::updateModel(){
-    query->prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Post, Roles.Role_ID "
-                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
-     if(!query->exec()){
-         qDebug()<<query->lastError().text();
-     }
-     else {
-         query->last();
-         appendUser(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toString(),
-                    query->value(4).toString(), query->value(5).toString(), query->value(6).toString(), query->value(7).toInt());
-     }
+    users.clear();
+    emit layoutChanged();
+    QList<QList<QVariant>> list = db->selectUsers();
+    for (int i = 0; i < list.count(); i++){
+        appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
+                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt());
+    }
 }
 
 QList<QList<QVariant>> UsersModel::getList()
@@ -158,7 +138,7 @@ QList<QList<QVariant>> UsersModel::getList()
         user.append(users[i][PATRONYMIC]);
         user.append(users[i][PHONE]);
         user.append(users[i][ROLE_ID]);
-        user.append(users[i][POST]);
+        user.append(users[i][UNIT]);
         list.append(user);
     }
     return list;
@@ -182,7 +162,7 @@ void UsersModel::updateUserPost(int id, QString post)
 {
     for (int i = 0;i < users.count();i++){
         if (users[i][ID] == id){
-            users[i][POST] = post;
+            users[i][UNIT] = post;
             emit layoutChanged();
         }
 }

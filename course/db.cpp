@@ -119,7 +119,10 @@ bool DataBase::createUsersTable()
                             "Patronymic              NVARCHAR(255)            NULL,"
                             "PhoneNumber             NVARCHAR(12)                  NOT NULL,"
                             "Password                VARCHAR(60)              NOT NULL,"
-                            "Post                    NVARCHAR(255)            NOT NULL,"
+                            "Unit                    NVARCHAR(255)            NOT NULL,"
+                            "Degree                  NVARCHAR(255)            NULL,"
+                            "Rank                    NVARCHAR(255)            NULL,"
+                            "Post                    NVARCHAR(255)            NULL,"
                             "FOREIGN KEY  (Role)     REFERENCES  Roles(Role_ID)"
 
                         ")"
@@ -128,28 +131,27 @@ bool DataBase::createUsersTable()
         qDebug() << query.lastError().text();
         return false;
     }
-    else{
-        return true;
-    }
-//    else {
-//    if (!query.exec("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Post )"
-//                    "VALUES ( 3, 'Бердин', 'Игорь', 'Олегович', '+71231231231', 'admin', 'Преподаватель' )"
-//                )){
-//        qDebug() << "error insert admin";
-//        return false;
-//    }
 //    else{
 //        return true;
 //    }
-//    }
+    else {
+    query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit )"
+                    "VALUES ( 3, 'Бердин', 'Игорь', 'Олегович', '+71231231231', :pswd, 'Преподаватель' )"
+                );
+    QString pswd = "admin";
+    query.bindValue(":pswd", pswd.toLatin1().toHex());
+    if(query.exec()){
+        return true;
+    }
+    }
     return false;
 }
 
 bool DataBase::insertIntoUsersTable(const QVariantList &data)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Post ) "
-                  "   VALUES( :role, :surname, :name, :patronymic, :phoneNumber, :password, :post )"
+    query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit ) "
+                  "   VALUES( :role, :surname, :name, :patronymic, :phoneNumber, :password, :unit )"
     );
     query.bindValue(":role",  data[0].toInt());
     query.bindValue(":surname", data[1].toString());
@@ -157,7 +159,7 @@ bool DataBase::insertIntoUsersTable(const QVariantList &data)
     query.bindValue(":patronymic", data[3].toString());
     query.bindValue(":phoneNumber", data[4].toString());
     query.bindValue(":password", data[5].toString());
-    query.bindValue(":post", data[6].toString());
+    query.bindValue(":unit", data[6].toString());
 
     if(!query.exec()){
             qDebug() << "error insert into " << "Users";
@@ -486,7 +488,7 @@ bool DataBase::updateUserRole(int userID, int role){
 bool DataBase::updateUserPost(int userID, QString post){
     QSqlQuery query;
     query.prepare("Update Users "
-                   "Set Post = :post "
+                   "Set Unit = :post "
                    "Where ID = :userID ");
     query.bindValue(":userID", userID);
     query.bindValue(":post", post);
@@ -517,4 +519,104 @@ int DataBase::getCountTasks(int workID){
     query.exec();
     query.next();
     return query.value(0).toInt();
+}
+
+bool DataBase::deleteResponsible(int taskID){
+    QSqlQuery query;
+    query.prepare("Delete From Tasks "
+                  "Where ID = :taskID");
+    query.bindValue(":taskID", taskID);
+    if(query.exec()){
+        return true;
+    }
+    return false;
+}
+
+QList<QList<QVariant>> DataBase::selectTasks(int workID){
+    QList<QList<QVariant>> list;
+    QSqlQuery query;
+    query.prepare("Select Title, Description, Deadline, Pay, Status, Users.Name, Users.Surname, Users.Patronymic, Tasks.Responsible "
+                   " From Works "
+                       "LEFT JOIN Tasks On Tasks.Work = Works.ID "
+                           "LEFT JOIN Users On Tasks.Responsible = Users.ID Where Works.ID = :workID" );
+    query.bindValue(":workID", workID);
+    if(!query.exec()){
+        qDebug()<<query.lastError().text();
+    }
+    while (query.next()){
+        QList<QVariant> task;
+        for (int i = 0; i < 9; i++){
+            task.append(query.value(i));
+       }
+      list.append(task);
+    }
+   return list;
+}
+
+QList<QList<QVariant>> DataBase::selectUsers(){
+    QList<QList<QVariant>> list;
+    QSqlQuery query;
+     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID "
+                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
+     if(!query.exec()){
+     }
+     else {
+         while (query.next()){
+             QList<QVariant> user;
+             for (int i = 0; i < 8; i++){
+                 user.append(query.value(i));
+            }
+           list.append(user);
+         }
+     }
+   return list;
+}
+
+bool DataBase::deleteUsers(QVariantList idList){
+    QSqlQuery query;
+    query.prepare("Delete from Tasks "
+                     "Where Tasks.Responsible = :userID");
+    query.bindValue(":userID", idList);
+    query.execBatch();
+    query.prepare("Delete from Users "
+                     "Where Users.ID = :userID");
+    query.bindValue(":userID", idList);
+    if(!query.execBatch()){
+        return false;
+    }
+   return true;
+}
+
+bool DataBase::deleteWorks(QVariantList idList){
+    QSqlQuery query;
+    query.prepare("Delete from Tasks "
+                   "Where Tasks.Work = :workID");
+    query.bindValue(":workID", idList);
+    query.execBatch();
+    query.prepare("Delete from Works "
+                   "Where Works.ID = :workID");
+    query.bindValue(":workID", idList);
+    if (!query.execBatch()){
+       return false;
+    }
+    return true;
+}
+
+QList<QList<QVariant>> DataBase::selectWorks(){
+    QList<QList<QVariant>> list;
+    QSqlQuery query;
+    query.prepare("Select Works.ID, Title, Status.Name, Works.Deadline "
+                   " From Works JOIN Status ON Status.ID = Works.Status " );
+     if(!query.exec()){
+     }
+     else {
+         while (query.next()){
+          QList<QVariant> work;
+             for (int i = 0; i < 4; i++){
+                 work.append(query.value(i));
+            }
+           list.append(work);
+         }
+     }
+     return list;
 }

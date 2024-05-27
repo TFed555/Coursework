@@ -19,7 +19,6 @@ SOURCES += \
     main.cpp \
     autho.cpp \
     registration.cpp \
-    test.cpp \
     usersmodel.cpp \
     userswindow.cpp \
     worksmodel.cpp \
@@ -37,7 +36,6 @@ HEADERS += \
     editwork.h \
     editworkswindow.h \
     registration.h \
-    test.h \
     usersmodel.h \
     userswindow.h \
     worksmodel.h \
@@ -51,7 +49,6 @@ FORMS += \
     editwork.ui \
     editworkswindow.ui \
     registration.ui \
-    test.ui \
     userswindow.ui \
     workswindow.ui
 

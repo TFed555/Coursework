@@ -1,6 +1,7 @@
 #ifndef DESCWORK_H
 #define DESCWORK_H
 
+#include <QMessageBox>
 #include <QDialog>
 #include <QSqlQuery>
 #include <QDebug>
@@ -37,6 +38,7 @@ private:
     void cancelChange(int workID, int status) override;
     bool checkUserID(int workID);
     void setTextBrowser(QList<QString> data) override;
+    void rejectAction() override;
 private:
     Ui::DescWork *ui;
     DataBase *db;

@@ -31,6 +31,7 @@ CreateWork::~CreateWork()
 void CreateWork::on_confirmButton_clicked()
 {
     QVariantList data;
+    if (validateFields()){
     data.append(ui->titleEdit->text());
     data.append(ui->dateEdit->text());
     data.append(ui->payEdit->text());
@@ -38,6 +39,9 @@ void CreateWork::on_confirmButton_clicked()
     int ind = ui->comboBox->currentIndex();
     int ind_2 = ui->comboBox_2->currentIndex();
     data.append(ind != 0 ? 2 : 1);
+    if (ind == ind_2 && ind != 0 && ind_2 != 0){
+        msgbx.showErrorBox("Ответственные должны быть разными");
+    }
     if (db->insertIntoWorksTable(data)){
         if (ind != 0){
             int user = ui->comboBox->itemData(ind).toInt();
@@ -49,6 +53,7 @@ void CreateWork::on_confirmButton_clicked()
         }
         this->close();
         emit MainWindow();
+    }
     }
 }
 
@@ -62,6 +67,14 @@ void CreateWork::setUsers(QComboBox* box){
             box->addItem(user, QVariant(id));
         }
     }
+}
+
+bool CreateWork::validateFields(){
+    if (ui->titleEdit->text()==""){
+        msgbx.showWarningBox("Введите заголовок");
+        return false;
+    }
+    return true;
 }
 
 void CreateWork::setComboBox(){

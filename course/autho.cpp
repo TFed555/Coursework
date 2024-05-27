@@ -13,13 +13,11 @@ Autho::Autho(QWidget *parent)
     regUi = new Registration();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
     connect(regUi, &Registration::UpdateData, usersUi, &UsersWindow::updateModel);
-    //Временно
     connect(usersUi, &UsersWindow::AuthoWindow, this, &Autho::show);
     connect(editUi, &EditWorksWindow::AuthoWindow, this, &Autho::show);
     ui->loginEdit->setText("+7");
     ui->loginEdit->setValidator(&phoneValidator);
 
-   test = new Test();
 }
 
 Autho::~Autho()

@@ -4,7 +4,8 @@
 EditWorksWindow::EditWorksWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditWorksWindow),
-    mymodel(WorksModel::instance())
+    mymodel(WorksModel::instance()),
+    proxyModel(new QSortFilterProxyModel(this))
 {
     ui->setupUi(this);
     connect(ui->tableView, &QTableView::doubleClicked, this, &EditWorksWindow::showWork);
@@ -22,6 +23,7 @@ EditWorksWindow::~EditWorksWindow()
 void EditWorksWindow::createUI()
 {
     ui->tableView->setModel(mymodel);
+    ui->tableView->setSortingEnabled(true);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -32,15 +34,15 @@ void EditWorksWindow::createUI()
 
 void EditWorksWindow::showWork(const QModelIndex &index){
     int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    editWork = new EditWork(workID, this);
+    editWork = new EditWork(workID);
+    this->close();
+    editWork->initialize();
+    editWork->open();
     connect(editWork, &EditWork::accepted, this, &EditWorksWindow::show);
     connect(editWork, &EditWork::rejected, this, &EditWorksWindow::show);
     connect(editWork, &EditWork::updatedWorkStatus, this, [this] (int id, int status){
         mymodel->updateWorkStatus(id, status);
     } );
-    this->close();
-    editWork->initialize();
-    editWork->open();
 }
 
 void EditWorksWindow::on_backButton_clicked()

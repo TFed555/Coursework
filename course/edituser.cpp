@@ -32,7 +32,7 @@ void EditUser::on_backButton_clicked()
 
 void EditUser::setupFields(int userID)
 {
-    QString surname, name, patronymic, phone, post;
+    QString surname, name, patronymic, phone, unit;
        QList<QList<QVariant>> users = model->getList();
        for (int i = 0; i < users.count(); i++){
            if (users[i][0].toInt() == userID){
@@ -40,7 +40,7 @@ void EditUser::setupFields(int userID)
                name = users[i][3].toString();
                patronymic = users[i][4].toString();
                phone = users[i][5].toString();
-               post = users[i][7].toString();
+               unit = users[i][7].toString();
                break;
            }
        }
@@ -48,7 +48,7 @@ void EditUser::setupFields(int userID)
        ui->name->setText(name);
        ui->patronymic->setText(patronymic);
        ui->phoneNumber->setText(phone);
-       ui->post->setText(post);
+       ui->post->setText(unit);
        fillCheckbox(userID);
 
 }

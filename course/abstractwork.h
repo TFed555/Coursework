@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDialog>
 #include "db.h"
+#include "custombox.h"
 
 class AbstractWork : public QDialog
 {
@@ -17,11 +18,12 @@ public:
     virtual bool confirmChange(int workID) = 0;
     virtual void cancelChange(int workID, int status) = 0;
     virtual void setTextBrowser(QList<QString> data) = 0;
+    virtual void rejectAction();
 protected:
     int workID;
+    CustomBox msgbx;
     DataBase *db;
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
+    QList<QList<QVariant>> tasks;
 };
 
 #endif // ABSTRACTWORK_H

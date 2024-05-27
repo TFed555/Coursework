@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background-color: rgb(174, 202, 208);</string>
   </property>
   <widget class="QTableView" name="tableView">
    <property name="geometry">

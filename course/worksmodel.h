@@ -25,13 +25,14 @@ private:
     QVariant data( const QModelIndex& index, int role ) const override;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
     void appendWork( const int& id, const QString& title,
-                          const QString& status );
+                          const QString& status, const QDate& deadline );
 
 private:
     enum Column {
         ID = 0,
         TITLE,
         STATUS,
+        DEADLINE,
         LAST
     };
 

@@ -23,15 +23,13 @@ public:
     void initialize();
 
 private slots:
-    void on_buttonBox_accepted();
 
-    void on_buttonBox_rejected();
+    bool insertResponsible(QComboBox* box);
 
-    bool insertResponsible1();
-
-    bool insertResponsible2();
+    bool deleteResponsible(QComboBox* box);
 signals:
     void updatedWorkStatus(int id, int status);
+
 private:
     bool setupData(int workID) override;
     bool confirmChange(int workID) override;
@@ -41,7 +39,7 @@ private:
     void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
     bool updateResponsibles();
     void updateUser(QComboBox* box, QComboBox* compareBox);
-
+//    void cancel();
 private:
     Ui::EditWork *ui;
     DataBase *db;

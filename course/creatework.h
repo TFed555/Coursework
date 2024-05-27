@@ -7,6 +7,7 @@
 #include <QRegExpValidator>
 #include "db.h"
 #include "usersmodel.h"
+#include "custombox.h"
 
 namespace Ui {
 class CreateWork;
@@ -30,6 +31,7 @@ private:
     void setUsers(QComboBox* box);
     void setComboBox();
     void setComboBox_2();
+    bool validateFields();
 private:
     Ui::CreateWork *ui;
     DataBase *db;
@@ -38,6 +40,7 @@ private:
     QRegExpValidator textValidator;
     DataBase conn;
     QSqlQuery* query = new QSqlQuery(conn.db);
+    CustomBox msgbx;
 };
 
 #endif // CREATEWORK_H

@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QDebug>
-//#include <QSortFilterProxyModel>
 #include "customproxymodel.h"
 
 #include "worksmodel.h"

@@ -40,12 +40,17 @@ public:
     QString getRoleName(int role);
     QList<QList<QVariant>> selectAllStatus();
     int getCountTasks(int workID);
+    QList<QList<QVariant>> selectTasks(int workID);
+    QList<QList<QVariant>> selectUsers();
+    QList<QList<QVariant>> selectWorks();
 //методы для обновления
     bool updateWorkStatus(int workID, int statusID);
     bool updateUserRole(int userID, int role);
     bool updateUserPost(int userID, QString post);
     bool updateTaskResponsibles(int workID, int respID, int taskID);
-
+    bool deleteResponsible(int taskID);
+    bool deleteUsers(QVariantList idList);
+    bool deleteWorks(QVariantList idList);
     int checkUserID(QString login);
 
 public:

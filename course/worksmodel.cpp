@@ -23,28 +23,28 @@ WorksModel::~WorksModel(){
 }
 
 void WorksModel::updateAddWork(){
-    query->prepare("Select Works.ID, Title, Status.Name "
-                   " From Works JOIN Status ON Status.ID = Works.Status " );
-     if(!query->exec()){
-         qDebug()<<query->lastError().text();
-     }
-     else {
-         query->last();
-         appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString());
-     }
+    works.clear();
+    emit layoutChanged();
+    QList<QList<QVariant>> list = db->selectWorks();
+    for (int i = 0; i < list.count(); i++){
+        appendWork(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toDate());
+    }
+//    query->prepare("Select Works.ID, Title, Status.Name, Works.Deadline "
+//                   " From Works JOIN Status ON Status.ID = Works.Status " );
+//     if(!query->exec()){
+//         qDebug()<<query->lastError().text();
+//     }
+//     else {
+//         query->last();
+//         appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toDate());
+//     }
 }
 
 void WorksModel::setupModel(){
-    query->prepare("Select Works.ID, Title, Status.Name "
-                   " From Works JOIN Status ON Status.ID = Works.Status " );
-     if(!query->exec()){
-         qDebug()<<query->lastError().text();
-     }
-     else {
-         while (query->next()){
-         appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString());
-         }
-     }
+    QList<QList<QVariant>> list = db->selectWorks();
+    for (int i = 0; i < list.count(); i++){
+        appendWork(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toDate());
+    }
 }
 
 int WorksModel::rowCount( const QModelIndex& parent ) const {
@@ -73,6 +73,8 @@ QVariant WorksModel::headerData( int section, Qt::Orientation orientation, int r
         return trUtf8( "Дополнительная работа" );
     case STATUS:
         return trUtf8("Статус");
+    case DEADLINE:
+         return trUtf8("Срок");
 
 }
     return QVariant();
@@ -91,11 +93,12 @@ QVariant WorksModel::data( const QModelIndex& index, int role ) const {
 
 
 void WorksModel::appendWork(const int& id, const QString& title,
-                            const QString& status ) {
+                            const QString& status, const QDate& deadline ) {
     ListData work;
     work[ ID ] = id;
     work[ TITLE ] = title;
     work[ STATUS ] = status;
+    work[ DEADLINE ] = deadline;
 
     int row = works.count();
     beginInsertRows( QModelIndex(), row, row );
@@ -127,26 +130,13 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
       for (int i : rows){
           idList.append(i);
       }
-      //метод в бд
-        query->prepare("Delete from Tasks "
-                       "Where Tasks.Work = :workID");
-        query->bindValue(":workID", idList);
-        if(!query->execBatch()){
-            qDebug()<<query->lastError().text();
-        }
-        query->prepare("Delete from Works "
-                       "Where Works.ID = :workID");
-        query->bindValue(":workID", idList);
-        if (!query->execBatch()){
-            qDebug()<<query->lastError().text();
-        }
-        else {
+      if(db->deleteWorks(idList)){
             for (const QModelIndex &index : indexes) {
                 //beginRemoveRows(QModelIndex(), index, index);
                    works.removeAt(index.row());
             }
             emit layoutChanged();
-        }
+    }
 }
 
 QList<QList<QVariant>> WorksModel::getList()

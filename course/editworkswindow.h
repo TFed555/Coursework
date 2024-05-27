@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include "customproxymodel.h"
 #include "worksmodel.h"
 #include "custombox.h"
 #include "creatework.h"
@@ -39,7 +40,9 @@ private:
     WorksModel *mymodel;
     CreateWork *newWork;
     EditWork *editWork;
+//    AbstractWork *editWork;
     CustomBox msgbx;
+    QSortFilterProxyModel *proxyModel;
 };
 
 #endif // EDITWORKSWINDOW_H
