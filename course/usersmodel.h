@@ -17,6 +17,7 @@ public:
    void removeUsers(const QModelIndexList &indexes);
    void updateModel();
    void updateUserRole(int id, int role);
+   void updateUserUnit(int id, QString unit);
    void updateUserPost(int id, QString post);
     QList<QList<QVariant>> getList();
 private:
@@ -26,7 +27,7 @@ private:
     QVariant data( const QModelIndex& index, int role ) const override;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
     void appendUser( const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
-                          const QString& post, const int& role_id );
+                          const QString& unit, const int& role_id, const QString& degree, const QString& rank, const QString& post );
 
 private:
     enum Column {
@@ -39,6 +40,9 @@ private:
         PASSWORD,
         UNIT,
         ROLE_ID,
+        DEGREE,
+        RANK,
+        POST,
         LAST
     };
 

@@ -46,7 +46,8 @@ public:
 //методы для обновления
     bool updateWorkStatus(int workID, int statusID);
     bool updateUserRole(int userID, int role);
-    bool updateUserPost(int userID, QString post);
+    bool updateUserUnit(int userID, QString unit);
+    bool updateUserPost(int userID, QString label, QString post);
     bool updateTaskResponsibles(int workID, int respID, int taskID);
     bool deleteResponsible(int taskID);
     bool deleteUsers(QVariantList idList);

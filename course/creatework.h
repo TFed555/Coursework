@@ -29,8 +29,6 @@ signals:
     void MainWindow();
 private:
     void setUsers(QComboBox* box);
-    void setComboBox();
-    void setComboBox_2();
     bool validateFields();
 private:
     Ui::CreateWork *ui;

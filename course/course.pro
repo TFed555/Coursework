@@ -18,6 +18,7 @@ SOURCES += \
     editworkswindow.cpp \
     main.cpp \
     autho.cpp \
+    qdynamicedit.cpp \
     registration.cpp \
     usersmodel.cpp \
     userswindow.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     edituser.h \
     editwork.h \
     editworkswindow.h \
+    qdynamicedit.h \
     registration.h \
     usersmodel.h \
     userswindow.h \

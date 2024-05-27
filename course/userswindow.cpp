@@ -32,6 +32,9 @@ void UsersWindow::createUI()
     ui->tableView->setColumnHidden(6, true);
     ui->tableView->setColumnHidden(5, true);
     ui->tableView->setColumnHidden(8, true);
+    ui->tableView->setColumnHidden(9, true);
+    ui->tableView->setColumnHidden(10, true);
+    ui->tableView->setColumnHidden(11, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->tableView->resizeColumnsToContents();
@@ -43,13 +46,13 @@ void UsersWindow::createUI()
 
 void UsersWindow::showUser(const QModelIndex &index){
     int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    EditUser *editUi = new EditUser(userID, this);
+    EditUser *editUi = new EditUser(userID);
     connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
     connect(editUi, &EditUser::updatedRole, this, [this](int id, int role){
         model->updateUserRole(id, role);
     });
-    connect(editUi, &EditUser::updatedPost, this, [this](int id, QString post){
-        model->updateUserPost(id, post);
+    connect(editUi, &EditUser::updatedUnit, this, [this](int id, QString post){
+        model->updateUserUnit(id, post);
     });
     this->close();
     editUi->show();

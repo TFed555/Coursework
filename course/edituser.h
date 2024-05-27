@@ -6,7 +6,9 @@
 #include <QDebug>
 
 #include "db.h"
+#include "custombox.h"
 #include "usersmodel.h"
+#include "qdynamicedit.h"
 
 namespace Ui {
 class EditUser;
@@ -23,11 +25,12 @@ public:
 signals:
     void UsersWindow();
     void updatedRole(int id, int role);
-    void updatedPost(int id, QString post);
+    void updatedUnit(int id, QString post);
 
 private slots:
     void on_backButton_clicked();
     void on_confirmButton_clicked();
+    void add_field(QString degree, QString rank, QString post);
 
 private:
     void setupFields(int userID);
@@ -38,8 +41,9 @@ private:
     Ui::EditUser *ui;
     UsersModel *model;
     DataBase *db;
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
+    CustomBox msgbx;
+private:
+    const int userId;
 };
 
 #endif // EDITUSER_H

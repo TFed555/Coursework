@@ -485,10 +485,23 @@ bool DataBase::updateUserRole(int userID, int role){
     return true;
 }
 
-bool DataBase::updateUserPost(int userID, QString post){
+bool DataBase::updateUserUnit(int userID, QString unit){
     QSqlQuery query;
     query.prepare("Update Users "
                    "Set Unit = :post "
+                   "Where ID = :userID ");
+    query.bindValue(":userID", userID);
+    query.bindValue(":post", unit);
+    if(!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+bool DataBase::updateUserPost(int userID, QString label, QString post){
+    QSqlQuery query;
+    query.prepare("Update Users "
+                   "Set "+label+" = :post "
                    "Where ID = :userID ");
     query.bindValue(":userID", userID);
     query.bindValue(":post", post);
@@ -556,14 +569,14 @@ QList<QList<QVariant>> DataBase::selectTasks(int workID){
 QList<QList<QVariant>> DataBase::selectUsers(){
     QList<QList<QVariant>> list;
     QSqlQuery query;
-     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID "
+     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID, Degree, Rank, Post "
                    " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
      if(!query.exec()){
      }
      else {
          while (query.next()){
              QList<QVariant> user;
-             for (int i = 0; i < 8; i++){
+             for (int i = 0; i < 11; i++){
                  user.append(query.value(i));
             }
            list.append(user);

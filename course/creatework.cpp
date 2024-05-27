@@ -8,8 +8,8 @@ CreateWork::CreateWork(QWidget *parent) :
     payValidator(0, 2147483647, this)
 {
     ui->setupUi(this);
-    this->setComboBox();
-    this->setComboBox_2();
+    this->setUsers(ui->comboBox);
+    this->setUsers(ui->comboBox_2);
     ui->comboBox_2->setEnabled(false);
     connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
             ui->comboBox_2->setEnabled(true);
@@ -35,7 +35,7 @@ void CreateWork::on_confirmButton_clicked()
     data.append(ui->titleEdit->text());
     data.append(ui->dateEdit->text());
     data.append(ui->payEdit->text());
-    data.append(ui->descEdit->text());
+    data.append(ui->descEdit->toPlainText());
     int ind = ui->comboBox->currentIndex();
     int ind_2 = ui->comboBox_2->currentIndex();
     data.append(ind != 0 ? 2 : 1);
@@ -58,6 +58,7 @@ void CreateWork::on_confirmButton_clicked()
 }
 
 void CreateWork::setUsers(QComboBox* box){
+    box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();
@@ -77,15 +78,7 @@ bool CreateWork::validateFields(){
     return true;
 }
 
-void CreateWork::setComboBox(){
-    ui->comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    setUsers(ui->comboBox);
-}
 
-void CreateWork::setComboBox_2(){
-    ui->comboBox_2->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    setUsers(ui->comboBox_2);
-}
 
 void CreateWork::on_backButton_clicked()
 {
