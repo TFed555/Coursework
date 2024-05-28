@@ -19,7 +19,7 @@ bool AbstractWork::setupData(int workID){
 }
 
 void AbstractWork::rejectAction(){
-    int reply = msgbx.showWarningBox("Изменения не были сохранены, продолжить?");
+    int reply = msgbx.showWarningBoxWithCancel("Изменения не были сохранены, продолжить?");
     if (reply==QMessageBox::Ok){
         reject();
     }

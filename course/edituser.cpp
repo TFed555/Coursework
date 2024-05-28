@@ -30,9 +30,11 @@ void EditUser::on_backButton_clicked()
     emit UsersWindow();
 }
 
+//вынести метод getData
 void EditUser::setupFields(int userID)
 {
     QString surname, name, patronymic, phone, unit, degree, rank, post;
+    //QVector вместо QList ???
        QList<QList<QVariant>> users = model->getList();
        for (int i = 0; i < users.count(); i++){
            if (users[i][0].toInt() == userID){
@@ -41,6 +43,7 @@ void EditUser::setupFields(int userID)
                patronymic = users[i][4].toString();
                phone = users[i][5].toString();
                unit = users[i][7].toString();
+               //убрать проверку isNull() или добавить везде
                degree = users[i][8].isNull() ? "": users[i][8].toString();
                rank = users[i][9].isNull() ? "": users[i][9].toString();
                post = users[i][10].isNull() ? "": users[i][10].toString();
@@ -59,6 +62,7 @@ void EditUser::setupFields(int userID)
 }
 
 
+//создать create_field
 void EditUser::add_field(QString degree, QString rank, QString post){
     while (QLayoutItem *item = ui->verticalLayout->takeAt(0)) {
             if (QWidget *widget = item->widget()) {
@@ -94,7 +98,7 @@ void EditUser::add_field(QString degree, QString rank, QString post){
     ui->verticalLayout->addWidget(edit);
     ui->verticalLayout->addWidget(button);
     connect(button, &QPushButton::clicked, this, [this, edit, edit_2, dbField](){
-        int reply = msgbx.showWarningBox("Вы хотите внести изменения?");
+        int reply = msgbx.showWarningBoxWithCancel("Вы хотите внести изменения?");
         if (reply == QMessageBox::Ok){
             db->updateUserPost(userId, dbField, edit->text());
             if (dbField == "Degree"){

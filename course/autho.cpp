@@ -4,7 +4,7 @@
 Autho::Autho(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Autho),
-      phoneValidator(QRegExp("^\\+\\d{1}\\d{10}$"))
+      phoneValidator(QRegExp("^\\+7\\d{10}$"))
 {
     ui->setupUi(this);
 
@@ -60,13 +60,16 @@ void Autho::on_authButton_clicked()
     else{
         msgbx.showErrorBox("Такого пользователя не существует");
     }
-
+    ui->loginEdit->clear();
+    ui->pswdEdit->clear();
 }
 
 
 void Autho::on_regButton_clicked()
 {
     regUi->show();
+    ui->loginEdit->clear();
+    ui->pswdEdit->clear();
     this->close();
 }
 

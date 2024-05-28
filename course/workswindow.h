@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "customproxymodel.h"
 
+#include "db.h"
 #include "worksmodel.h"
 #include "descwork.h"
 
@@ -31,7 +32,8 @@ private:
     Ui::WorksWindow *ui;
     DescWork *itemUi;
     WorksModel *mymodel;
-    QSortFilterProxyModel *proxyModel;
+    CustomSortFilterProxyModel *proxyModel;
+    DataBase *db;
 private:
     const QString login;
 };

@@ -15,7 +15,7 @@ public:
 
 public:
     const int width = 400, height = 200;
-    int showWarningBox(const QString &msg){
+    int showWarningBoxWithCancel(const QString &msg){
         QMessageBox box;
         box.setFixedSize(width, height);
         box.setSizeGripEnabled(true);
@@ -24,8 +24,17 @@ public:
         box.setWindowTitle("Предупреждение");
         box.setText(msg);
         box.setIcon(QMessageBox::Warning);
-//        box.setWindowModality(Qt::NonModal);
-        //box.show();
+        int reply = box.exec();
+        return reply;
+    }
+    int showWarningBox(const QString &msg){
+        QMessageBox box;
+        box.setFixedSize(width, height);
+        box.setSizeGripEnabled(true);
+        box.setDefaultButton(QMessageBox::Ok);
+        box.setWindowTitle("Предупреждение");
+        box.setText(msg);
+        box.setIcon(QMessageBox::Warning);
         int reply = box.exec();
         return reply;
     }

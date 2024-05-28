@@ -29,15 +29,6 @@ void WorksModel::updateAddWork(){
     for (int i = 0; i < list.count(); i++){
         appendWork(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toDate());
     }
-//    query->prepare("Select Works.ID, Title, Status.Name, Works.Deadline "
-//                   " From Works JOIN Status ON Status.ID = Works.Status " );
-//     if(!query->exec()){
-//         qDebug()<<query->lastError().text();
-//     }
-//     else {
-//         query->last();
-//         appendWork(query->value(0).toInt(), query->value(1).toString(), query->value(2).toString(), query->value(3).toDate());
-//     }
 }
 
 void WorksModel::setupModel(){

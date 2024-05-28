@@ -69,6 +69,7 @@ QVariant UsersModel::headerData( int section, Qt::Orientation orientation, int r
 }
 
 
+//поменять вывод столбцов
 QVariant UsersModel::data( const QModelIndex& index, int role ) const {
     if(!index.isValid() ||
         users.count() <= index.row() ||
@@ -129,6 +130,8 @@ void UsersModel::updateModel(){
     }
 }
 
+
+//мб вложенный
 QList<QList<QVariant>> UsersModel::getList()
 {
     QList<QList<QVariant>> list;

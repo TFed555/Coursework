@@ -62,6 +62,8 @@ bool DescWork::setupData(int workID){
     return true;
 }
 
+
+//вынести в абстрактный
 void DescWork::setTextBrowser(QList<QString> data){
     ui->textBrowser->setFont(QFont("Times", 9));
     for (const QString& item : data){
@@ -95,6 +97,7 @@ void DescWork::on_buttonBox_accepted()
 
 void DescWork::on_buttonBox_rejected()
 {
+    //возникает ошибка при работе с proxymodel
     reject();
 }
 

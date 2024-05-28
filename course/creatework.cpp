@@ -28,7 +28,7 @@ CreateWork::~CreateWork()
     delete query;
 }
 
-void CreateWork::on_confirmButton_clicked()
+bool CreateWork::on_confirmButton_clicked()
 {
     QVariantList data;
     if (validateFields()){
@@ -41,6 +41,7 @@ void CreateWork::on_confirmButton_clicked()
     data.append(ind != 0 ? 2 : 1);
     if (ind == ind_2 && ind != 0 && ind_2 != 0){
         msgbx.showErrorBox("Ответственные должны быть разными");
+        return false;
     }
     if (db->insertIntoWorksTable(data)){
         if (ind != 0){
@@ -54,7 +55,9 @@ void CreateWork::on_confirmButton_clicked()
         this->close();
         emit MainWindow();
     }
+    return true;
     }
+    return false;
 }
 
 void CreateWork::setUsers(QComboBox* box){

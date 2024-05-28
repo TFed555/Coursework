@@ -43,6 +43,7 @@ public:
     QList<QList<QVariant>> selectTasks(int workID);
     QList<QList<QVariant>> selectUsers();
     QList<QList<QVariant>> selectWorks();
+    QSet<int> selectWorksForUser(const int &userID);
 //методы для обновления
     bool updateWorkStatus(int workID, int statusID);
     bool updateUserRole(int userID, int role);

@@ -633,3 +633,16 @@ QList<QList<QVariant>> DataBase::selectWorks(){
      }
      return list;
 }
+
+QSet<int> DataBase::selectWorksForUser(const int &userID){
+    QSet<int> workIDs;
+    QSqlQuery query;
+    query.prepare("Select Work FROM Tasks Where Tasks.Responsible = :userID");
+    query.bindValue(":userID", userID);
+    if(query.exec()){
+        while (query.next()){
+            workIDs.insert(query.value(0).toInt());
+        }
+    }
+    return workIDs;
+}

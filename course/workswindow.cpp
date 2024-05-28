@@ -5,11 +5,10 @@ WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WorksWindow),
     mymodel(WorksModel::instance()),
-//    proxyModel(new QSortFilterProxyModel(this)),
+    proxyModel(new CustomSortFilterProxyModel(this)),
     login(currentLogin)
 {
     ui->setupUi(this);
-//    proxyModel->setSourceModel(mymodel);
 
     connect(ui->tableView, &QTableView::clicked, this, &WorksWindow::showWork);
     this->createUI();
@@ -24,7 +23,12 @@ WorksWindow::~WorksWindow()
 
 void WorksWindow::createUI()
 {
-    ui->tableView->setModel(mymodel);
+    int userID = db->checkUserID(login);
+    QSet<int> workIDs = db->selectWorksForUser(userID);
+    proxyModel->setWorkIDs(workIDs);
+    proxyModel->setFilterKeyColumn(0);
+    proxyModel->setSourceModel(mymodel);
+    ui->tableView->setModel(proxyModel);
     ui->tableView->setSortingEnabled(true);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -32,12 +36,14 @@ void WorksWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, proxyModel, &QSortFilterProxyModel::setFilterFixedString);
+    connect(ui->radioButton, &QRadioButton::toggled, proxyModel, &CustomSortFilterProxyModel::setFilterEnabled);
 }
 
 void WorksWindow::showWork(const QModelIndex &index){
-//    QModelIndex sourceIndex = proxyModel->mapToSource(index);
-    int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
+    QModelIndex sourceIndex = proxyModel->mapToSource(index);
+    int workID = sourceIndex.model()->data(sourceIndex.model()->index(sourceIndex.row(),0)).toInt();
+    qDebug() << "Showing work with ID:" << workID;
     itemUi = new DescWork(login, workID);
     connect(itemUi, &DescWork::accepted, this, &WorksWindow::show);
     connect(itemUi, &DescWork::rejected, this, &WorksWindow::show);

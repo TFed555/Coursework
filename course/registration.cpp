@@ -5,7 +5,7 @@
 Registration::Registration(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Registration),
-    phoneValidator(QRegExp("^\\+\\d{1}\\d{10}$")),
+    phoneValidator(QRegExp("^\\+7\\d{10}$")),
     textValidator(QRegExp("^[А-я]{20}"))
 {
     ui->setupUi(this);

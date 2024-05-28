@@ -22,7 +22,7 @@ public:
     ~CreateWork();
 
 private slots:
-    void on_confirmButton_clicked();
+    bool on_confirmButton_clicked();
     void on_backButton_clicked();
 
 signals:
