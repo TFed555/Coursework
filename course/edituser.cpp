@@ -160,6 +160,8 @@ void EditUser::confirmStatus(int userID){
         QString unit = ui->comboBox->currentText();
         db->updateUserUnit(userID, unit);
         ui->post->setText(unit);
-        emit updatedUnit(userID, unit);
+        model->updateModel();
+//        model->updateUserUnit(userID, unit, salary);
+        //emit updatedUnit(userID, unit);
     }
 }

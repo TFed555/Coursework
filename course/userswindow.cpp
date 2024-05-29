@@ -51,9 +51,6 @@ void UsersWindow::showUser(const QModelIndex &index){
     connect(editUi, &EditUser::updatedRole, this, [this](int id, int role){
         model->updateUserRole(id, role);
     });
-    connect(editUi, &EditUser::updatedUnit, this, [this](int id, QString post){
-        model->updateUserUnit(id, post);
-    });
     this->close();
     editUi->show();
 }

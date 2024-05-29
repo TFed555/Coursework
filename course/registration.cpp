@@ -53,7 +53,6 @@ bool Registration::on_confirmButton_clicked()
     else{
         if (validateFields()){
             QVariantList data;
-            data.append(1);
             data.append(ui->surnameEdit->text());
             data.append(ui->nameEdit->text());
             data.append(ui->patronymicEdit->text());

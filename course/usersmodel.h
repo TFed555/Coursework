@@ -17,7 +17,7 @@ public:
    void removeUsers(const QModelIndexList &indexes);
    void updateModel();
    void updateUserRole(int id, int role);
-   void updateUserUnit(int id, QString unit);
+   void updateUserUnit(int id, QString unit, int salary);
    void updateUserPost(int id, QString post);
     QList<QList<QVariant>> getList();
 private:

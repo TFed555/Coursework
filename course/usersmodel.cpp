@@ -65,7 +65,7 @@ QVariant UsersModel::headerData( int section, Qt::Orientation orientation, int r
     case UNIT:
         return trUtf8( "Отдел");
     case SALARY:
-        return trUtf8("Оклад");
+        return trUtf8( "Текущая зарплата" );
 
 }
     return QVariant();
@@ -173,7 +173,7 @@ void UsersModel::updateUserRole(int id, int role)
 }
 
 
-void UsersModel::updateUserUnit(int id, QString unit)
+void UsersModel::updateUserUnit(int id, QString unit, int salary)
 {
     for (int i = 0;i < users.count();i++){
         if (users[i][ID] == id){

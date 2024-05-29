@@ -65,9 +65,9 @@ void CreateWork::setUsers(QComboBox* box){
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();
-        QString role = users[i][1].toString();
+        int role = users[i][6].toInt();
         QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
-        if (role!="заведующий" && role!="организатор"){
+        if (role!=3 && role!=2){
             box->addItem(user, QVariant(id));
         }
     }

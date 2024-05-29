@@ -25,7 +25,6 @@ public:
 signals:
     void UsersWindow();
     void updatedRole(int id, int role);
-    void updatedUnit(int id, QString post);
 
 private slots:
     void on_backButton_clicked();

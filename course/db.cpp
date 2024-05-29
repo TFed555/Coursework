@@ -62,6 +62,7 @@ bool DataBase::openDataBase()
         if (!tableExists("Tasks")){
             createTasksTable();
         }
+        createSalaryTable();
         return true;
     } else {
         return false;
@@ -107,6 +108,39 @@ void DataBase::insertIntoRolesTable(QString data){
         }
 }
 
+bool DataBase::createSalaryTable(){
+     QSqlQuery query;
+     if(!query.exec( "CREATE TABLE  IF NOT EXISTS EmployeeSalary ("
+                             "ID  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                             "FixedPay INTEGER  NOT NULL, "
+                             "Pay      INTEGER DEFAULT 0 NOT NULL, "
+                             "user_ID INTEGER NOT NULL, "
+                          "CONSTRAINT S_Key FOREIGN KEY (user_ID) REFERENCES Users(ID) "
+                         ")"
+                     )){
+         qDebug() << "DataBase: error of create " << "Salary";
+         qDebug() << query.lastError().text();
+         return false;
+     }
+     else {
+         return true;
+     }
+     return false;
+}
+
+void DataBase::insertIntoSalaryTable(QVariantList &data){
+    QSqlQuery query;
+    query.prepare("INSERT INTO EmployeeSalary( FixedPay, user_ID ) "
+                  "   VALUES( :pay, :userID )"
+    );
+    query.bindValue(":pay", data[0].toInt());
+    query.bindValue(":userID", data[1].toInt());
+    if( !query.exec() ) {
+            qDebug() << db.lastError().text();
+            qDebug()<<"??????";
+        }
+}
+
 bool DataBase::createUsersTable()
 {
 
@@ -123,8 +157,8 @@ bool DataBase::createUsersTable()
                             "Degree                  NVARCHAR(255)            NULL,"
                             "Rank                    NVARCHAR(255)            NULL,"
                             "Post                    NVARCHAR(255)            NULL,"
-                            "Salary                  INTEGER   DEFAULT 30000       NOT NULL,"
-                            "FOREIGN KEY  (Role)     REFERENCES  Roles(Role_ID)"
+                            "FOREIGN KEY  (Role)     REFERENCES  Roles(Role_ID)  "
+//                            "FOREIGN KEY  (Salary) REFERENCES EmployeeSalary(ID) "
 
                         ")"
                     )){
@@ -142,6 +176,8 @@ bool DataBase::createUsersTable()
     QString pswd = "admin";
     query.bindValue(":pswd", pswd.toLatin1().toHex());
     if(query.exec()){
+        QVariantList salary = {70000, checkUserID("+7")};
+        insertIntoSalaryTable(salary);
         return true;
     }
     }
@@ -154,19 +190,21 @@ bool DataBase::insertIntoUsersTable(const QVariantList &data)
     query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit ) "
                   "   VALUES( :role, :surname, :name, :patronymic, :phoneNumber, :password, :unit )"
     );
-    query.bindValue(":role",  data[0].toInt());
-    query.bindValue(":surname", data[1].toString());
-    query.bindValue(":name", data[2].toString());
-    query.bindValue(":patronymic", data[3].toString());
-    query.bindValue(":phoneNumber", data[4].toString());
-    query.bindValue(":password", data[5].toString());
-    query.bindValue(":unit", data[6].toString());
-
+    query.bindValue(":role", 1);
+    query.bindValue(":surname", data[0].toString());
+    query.bindValue(":name", data[1].toString());
+    query.bindValue(":patronymic", data[2].toString());
+    query.bindValue(":phoneNumber", data[3].toString());
+    query.bindValue(":password", data[4].toString());
+    query.bindValue(":unit", data[5].toString());
+//    query.bindValue(":salary", data[5].toString() == "Преподаватель" ? 50000 : 30000 );
     if(!query.exec()){
             qDebug() << "error insert into " << "Users";
             qDebug() << query.lastError().text();
             return false;
         } else {
+        QVariantList salary = {data[5].toString() == "Преподаватель" ? 50000 : 30000, checkUserID(data[3].toString())};
+        insertIntoSalaryTable(salary);
             return true;
         }
         return false;
@@ -232,6 +270,7 @@ int DataBase::getRole(QString login){
     query.next();
     return query.value(0).toInt();
 }
+
 
 void DataBase::deleteTable(const QString &tableName)
 {
@@ -424,9 +463,9 @@ bool DataBase::finishTasks(QVariantList idList){
 
 bool DataBase::updateUserSalary(const int userID, const int pay){
     QSqlQuery query;
-    query.prepare("Update Users "
-                   "Set Salary = Salary + :pay "
-                    "Where ID = :userID");
+    query.prepare("Update EmployeeSalary "
+                   "Set Pay = Pay + :pay "
+                    "Where user_ID = :userID ");
     query.bindValue(":userID", userID);
     query.bindValue(":pay", pay);
     if (!query.exec()){
@@ -544,15 +583,31 @@ bool DataBase::updateUserRole(int userID, int role){
 
 bool DataBase::updateUserUnit(int userID, QString unit){
     QSqlQuery query;
+    int fixedPay = unit == "Преподаватель" ? 50000 : 30000;
     query.prepare("Update Users "
-                   "Set Unit = :post "
-                   "Where ID = :userID ");
+                       "Set Unit = :unit "
+                       "Where ID = :userID ");
+        query.bindValue(":userID", userID);
+        query.bindValue(":unit", unit);
+    query.exec();
+    query.prepare("Update EmployeeSalary "
+                    "Set FixedPay = :fixedPay "
+                        "Where user_ID = :userID ");
     query.bindValue(":userID", userID);
-    query.bindValue(":post", unit);
-    if(!query.exec()){
-        return false;
-    }
+    query.bindValue(":fixedPay", fixedPay);
+    query.exec();
     return true;
+//    int fixedPayBefore = unit == "Преподаватель" ? 30000 : 50000;
+//    int fixedPayAfter = fixedPayBefore == 30000 ? 50000 : 30000;
+//
+//    query.bindValue(":fixedPayAfter", fixedPayAfter);
+//    query.bindValue(":fixedPayBefore", fixedPayBefore);
+//    query.exec();
+//    query.prepare("Select Salary From Users Where ID = :userID");
+//    query.bindValue(":userID", userID);
+//    query.exec();
+//    query.next();
+//    return query.value(0).toInt();
 }
 
 bool DataBase::updateUserPost(int userID, QString label, QString post){
@@ -626,8 +681,9 @@ QList<QList<QVariant>> DataBase::selectTasks(int workID){
 QList<QList<QVariant>> DataBase::selectUsers(){
     QList<QList<QVariant>> list;
     QSqlQuery query;
-     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID, Degree, Rank, Post, Salary "
-                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
+     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID, Degree, Rank, Post, FixedPay+Pay "
+                   " From Users JOIN Roles ON Roles.Role_ID = Users.Role "
+                     "JOIN EmployeeSalary ON EmployeeSalary.user_ID = Users.ID " );
      if(!query.exec()){
      }
      else {
@@ -646,6 +702,11 @@ bool DataBase::deleteUsers(QVariantList idList){
     QSqlQuery query;
     query.prepare("Delete from Tasks "
                      "Where Tasks.Responsible = :userID");
+    query.bindValue(":userID", idList);
+    query.execBatch();
+    query.prepare("Delete from EmployeeSalary "
+                     "Where user_ID = :userID");
+    query.bindValue(":userID", idList);
     query.bindValue(":userID", idList);
     query.execBatch();
     query.prepare("Delete from Users "

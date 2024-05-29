@@ -69,6 +69,7 @@ private:
 private:
     void insertIntoRolesTable(QString data);
     void insertIntoStatusTable(QString data);
+    void insertIntoSalaryTable(QVariantList &data);
     bool openDataBase();
     bool restoreDataBase();
     bool createUsersTable();
@@ -76,6 +77,7 @@ private:
     bool createWorksTable();
     bool createStatusTable();
     bool createTasksTable();
+    bool createSalaryTable();
 };
 
 #endif // DB_H

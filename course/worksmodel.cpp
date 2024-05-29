@@ -144,7 +144,6 @@ void WorksModel::finishWorks(const QModelIndexList &indexes){
       }
       if(db->finishTasks(idList)){
             for (const QModelIndex &index : indexes) {
-                //beginRemoveRows(QModelIndex(), index, index);
                    works.removeAt(index.row());
             }
             emit layoutChanged();
