@@ -27,7 +27,7 @@ private:
     QVariant data( const QModelIndex& index, int role ) const override;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
     void appendUser( const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
-                          const QString& unit, const int& role_id, const QString& degree, const QString& rank, const QString& post );
+                          const QString& unit, const int& role_id, const QString& degree, const QString& rank, const QString& post, const int& salary );
 
 private:
     enum Column {
@@ -43,6 +43,7 @@ private:
         DEGREE,
         RANK,
         POST,
+        SALARY,
         LAST
     };
 

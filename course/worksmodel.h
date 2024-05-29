@@ -17,6 +17,7 @@ public:
     void updateWorkStatus(int id, int status);
     void updateAddWork();
     void removeWorks(const QModelIndexList &indexes);
+    void finishWorks(const QModelIndexList &indexes);
     QList<QList<QVariant>> getList();
 private:
     void setupModel();

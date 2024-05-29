@@ -122,9 +122,11 @@ bool EditWork::updateResponsibles(){
     else if (status == 2){
         if (db->getCountTasks(workID) == 1){
             insertResponsible(ui->comboBox_2);
+            return true;
         }
-        if (ui->comboBox_2->currentIndex() == -1 && db->getCountTasks(workID)!=1){
+        if (ui->comboBox_2->currentIndex() == -1 && db->getCountTasks(workID)>1){
             deleteResponsible(ui->comboBox_2);
+            return true;
         }
     }
     int ind = ui->comboBox->currentIndex();
@@ -133,13 +135,15 @@ bool EditWork::updateResponsibles(){
         int user = ui->comboBox->itemData(ind).toInt();
         int taskId = db->getTaskID(workID, "ASC");
         db->updateTaskResponsibles(workID, user, taskId);
+        return true;
     }
     if(ind_2!=-1){
         int user_2 = ui->comboBox_2->itemData(ind_2).toInt();
         int taskId = db->getTaskID(workID, "DESC");
         db->updateTaskResponsibles(workID, user_2, taskId);
+        return true;
     }
-    return true;
+    return false;
 }
 
 

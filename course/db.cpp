@@ -123,6 +123,7 @@ bool DataBase::createUsersTable()
                             "Degree                  NVARCHAR(255)            NULL,"
                             "Rank                    NVARCHAR(255)            NULL,"
                             "Post                    NVARCHAR(255)            NULL,"
+                            "Salary                  INTEGER   DEFAULT 30000       NOT NULL,"
                             "FOREIGN KEY  (Role)     REFERENCES  Roles(Role_ID)"
 
                         ")"
@@ -136,7 +137,7 @@ bool DataBase::createUsersTable()
 //    }
     else {
     query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit )"
-                    "VALUES ( 3, 'Бердин', 'Игорь', 'Олегович', '+71231231231', :pswd, 'Преподаватель' )"
+                    "VALUES ( 3, 'Бердин', 'Игорь', 'Олегович', '+7', :pswd, 'Преподаватель' )"
                 );
     QString pswd = "admin";
     query.bindValue(":pswd", pswd.toLatin1().toHex());
@@ -394,6 +395,62 @@ bool DataBase::insertIntoTasksTable(const int userID, const int workID)
         return false;
 }
 
+
+bool DataBase::finishTasks(QVariantList idList){
+    QSqlQuery query;
+//    QList<QVariantList> list;
+    for (QVariant i : idList){
+    QVariantList resps;
+    int pay;
+    query.prepare("Select Responsible From Tasks Where Work = :workIDs");
+    query.bindValue(":workIDs", i);
+    query.exec();
+    while (query.next()){
+        resps.append(query.value(0));
+    }
+    query.prepare("Select Pay From Works Where ID = :workIDs");
+    query.bindValue(":workIDs", i);
+    query.exec();
+    query.next();
+    pay = query.value(0).toInt();
+    for ( QVariant j : resps ){
+        updateUserSalary(j.toInt(), pay);
+    }
+}
+    deleteWorks(idList);
+    return true;
+}
+
+
+bool DataBase::updateUserSalary(const int userID, const int pay){
+    QSqlQuery query;
+    query.prepare("Update Users "
+                   "Set Salary = Salary + :pay "
+                    "Where ID = :userID");
+    query.bindValue(":userID", userID);
+    query.bindValue(":pay", pay);
+    if (!query.exec()){
+        return false;
+    }
+    return true;
+}
+
+
+bool DataBase::deleteWorks(QVariantList idList){
+    QSqlQuery query;
+    query.prepare("Delete from Tasks "
+                   "Where Tasks.Work = :workIDs");
+    query.bindValue(":workIDs", idList);
+    query.execBatch();
+    query.prepare("Delete from Works "
+                   "Where Works.ID = :workIDs");
+    query.bindValue(":workIDs", idList);
+    if (!query.execBatch()){
+       return false;
+    }
+    return true;
+}
+
 int DataBase::getLastWorkID()
 {
     QSqlQuery query;
@@ -569,14 +626,14 @@ QList<QList<QVariant>> DataBase::selectTasks(int workID){
 QList<QList<QVariant>> DataBase::selectUsers(){
     QList<QList<QVariant>> list;
     QSqlQuery query;
-     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID, Degree, Rank, Post "
+     query.prepare("Select Users.ID, Roles.Name, Surname, Users.Name, Patronymic, phoneNumber, Unit, Roles.Role_ID, Degree, Rank, Post, Salary "
                    " From Users JOIN Roles ON Roles.Role_ID = Users.Role " );
      if(!query.exec()){
      }
      else {
          while (query.next()){
              QList<QVariant> user;
-             for (int i = 0; i < 11; i++){
+             for (int i = 0; i < 12; i++){
                  user.append(query.value(i));
             }
            list.append(user);
@@ -600,20 +657,6 @@ bool DataBase::deleteUsers(QVariantList idList){
    return true;
 }
 
-bool DataBase::deleteWorks(QVariantList idList){
-    QSqlQuery query;
-    query.prepare("Delete from Tasks "
-                   "Where Tasks.Work = :workID");
-    query.bindValue(":workID", idList);
-    query.execBatch();
-    query.prepare("Delete from Works "
-                   "Where Works.ID = :workID");
-    query.bindValue(":workID", idList);
-    if (!query.execBatch()){
-       return false;
-    }
-    return true;
-}
 
 QList<QList<QVariant>> DataBase::selectWorks(){
     QList<QList<QVariant>> list;

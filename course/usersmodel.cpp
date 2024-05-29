@@ -27,7 +27,8 @@ void UsersModel::setupModel(){
     QList<QList<QVariant>> list = db->selectUsers();
     for (int i = 0; i < list.count(); i++){
         appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
-                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString());
+                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString(),
+                    list[i][11].toInt());
     }
 }
 
@@ -56,13 +57,15 @@ QVariant UsersModel::headerData( int section, Qt::Orientation orientation, int r
     case ROLE:
         return trUtf8( "Роль" );
     case SURNAME:
-        return trUtf8("Фамилия");
+        return trUtf8( "Фамилия");
     case NAME:
-        return trUtf8("Имя");
+        return trUtf8( "Имя");
     case PATRONYMIC:
         return trUtf8("Отчество");
     case UNIT:
-        return trUtf8("Должность");
+        return trUtf8( "Отдел");
+    case SALARY:
+        return trUtf8("Оклад");
 
 }
     return QVariant();
@@ -81,7 +84,7 @@ QVariant UsersModel::data( const QModelIndex& index, int role ) const {
 }
 
 void UsersModel::appendUser(const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
-                                const QString& unit, const int& role_id, const QString& degree, const QString& rank, const QString& post) {
+                                const QString& unit, const int& role_id, const QString& degree, const QString& rank, const QString& post, const int& salary) {
     ListData user;
     user[ ID ] = id;
     user[ ROLE ] = role;
@@ -94,6 +97,7 @@ void UsersModel::appendUser(const int& id, const QString& role, const QString& s
     user[ DEGREE ] = degree;
     user[ RANK ] = rank;
     user[ POST ] = post;
+    user[ SALARY ] = salary;
 
     int row = users.count();
     beginInsertRows( QModelIndex(), row, row );
@@ -126,7 +130,8 @@ void UsersModel::updateModel(){
     QList<QList<QVariant>> list = db->selectUsers();
     for (int i = 0; i < list.count(); i++){
         appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
-                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString());
+                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString(),
+                list[i][11].toInt());
     }
 }
 
@@ -148,6 +153,7 @@ QList<QList<QVariant>> UsersModel::getList()
         user.append(users[i][DEGREE]);
         user.append(users[i][RANK]);
         user.append(users[i][POST]);
+        user.append(users[i][SALARY]);
         list.append(user);
     }
     return list;
@@ -186,6 +192,7 @@ void UsersModel::updateUserPost(int id, QString post)
         }
 }
 }
+
 
 
 

@@ -68,10 +68,28 @@ void EditWorksWindow::on_delButton_clicked()
 {
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
     if (!selection.isEmpty()){
-        int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите завершить эти задания?");
+        int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите удалить эти задания?");
         if (reply==QMessageBox::Ok){
             std::sort(selection.rbegin(), selection.rend());
             mymodel->removeWorks(selection);
+        }
+    }
+    else{
+        msgbx.showWarningBox("Выберите хотя бы 1 задание");
+    }
+}
+
+
+
+void EditWorksWindow::on_finishButton_clicked()
+{
+    QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
+    if (!selection.isEmpty()){
+        int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите завершить эти задания?");
+        if (reply==QMessageBox::Ok){
+            std::sort(selection.rbegin(), selection.rend());
+            mymodel->finishWorks(selection);
+            emit updateUsers();
         }
     }
     else{

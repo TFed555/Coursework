@@ -49,10 +49,12 @@ public:
     bool updateUserRole(int userID, int role);
     bool updateUserUnit(int userID, QString unit);
     bool updateUserPost(int userID, QString label, QString post);
+    bool updateUserSalary(const int userID, const int pay);
     bool updateTaskResponsibles(int workID, int respID, int taskID);
     bool deleteResponsible(int taskID);
     bool deleteUsers(QVariantList idList);
     bool deleteWorks(QVariantList idList);
+    bool finishTasks(QVariantList idList);
     int checkUserID(QString login);
 
 public:

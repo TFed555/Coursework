@@ -111,6 +111,8 @@ void WorksModel::updateWorkStatus(int id, int status)
 
 }
 
+
+//объеденить с finishWorks
 void WorksModel::removeWorks(const QModelIndexList &indexes){
       QVector<int> rows;
       QVariantList idList;
@@ -122,6 +124,25 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
           idList.append(i);
       }
       if(db->deleteWorks(idList)){
+            for (const QModelIndex &index : indexes) {
+                //beginRemoveRows(QModelIndex(), index, index);
+                   works.removeAt(index.row());
+            }
+            emit layoutChanged();
+    }
+}
+
+void WorksModel::finishWorks(const QModelIndexList &indexes){
+      QVector<int> rows;
+      QVariantList idList;
+      for (const QModelIndex &index : indexes) {
+             int id = works[index.row()][ID].toInt();
+             rows.append(id);
+      }
+      for (int i : rows){
+          idList.append(i);
+      }
+      if(db->finishTasks(idList)){
             for (const QModelIndex &index : indexes) {
                 //beginRemoveRows(QModelIndex(), index, index);
                    works.removeAt(index.row());

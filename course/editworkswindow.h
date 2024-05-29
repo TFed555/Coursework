@@ -25,11 +25,14 @@ public:
 
 signals:
     void AuthoWindow();
+    void updateUsers();
 private slots:
     void on_backButton_clicked();
     void on_addButton_clicked();
     void on_delButton_clicked();
     void showWork(const QModelIndex &index);
+
+    void on_finishButton_clicked();
 
 private:
 
