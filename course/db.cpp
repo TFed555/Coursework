@@ -597,17 +597,6 @@ bool DataBase::updateUserUnit(int userID, QString unit){
     query.bindValue(":fixedPay", fixedPay);
     query.exec();
     return true;
-//    int fixedPayBefore = unit == "Преподаватель" ? 30000 : 50000;
-//    int fixedPayAfter = fixedPayBefore == 30000 ? 50000 : 30000;
-//
-//    query.bindValue(":fixedPayAfter", fixedPayAfter);
-//    query.bindValue(":fixedPayBefore", fixedPayBefore);
-//    query.exec();
-//    query.prepare("Select Salary From Users Where ID = :userID");
-//    query.bindValue(":userID", userID);
-//    query.exec();
-//    query.next();
-//    return query.value(0).toInt();
 }
 
 bool DataBase::updateUserPost(int userID, QString label, QString post){

@@ -60,7 +60,7 @@ void UsersWindow::showUser(const QModelIndex &index){
 void UsersWindow::removeUser(){
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
     if (!selection.isEmpty()){
-        int reply = msgbx.showWarningBox("Вы уверены что хотите удалить этих сотрудников?");
+        int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите удалить этих сотрудников?");
         if (reply==QMessageBox::Ok){
             std::sort(selection.rbegin(), selection.rend());
             model->removeUsers(selection);

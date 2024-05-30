@@ -19,23 +19,25 @@ WorksModel::WorksModel(QObject* parent) : QAbstractTableModel(parent)
 
 WorksModel::~WorksModel(){
     delete db;
-    delete query;
 }
 
 void WorksModel::updateAddWork(){
-    works.clear();
-    emit layoutChanged();
-    QList<QList<QVariant>> list = db->selectWorks();
-    for (int i = 0; i < list.count(); i++){
-        appendWork(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toDate());
-    }
+    setupModel();
 }
 
 void WorksModel::setupModel(){
     QList<QList<QVariant>> list = db->selectWorks();
-    for (int i = 0; i < list.count(); i++){
-        appendWork(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toDate());
+    insertWorks(list);
+}
+
+void WorksModel::insertWorks(const QList<QList<QVariant>> &list){
+    beginResetModel();
+    works.clear();
+    works.reserve(list.size());
+    for (const auto& work : list){
+       appendWork(work[0].toInt(), work[1].toString(), work[2].toString(), work[3].toDate());
     }
+    endResetModel();
 }
 
 int WorksModel::rowCount( const QModelIndex& parent ) const {
@@ -63,12 +65,12 @@ QVariant WorksModel::headerData( int section, Qt::Orientation orientation, int r
     case TITLE:
         return trUtf8( "Дополнительная работа" );
     case STATUS:
-        return trUtf8("Статус");
+        return trUtf8( "Статус");
     case DEADLINE:
-         return trUtf8("Срок");
-
-}
-    return QVariant();
+         return trUtf8( "Срок");
+    default:
+        return QVariant();
+    }
 }
 
 
@@ -104,28 +106,30 @@ void WorksModel::updateWorkStatus(int id, int status)
         if (works[i][ID] == id){
             res = db->getStatusName(status);
             works[i][STATUS] = res;
-            emit layoutChanged();
+            emit dataChanged(index(i, STATUS), index(i, STATUS));
         }
     }
-    //emit dataChanged(createIndex(5, 5, this));
 
 }
 
 
-//объеденить с finishWorks
+QVariantList WorksModel::getIdList(const QModelIndexList &indexes){
+    QVector<int> rows;
+    QVariantList idList;
+    for (const QModelIndex &index : indexes) {
+           int id = works[index.row()][ID].toInt();
+           rows.append(id);
+    }
+    for (int i : rows){
+        idList.append(i);
+    }
+    return idList;
+}
+
 void WorksModel::removeWorks(const QModelIndexList &indexes){
-      QVector<int> rows;
-      QVariantList idList;
-      for (const QModelIndex &index : indexes) {
-             int id = works[index.row()][ID].toInt();
-             rows.append(id);
-      }
-      for (int i : rows){
-          idList.append(i);
-      }
+      QVariantList idList = getIdList(indexes);
       if(db->deleteWorks(idList)){
             for (const QModelIndex &index : indexes) {
-                //beginRemoveRows(QModelIndex(), index, index);
                    works.removeAt(index.row());
             }
             emit layoutChanged();
@@ -133,15 +137,7 @@ void WorksModel::removeWorks(const QModelIndexList &indexes){
 }
 
 void WorksModel::finishWorks(const QModelIndexList &indexes){
-      QVector<int> rows;
-      QVariantList idList;
-      for (const QModelIndex &index : indexes) {
-             int id = works[index.row()][ID].toInt();
-             rows.append(id);
-      }
-      for (int i : rows){
-          idList.append(i);
-      }
+      QVariantList idList = getIdList(indexes);
       if(db->finishTasks(idList)){
             for (const QModelIndex &index : indexes) {
                    works.removeAt(index.row());
@@ -153,12 +149,12 @@ void WorksModel::finishWorks(const QModelIndexList &indexes){
 QList<QList<QVariant>> WorksModel::getList()
 {
     QList<QList<QVariant>> list;
-    for (int i = 0; i < works.count(); i++){
-        QList<QVariant> work;
-        work.append(works[i][ID]);
-        work.append(works[i][TITLE]);
-        work.append(works[i][STATUS]);
-        list.append(work);
+    for (const auto& work : works){
+        QList<QVariant> workData;
+        for (int i = 0; i < LAST; ++i){
+            workData.append(work[Column(i)]);
+        }
+        list.append(workData);
     }
     return list;
 }

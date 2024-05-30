@@ -2,7 +2,7 @@
 #include "ui_editwork.h"
 
 EditWork::EditWork(int workID, QWidget *parent) :
-    AbstractWork(workID, parent),
+    Work(workID, parent),
     ui(new Ui::EditWork),
     usersmodel(UsersModel::instance())
 {
@@ -28,7 +28,7 @@ void EditWork::initialize(){
 
 bool EditWork::setupData(int workID){
     int resp = 0, resp_2 = 0;
-    if(!AbstractWork::setupData(workID)){
+    if(!Work::setupData(workID)){
         return false;
     }
     //формирование textbrowser
@@ -44,7 +44,7 @@ bool EditWork::setupData(int workID){
     if (tasks.length()>1){
         resp_2 = tasks[1][8].toInt();
     }
-    setTextBrowser(data);
+    setTextBrowser(data, ui->textBrowser);
     setStatus(statusID);
     setUsers(ui->comboBox, ui->comboBox_2, resp);
     setUsers(ui->comboBox_2, ui->comboBox, resp_2);
@@ -54,12 +54,6 @@ bool EditWork::setupData(int workID){
     return true;
 }
 
-void EditWork::setTextBrowser(QList<QString> data){
-    ui->textBrowser->setFont(QFont("Times", 9));
-    for (const QString& item : data){
-        ui->textBrowser->append(item);
-    }
-}
 
 void EditWork::setStatus(int ID){
     QList<QList<QVariant>> status = db->selectAllStatus();
@@ -165,7 +159,7 @@ void EditWork::setUsers(QComboBox* box, QComboBox* compareBox, int respID){
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();
-        int role = users[i][6].toInt();
+        int role = users[i][8].toInt();
         QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
         if(compareBox->currentIndex() != compareBox->findData(id)){
             if (role!=3 && role!=2){

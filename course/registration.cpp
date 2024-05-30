@@ -5,8 +5,8 @@
 Registration::Registration(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Registration),
-    phoneValidator(QRegExp("^\\+7\\d{10}$")),
-    textValidator(QRegExp("^[А-я]{20}"))
+    phoneValidator(QRegularExpression("^\\+7\\d{10}$")),
+    textValidator(QRegularExpression("^[А-я]{20}"))
 {
     ui->setupUi(this);
     connect(this, &Registration::clearValid, this, &Registration::clearFields);
@@ -21,7 +21,9 @@ Registration::Registration(QWidget *parent) :
 Registration::~Registration()
 {
     delete ui;
-    delete db;
+    if (db){
+        delete db;
+    }
 }
 
 //Возврат к окну авторизации
@@ -50,32 +52,39 @@ bool Registration::on_confirmButton_clicked()
         msgbx.showErrorBox("Такой телефон уже существует");
         return false;
     }
-    else{
-        if (validateFields()){
-            QVariantList data;
-            data.append(ui->surnameEdit->text());
-            data.append(ui->nameEdit->text());
-            data.append(ui->patronymicEdit->text());
-            data.append(ui->phoneEdit->text());
-            QString password = ui->pswdEdit->text().toLatin1().toHex();
-            data.append(password);
-            data.append(ui->comboBox->currentText());
-            if(db->insertIntoUsersTable(data)){
-                this->close();
-                emit UpdateData(), emit clearValid(), emit AuthoWindow();
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
+
+    if(!validateFields()){
+        return false;
     }
-    return false;
+
+    QVariantList data = getUserData();
+    if(db->insertIntoUsersTable(data)){
+        this->close();
+        emit UpdateData();
+        emit clearValid();
+        emit AuthoWindow();
+        return true;
+       }
+       else{
+        msgbx.showErrorBox("Ошибка при внесении в базу данных");
+          return false;
+        }
+}
+
+QVariantList Registration::getUserData(){
+    QVariantList data;
+    data.append(ui->surnameEdit->text());
+    data.append(ui->nameEdit->text());
+    data.append(ui->patronymicEdit->text());
+    data.append(ui->phoneEdit->text());
+    QString password = ui->pswdEdit->text().toLatin1().toHex();
+    data.append(password);
+    data.append(ui->comboBox->currentText());
+    return data;
 }
 
 bool Registration::validateFields(){
     CustomBox msgbx;
-    int len = ui->phoneEdit->text().length();
     QString nameEdit = ui->nameEdit->text();
     QString surnameEdit = ui->surnameEdit->text();
     QString pswdEdit = ui->pswdEdit->text();
@@ -96,8 +105,12 @@ bool Registration::validateFields(){
         msgbx.showWarningBox("Введите пароль");
         return false;
     }
-    if (len<12){
+    if (ui->phoneEdit->text().length()<12){
         msgbx.showWarningBox("Неверный номер");
+        return false;
+    }
+    if (ui->pswdEdit->text().length()<6){
+        msgbx.showWarningBox("Введите корректный пароль");
         return false;
     }
     }

@@ -28,8 +28,10 @@ private slots:
 signals:
     void MainWindow();
 private:
+    void setUI();
     void setUsers(QComboBox* box);
     bool validateFields();
+    QVariantList insertData();
 private:
     Ui::CreateWork *ui;
     DataBase *db;

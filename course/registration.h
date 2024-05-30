@@ -2,7 +2,7 @@
 #define REGISTRATION_H
 
 #include "custombox.h"
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QDialog>
 #include <QDebug>
 #include "db.h"
@@ -37,10 +37,12 @@ private slots:
 private:
     Ui::Registration *ui;
     DataBase *db;
-    QRegExpValidator phoneValidator;
-    QRegExpValidator textValidator;
+    QRegularExpressionValidator phoneValidator;
+    QRegularExpressionValidator textValidator;
+private:
     bool validateFields();
     void validatePassword(QString pswd);
+    QVariantList getUserData();
 };
 
 #endif // REGISTRATION_H

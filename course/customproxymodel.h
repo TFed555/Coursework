@@ -4,6 +4,11 @@
 #include <QSortFilterProxyModel>
 #include "worksmodel.h"
 
+enum FilterMode {
+    StringSearch,
+    IDFilter
+};
+
 class CustomSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -20,14 +25,19 @@ public:
             invalidateFilter();
         }
 
-        void setFilterEnabled(bool enabled) {
-               filterEnabled = enabled;
-               invalidateFilter();
+        void setFilterMode(FilterMode mode) {
+             filterMode = mode;
+             invalidateFilter();
            }
 
+        void setSearchString(const QString& searchString) {
+               this->searchString = searchString;
+               invalidateFilter();
+          }
 private:
     QSet<int> workIDs;
-    bool filterEnabled = false;
+    FilterMode filterMode = StringSearch;
+    QString searchString;
 
 protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
@@ -41,10 +51,17 @@ protected:
     }
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
     {
-        if (!filterEnabled) return true;
-        QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
-        int id = sourceModel()->data(index).toInt();
-        return workIDs.contains(id);
+        if (filterMode == StringSearch) {
+                   QModelIndex index = sourceModel()->index(source_row, 1, source_parent);
+                   QString value = sourceModel()->data(index).toString();
+                   return value.contains(searchString, Qt::CaseInsensitive);
+                }
+        else if (filterMode == IDFilter) {
+            QModelIndex index = sourceModel()->index(source_row, filterKeyColumn(), source_parent);
+            int id = sourceModel()->data(index).toInt();
+            return workIDs.contains(id);
+        }
+        return true;
     }
 };
 

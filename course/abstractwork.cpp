@@ -1,16 +1,16 @@
 #include "abstractwork.h"
 
-AbstractWork::AbstractWork(int workID, QWidget *parent)
+Work::Work(int workID, QWidget *parent)
     : QDialog(parent), workID(workID)
 {
 
 }
 
-AbstractWork::~AbstractWork(){
+Work::~Work(){
     delete db;
 }
 
-bool AbstractWork::setupData(int workID){
+bool Work::setupData(int workID){
     tasks = db->selectTasks(workID);
     if (tasks.isEmpty()){
         return false;
@@ -18,9 +18,17 @@ bool AbstractWork::setupData(int workID){
     return true;
 }
 
-void AbstractWork::rejectAction(){
+void Work::rejectAction(){
     int reply = msgbx.showWarningBoxWithCancel("Изменения не были сохранены, продолжить?");
     if (reply==QMessageBox::Ok){
         reject();
+    }
+}
+
+void Work::setTextBrowser(QList<QString> data, QTextBrowser *browser){
+    browser->setFont(QFont("Times", 9));
+    browser->clear();
+    for (const QString& item : data){
+        browser->append(item);
     }
 }

@@ -28,21 +28,27 @@ signals:
 
 private slots:
     void on_backButton_clicked();
-    void on_confirmButton_clicked();
-    void add_field(QString degree, QString rank, QString post);
-
+    void change_field(QString degree, QString rank, QString post);
 private:
-    void setupFields(int userID);
-    void updateUser(int userID);
-    void fillCheckbox(int userID);
-    void confirmStatus(int userID);
+    QList<QString> getData();
+    void setupFields();
+    void updateUser();
+    void fillCheckbox();
+    void confirmStatus();
+    int getRole();
+
+    void clearLayout(QLayout* layout);
+    void addWidgetsToLayout(QLayout* layout, const QList<QWidget*>& widgets);
+
 private:
     Ui::EditUser *ui;
     UsersModel *model;
     DataBase *db;
     CustomBox msgbx;
+    QDynamicWidget dynamicWidget;
 private:
     const int userId;
+    const QString teacher = "Преподаватель";
 };
 
 #endif // EDITUSER_H

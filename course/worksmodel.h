@@ -27,6 +27,8 @@ private:
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
     void appendWork( const int& id, const QString& title,
                           const QString& status, const QDate& deadline );
+    void insertWorks(const QList<QList<QVariant>>& list);
+    QVariantList getIdList(const QModelIndexList &indexes);
 
 private:
     enum Column {

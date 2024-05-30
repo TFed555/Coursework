@@ -2,7 +2,7 @@
 #include "ui_descwork.h"
 
 DescWork::DescWork(QString currentLogin, int workID, QWidget *parent) :
-    AbstractWork(workID, parent),
+    Work(workID, parent),
     ui(new Ui::DescWork),
     login(currentLogin)
 {
@@ -13,12 +13,17 @@ DescWork::DescWork(QString currentLogin, int workID, QWidget *parent) :
     if(!checkUserID(workID)){
         ui->acceptButton->setDisabled(true);
     }
+    connect(this, &DescWork::rejected, [this, workID]{
+                 this->cancelChange(workID, tasks[0][4].toInt());
+             });
 }
 
 DescWork::~DescWork()
 {
     delete ui;
-    delete db;
+    if (db){
+        delete db;
+    }
 }
 
 void DescWork::initialize(){
@@ -27,16 +32,13 @@ void DescWork::initialize(){
 
 
 bool DescWork::setupData(int workID){
-         if(!AbstractWork::setupData(workID)){
+         if(!Work::setupData(workID)){
              return false;
          }
          int status = tasks[0][4].toInt();
          if (status==3){
               ui->acceptButton->setDisabled(true);
          }
-         connect(this, &DescWork::rejected, [this, workID, status]{
-                      this->cancelChange(workID, status);
-                  });
          //формирование textbrowser
           QString title = "<b>Название</b> " + QString("%1").arg(tasks[0][0].toString());
           QString desc = "<b>Описание</b> " + QString("%1").arg(tasks[0][1].toString());
@@ -58,18 +60,11 @@ bool DescWork::setupData(int workID){
                      tasks[1][7].toString());
                data.append(resp_2);
                    }
-          setTextBrowser(data);
+          setTextBrowser(data, ui->textBrowser);
     return true;
 }
 
 
-//вынести в абстрактный
-void DescWork::setTextBrowser(QList<QString> data){
-    ui->textBrowser->setFont(QFont("Times", 9));
-    for (const QString& item : data){
-        ui->textBrowser->append(item);
-    }
-}
 
 bool DescWork::checkUserID(int workID){
    int userId = db->checkUserID(login);
@@ -97,7 +92,6 @@ void DescWork::on_buttonBox_accepted()
 
 void DescWork::on_buttonBox_rejected()
 {
-    //возникает ошибка при работе с proxymodel
     reject();
 }
 

@@ -8,56 +8,66 @@ CreateWork::CreateWork(QWidget *parent) :
     payValidator(0, 2147483647, this)
 {
     ui->setupUi(this);
-    this->setUsers(ui->comboBox);
-    this->setUsers(ui->comboBox_2);
-    ui->comboBox_2->setEnabled(false);
-    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
-            ui->comboBox_2->setEnabled(true);
-    });
-    //в другой метод
-    ui->dateEdit->setMinimumDate(QDate::currentDate());
-    ui->dateEdit->setDisplayFormat("yyyy.MM.dd");
-    ui->payEdit->setValidator(&payValidator);
-
+    this->setUI();
 }
 
 CreateWork::~CreateWork()
 {
     delete ui;
     delete db;
-    delete query;
+}
+
+void CreateWork::setUI(){
+    this->setUsers(ui->comboBox);
+    this->setUsers(ui->comboBox_2);
+    ui->comboBox_2->setEnabled(false);
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
+            ui->comboBox_2->setEnabled(true);
+    });
+    ui->dateEdit->setMinimumDate(QDate::currentDate());
+    ui->dateEdit->setDisplayFormat("yyyy.MM.dd");
+    ui->payEdit->setValidator(&payValidator);
 }
 
 bool CreateWork::on_confirmButton_clicked()
 {
-    QVariantList data;
-    if (validateFields()){
-    data.append(ui->titleEdit->text());
-    data.append(ui->dateEdit->text());
-    data.append(ui->payEdit->text());
-    data.append(ui->descEdit->toPlainText());
-    int ind = ui->comboBox->currentIndex();
-    int ind_2 = ui->comboBox_2->currentIndex();
-    data.append(ind != 0 ? 2 : 1);
-    if (ind == ind_2 && ind != 0 && ind_2 != 0){
+    if (insertData().isEmpty()){
+        return false;
+    }
+    QVariantList data = insertData();
+    int selectedIndex = ui->comboBox->currentIndex();
+    int secondSelectedIndex = ui->comboBox_2->currentIndex();
+    if (selectedIndex == secondSelectedIndex && selectedIndex != 0 && secondSelectedIndex != 0){
         msgbx.showErrorBox("Ответственные должны быть разными");
         return false;
     }
     if (db->insertIntoWorksTable(data)){
-        if (ind != 0){
-            int user = ui->comboBox->itemData(ind).toInt();
+        if (selectedIndex != 0){
+            int user = ui->comboBox->itemData(selectedIndex).toInt();
             db->insertIntoTasksTable(user, db->getLastWorkID());
         }
-        if (ind_2 != 0){
-            int user_2 = ui->comboBox_2->itemData(ind_2).toInt();
+        if (secondSelectedIndex != 0){
+            int user_2 = ui->comboBox_2->itemData(secondSelectedIndex).toInt();
             db->insertIntoTasksTable(user_2, db->getLastWorkID());
         }
         this->close();
         emit MainWindow();
     }
     return true;
+}
+
+QVariantList CreateWork::insertData(){
+
+    QVariantList data;
+    if (validateFields()){
+    data.append(ui->titleEdit->text());
+    data.append(ui->dateEdit->text());
+    data.append(ui->payEdit->text());
+    data.append(ui->descEdit->toPlainText());
+    int selectedIndex = ui->comboBox->currentIndex();
+    data.append(selectedIndex != 0 ? 2 : 1);
     }
-    return false;
+    return data;
 }
 
 void CreateWork::setUsers(QComboBox* box){
@@ -65,7 +75,7 @@ void CreateWork::setUsers(QComboBox* box){
     QList<QList<QVariant>> users = usersmodel->getList();
     for(int i = 0; i < users.count(); i++){
         int id = users[i][0].toInt();
-        int role = users[i][6].toInt();
+        int role = users[i][8].toInt();
         QString user = users[i][2].toString()+" "+users[i][3].toString()+" "+users[i][4].toString();
         if (role!=3 && role!=2){
             box->addItem(user, QVariant(id));
@@ -76,6 +86,10 @@ void CreateWork::setUsers(QComboBox* box){
 bool CreateWork::validateFields(){
     if (ui->titleEdit->text()==""){
         msgbx.showWarningBox("Введите заголовок");
+        return false;
+    }
+    if (ui->payEdit->text()==0){
+        msgbx.showWarningBox("Введите оплату");
         return false;
     }
     return true;

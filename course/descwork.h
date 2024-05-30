@@ -14,7 +14,7 @@ namespace Ui {
 class DescWork;
 }
 
-class DescWork : public AbstractWork
+class DescWork : public Work
 {
     Q_OBJECT
 
@@ -37,7 +37,6 @@ private:
     bool confirmChange(int workID) override;
     void cancelChange(int workID, int status) override;
     bool checkUserID(int workID);
-    void setTextBrowser(QList<QString> data) override;
     void rejectAction() override;
 private:
     Ui::DescWork *ui;

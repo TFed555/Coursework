@@ -10,7 +10,7 @@ WorksWindow::WorksWindow(QString currentLogin, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->tableView, &QTableView::clicked, this, &WorksWindow::showWork);
+    connect(ui->tableView, &QTableView::doubleClicked, this, &WorksWindow::showWork);
     this->createUI();
 }
 
@@ -36,8 +36,16 @@ void WorksWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    connect(ui->searchLineEdit, &QLineEdit::textChanged, proxyModel, &QSortFilterProxyModel::setFilterFixedString);
-    connect(ui->radioButton, &QRadioButton::toggled, proxyModel, &CustomSortFilterProxyModel::setFilterEnabled);
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, this, [this](const QString& text){
+        proxyModel->setSearchString(text);
+        proxyModel->setFilterMode(StringSearch);
+    });
+    connect(ui->radioButton, &QRadioButton::clicked, this, [this](){
+        if (ui->radioButton->isChecked()){
+            proxyModel->setFilterMode(IDFilter);
+        }
+        else proxyModel->setFilterMode(StringSearch);
+    });
 }
 
 void WorksWindow::showWork(const QModelIndex &index){

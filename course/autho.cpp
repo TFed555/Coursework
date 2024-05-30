@@ -4,13 +4,14 @@
 Autho::Autho(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Autho),
-      phoneValidator(QRegExp("^\\+7\\d{10}$"))
+      regUi(new Registration()),
+      phoneValidator(QRegExp("^\\+7\\d{10}$")),
+      usersUi(new UsersWindow()),
+      worksUi(nullptr),
+      editUi(new EditWorksWindow())
 {
     ui->setupUi(this);
 
-    usersUi = new UsersWindow();
-    editUi = new EditWorksWindow();
-    regUi = new Registration();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
     connect(regUi, &Registration::UpdateData, usersUi, &UsersWindow::updateModel);
     connect(usersUi, &UsersWindow::AuthoWindow, this, &Autho::show);
@@ -24,35 +25,41 @@ Autho::Autho(QWidget *parent)
 Autho::~Autho()
 {
     delete ui;
-//    delete usersUi;
-//    delete worksUi;
-//    delete editUi;
-//    delete regUi;
+    delete regUi;
+    delete usersUi;
+    if (worksUi){
+        delete worksUi;
+    }
+    delete editUi;
 }
 
 
 void Autho::on_authButton_clicked()
 {
     CustomBox msgbx;
-    if(db->loginExists(ui->loginEdit->text())){
-        QString currentLogin = ui->loginEdit->text();
-        if (db->pswdCompare(ui->loginEdit->text(), ui->pswdEdit->text())){
-          switch(db->getRole(ui->loginEdit->text())){
+    QString login = ui->loginEdit->text();
+    QString password = ui->pswdEdit->text();
+    if(db->loginExists(login)){
+        if (db->pswdCompare(login, password)){
+          switch(db->getRole(login)){
           case 1:
-              worksUi = new WorksWindow(currentLogin);
-              connect(worksUi, &WorksWindow::AuthoWindow, this, &Autho::show);
+              if (!worksUi) {
+                    worksUi = new WorksWindow(login);
+                    connect(worksUi, &WorksWindow::AuthoWindow, this, &Autho::show);
+              }
               worksUi->show();
-              this->hide();
               break;
           case 2:
               editUi->show();
-              this->hide();
               break;
           case 3:
                usersUi->show();
-               this->hide();
                break;
+           default:
+              msgbx.showErrorBox("Роль не найдена");
+              return;
           }
+          this->hide();
         }
         else{
             msgbx.showErrorBox("Введите верный пароль");

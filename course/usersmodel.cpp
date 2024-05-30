@@ -12,24 +12,30 @@ UsersModel* UsersModel::instance()
 
 UsersModel::UsersModel(QObject* parent) : QAbstractTableModel(parent)
 {
-    setParent(parent);
-    this->setupModel();
+    setupModel();
 
 }
 
 UsersModel::~UsersModel(){
     delete db;
-    delete query;
 }
 
 
 void UsersModel::setupModel(){
     QList<QList<QVariant>> list = db->selectUsers();
-    for (int i = 0; i < list.count(); i++){
-        appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
-                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString(),
-                    list[i][11].toInt());
+    insertUsers(list);
+}
+
+void UsersModel::insertUsers(const QList<QList<QVariant>>& list){
+    beginResetModel();
+    users.clear();
+    users.reserve(list.size());
+    for (const auto& user : list){
+        appendUser(user[0].toInt(), user[1].toString(), user[2].toString(), user[3].toString(), user[4].toString(),
+                user[5].toString(), user[6].toString(), user[7].toInt(), user[8].toString(), user[9].toString(), user[10].toString(),
+                    user[11].toInt());
     }
+    endResetModel();
 }
 
 int UsersModel::rowCount( const QModelIndex& parent ) const {
@@ -72,7 +78,6 @@ QVariant UsersModel::headerData( int section, Qt::Orientation orientation, int r
 }
 
 
-//поменять вывод столбцов
 QVariant UsersModel::data( const QModelIndex& index, int role ) const {
     if(!index.isValid() ||
         users.count() <= index.row() ||
@@ -80,7 +85,21 @@ QVariant UsersModel::data( const QModelIndex& index, int role ) const {
         return QVariant();
     }
 
-    return users[ index.row() ][ Column( index.column() ) ];
+    int column = index.column();
+        switch (column) {
+        case ID:
+        case ROLE:
+        case SURNAME:
+        case NAME:
+        case PATRONYMIC:
+        case UNIT:
+        case SALARY:
+            return users[index.row()][Column(column)];
+        default:
+            return QVariant();
+        }
+
+//    return users[ index.row() ][ Column( index.column() ) ];
 }
 
 void UsersModel::appendUser(const int& id, const QString& role, const QString& surname, const QString& name, const QString& patronymic, const QString& phone,
@@ -125,36 +144,20 @@ void UsersModel::removeUsers(const QModelIndexList &indexes){
 
 
 void UsersModel::updateModel(){
-    users.clear();
-    emit layoutChanged();
-    QList<QList<QVariant>> list = db->selectUsers();
-    for (int i = 0; i < list.count(); i++){
-        appendUser(list[i][0].toInt(), list[i][1].toString(), list[i][2].toString(), list[i][3].toString(), list[i][4].toString(),
-                list[i][5].toString(), list[i][6].toString(), list[i][7].toInt(), list[i][8].toString(), list[i][9].toString(), list[i][10].toString(),
-                list[i][11].toInt());
-    }
+    setupModel();
 }
 
 
-//мб вложенный
+
 QList<QList<QVariant>> UsersModel::getList()
 {
     QList<QList<QVariant>> list;
-    for (int i = 0; i < users.count(); i++){
-        QList<QVariant> user;
-        user.append(users[i][ID]);
-        user.append(users[i][ROLE]);
-        user.append(users[i][SURNAME]);
-        user.append(users[i][NAME]);
-        user.append(users[i][PATRONYMIC]);
-        user.append(users[i][PHONE]);
-        user.append(users[i][ROLE_ID]);
-        user.append(users[i][UNIT]);
-        user.append(users[i][DEGREE]);
-        user.append(users[i][RANK]);
-        user.append(users[i][POST]);
-        user.append(users[i][SALARY]);
-        list.append(user);
+    for (const auto& user : users){
+        QList<QVariant> userData;
+        for (int i = 0; i < LAST; ++i){
+            userData.append(user[Column(i)]);
+        }
+        list.append(userData);
     }
     return list;
 }
@@ -173,11 +176,11 @@ void UsersModel::updateUserRole(int id, int role)
 }
 
 
-void UsersModel::updateUserUnit(int id, QString unit, int salary)
+void UsersModel::updateUserUnit(int id, QString unit)
 {
-    for (int i = 0;i < users.count();i++){
-        if (users[i][ID] == id){
-            users[i][UNIT] = unit;
+    for (auto& user : users){
+        if (user[ID] == id){
+            user[UNIT] = unit;
             emit layoutChanged();
         }
 }
@@ -185,9 +188,9 @@ void UsersModel::updateUserUnit(int id, QString unit, int salary)
 
 void UsersModel::updateUserPost(int id, QString post)
 {
-    for (int i = 0;i < users.count();i++){
-        if (users[i][ID] == id){
-            users[i][POST] = post;
+    for (auto& user : users){
+        if (user[ID] == id){
+            user[POST] = post;
             emit layoutChanged();
         }
 }

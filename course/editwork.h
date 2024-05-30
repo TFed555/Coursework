@@ -12,7 +12,7 @@ namespace Ui {
 class EditWork;
 }
 
-class EditWork : public AbstractWork
+class EditWork : public Work
 {
     Q_OBJECT
 
@@ -34,7 +34,6 @@ private:
     bool setupData(int workID) override;
     bool confirmChange(int workID) override;
     void cancelChange(int workID, int status) override;
-    void setTextBrowser(QList<QString> data) override;
     void setStatus(int ID);
     void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
     bool updateResponsibles();

@@ -1,23 +1,41 @@
 #include "qdynamicedit.h"
 
-QDynamicEdit::QDynamicEdit(QWidget *parent) :
-    QLineEdit(parent)
+QDynamicWidget::QDynamicWidget(QWidget *parent) :
+    QWidget(parent)
 {
     ResID++;
     ID = ResID;
 
 }
 
-QDynamicEdit::~QDynamicEdit()
+QDynamicWidget::~QDynamicWidget()
 {
 
 }
 
 
-int QDynamicEdit::getID()
+int QDynamicWidget::getID()
 {
     return ID;
 }
 
 
-int QDynamicEdit::ResID = 0;
+int QDynamicWidget::ResID = 0;
+
+QLabel* QDynamicWidget::createLabel(const QString& text) {
+    QLabel* label = new QLabel(this);
+    label->setText(text);
+    return label;
+}
+
+QLineEdit* QDynamicWidget::createEdit(const QString& text) {
+    QLineEdit* edit = new QLineEdit(this);
+    edit->setText(text);
+    return edit;
+}
+
+QPushButton* QDynamicWidget::createButton(const QString& text) {
+    QPushButton* button = new QPushButton(this);
+    button->setText(text);
+    return button;
+}
