@@ -28,7 +28,8 @@ signals:
 
 private slots:
     void on_backButton_clicked();
-    void change_field(QString degree, QString rank, QString post);
+    void change_field(QString degree, QString rank, QString post);;
+
 private:
     QList<QString> getData();
     void setupFields();
@@ -49,6 +50,7 @@ private:
 private:
     const int userId;
     const QString teacher = "Преподаватель";
+    const QString employee = "Учебно-организационный отдел";
 };
 
 #endif // EDITUSER_H

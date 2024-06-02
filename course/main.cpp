@@ -3,6 +3,9 @@
 #include "db.h"
 #include <QApplication>
 
+
+inline void initMyResource() { Q_INIT_RESOURCE(); }
+
 int main(int argc, char *argv[])
 {
     DataBase *db;
@@ -10,7 +13,6 @@ int main(int argc, char *argv[])
     db->connectToDataBase();
     QApplication a(argc, argv);
 //    a.setQuitOnLastWindowClosed(false);
-
     Autho w;
     w.show();
     return a.exec();

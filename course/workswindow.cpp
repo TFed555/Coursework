@@ -46,6 +46,8 @@ void WorksWindow::createUI()
         }
         else proxyModel->setFilterMode(StringSearch);
     });
+    QPixmap userIcon(":/iconki/icons/search_8788216.png");
+    ui->searchLabel->setPixmap(userIcon);
 }
 
 void WorksWindow::showWork(const QModelIndex &index){

@@ -11,13 +11,12 @@ Autho::Autho(QWidget *parent)
       editUi(new EditWorksWindow())
 {
     ui->setupUi(this);
-
+    this->setIcons();
     connect(regUi, &Registration::AuthoWindow, this, &Autho::show);
     connect(regUi, &Registration::UpdateData, usersUi, &UsersWindow::updateModel);
     connect(usersUi, &UsersWindow::AuthoWindow, this, &Autho::show);
     connect(editUi, &EditWorksWindow::updateUsers, usersUi, &UsersWindow::updateModel);
     connect(editUi, &EditWorksWindow::AuthoWindow, this, &Autho::show);
-    ui->loginEdit->setText("+7");
     ui->loginEdit->setValidator(&phoneValidator);
 
 }
@@ -31,6 +30,13 @@ Autho::~Autho()
         delete worksUi;
     }
     delete editUi;
+}
+
+void Autho::setIcons(){
+    QPixmap keyIcon(":/iconki/Downloads/free-icon-door-key-435466.png");
+    ui->keylabel->setPixmap(keyIcon);
+    QPixmap userIcon(":/iconki/Downloads/free-icon-user-profile-10336815.png");
+    ui->userlabel->setPixmap(userIcon);
 }
 
 
@@ -60,6 +66,8 @@ void Autho::on_authButton_clicked()
               return;
           }
           this->hide();
+          ui->loginEdit->clear();
+          ui->pswdEdit->clear();
         }
         else{
             msgbx.showErrorBox("Введите верный пароль");
@@ -68,8 +76,6 @@ void Autho::on_authButton_clicked()
     else{
         msgbx.showErrorBox("Такого пользователя не существует");
     }
-    ui->loginEdit->clear();
-    ui->pswdEdit->clear();
 }
 
 

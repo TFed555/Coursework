@@ -92,9 +92,9 @@ border-radius: 8px;
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>40</x>
      <y>270</y>
-     <width>81</width>
+     <width>51</width>
      <height>21</height>
     </rect>
    </property>
@@ -104,7 +104,7 @@ border-radius: 8px;
     </font>
    </property>
    <property name="text">
-    <string>Должность</string>
+    <string>Отдел</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">

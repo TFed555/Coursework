@@ -6,37 +6,55 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
-    <height>384</height>
+    <width>520</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>521</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0.866, y2:0.164818, stop:0.60199 rgba(214, 131, 64, 255), stop:1 rgba(255, 188, 94, 255));</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>90</x>
      <y>50</y>
      <width>321</width>
      <height>241</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(233, 243, 255);</string>
+    <string notr="true">background-color: rgb(185, 215, 221);
+border-radius:10px;</string>
    </property>
   </widget>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>80</x>
      <y>290</y>
      <width>261</width>
      <height>61</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">background-color: rgb(233, 243, 255);
+alternate-background-color: rgb(174, 202, 208);</string>
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -45,14 +63,16 @@
   <widget class="QPushButton" name="acceptButton">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>160</x>
      <y>250</y>
      <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">background-color: rgb(233, 243, 255);
+border-color: rgb(9, 9, 9);
+border-radius: 10pt;</string>
    </property>
    <property name="text">
     <string>Подтвердить выполнение</string>

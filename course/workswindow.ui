@@ -6,34 +6,58 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>952</width>
-    <height>586</height>
+    <width>1020</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QTableView" name="tableView">
+  <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>741</width>
-     <height>491</height>
+     <x>0</x>
+     <y>0</y>
+     <width>1021</width>
+     <height>631</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(233, 243, 255);</string>
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0.866, y2:0.164818, stop:0.60199 rgba(214, 131, 64, 255), stop:1 rgba(255, 188, 94, 255));</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QTableView" name="tableView">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>60</y>
+     <width>741</width>
+     <height>531</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(233, 243, 255);
+border-top-color: rgb(174, 202, 208);
+</string>
    </property>
   </widget>
   <widget class="QPushButton" name="backButton">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>530</y>
+     <x>870</x>
+     <y>570</y>
      <width>93</width>
      <height>28</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(174, 202, 208);
+color: rgb(233, 243, 255);
+border-radius:10px;
+font: 8pt &quot;Cascadia Code&quot;;</string>
    </property>
    <property name="text">
     <string>Назад</string>
@@ -42,26 +66,36 @@
   <widget class="QLineEdit" name="searchLineEdit">
    <property name="geometry">
     <rect>
-     <x>790</x>
-     <y>70</y>
+     <x>830</x>
+     <y>90</y>
      <width>151</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(233, 243, 255);</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>800</x>
-     <y>40</y>
+     <x>880</x>
+     <y>60</y>
      <width>55</width>
      <height>16</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Cascadia Code</family>
      <pointsize>9</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 9pt &quot;Cascadia Code&quot;;</string>
    </property>
    <property name="text">
     <string>Поиск</string>
@@ -70,14 +104,33 @@
   <widget class="QRadioButton" name="radioButton">
    <property name="geometry">
     <rect>
-     <x>790</x>
-     <y>130</y>
+     <x>830</x>
+     <y>150</y>
      <width>121</width>
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: 8pt &quot;Cascadia Code&quot;;</string>
+   </property>
    <property name="text">
     <string>Мои работы</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="searchLabel">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>50</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

@@ -67,11 +67,13 @@ void EditUser::setupFields()
                break;
            }
        }
-       fillCheckbox();
+   fillCheckbox();
+   this->change_field(degree, rank, post);
    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this, degree, rank, post](){
            this->change_field(degree, rank, post);
      });
 }
+
 
 void EditUser::clearLayout(QLayout *layout){
     while (QLayoutItem* item = layout->takeAt(0)) {
@@ -90,46 +92,44 @@ void EditUser::addWidgetsToLayout(QLayout *layout, const QList<QWidget *> &widge
 
 void EditUser::change_field(QString degree, QString rank, QString post){
     clearLayout(ui->verticalLayout);
-    QLineEdit* firstEdit = nullptr;
-    QLineEdit* secondEdit = nullptr;
-    QString dbField;
-    QString unit = ui->comboBox->currentText();
-    QList<QWidget*> widgets;
-    if (unit == teacher){
-        QLabel* degreeLabel = dynamicWidget.createLabel("Ученая степень");
-        QLineEdit* degreeEdit = dynamicWidget.createEdit(degree);
-        QLabel* rankLabel = dynamicWidget.createLabel("Ученое звание");
-        QLineEdit* rankEdit = dynamicWidget.createEdit(rank);
+        QLineEdit* firstEdit = nullptr;
+        QLineEdit* secondEdit = nullptr;
+        QString dbField;
+        QString unit = ui->comboBox->currentText();
+        QList<QWidget*> widgets;
 
-        widgets << degreeLabel << degreeEdit << rankLabel << rankEdit;
-
-        dbField = "Degree";
-        firstEdit = degreeEdit;
-        secondEdit = rankEdit;
-    }
-    else {
-        QLabel* postLabel = dynamicWidget.createLabel("Должность");
-        QLineEdit* postEdit = dynamicWidget.createEdit(post);
-        widgets << postLabel << postEdit;
-        dbField = "Post";
-        firstEdit = postEdit;
-    }
-    QPushButton* confirmButton = dynamicWidget.createButton("Подтвердить");
-    widgets << confirmButton;
-
-    addWidgetsToLayout(ui->verticalLayout, widgets);
-
-    ui->verticalLayout->addWidget(confirmButton);
-    connect(confirmButton, &QPushButton::clicked, this, [this, firstEdit, secondEdit, dbField](){
-        int reply = msgbx.showWarningBoxWithCancel("Вы хотите внести изменения?");
-        if (reply == QMessageBox::Ok){
-            db->updateUserPost(userId, dbField, firstEdit->text());
-            if (dbField == "Degree" && !secondEdit->text().isEmpty()){
-                db->updateUserPost(userId, "Rank", secondEdit->text());
-            }
-            model->updateUserPost(userId, firstEdit->text());
+        if (unit == teacher) {
+            QLabel* degreeLabel = dynamicWidget.createLabel("Ученая степень");
+            QLineEdit* degreeEdit = dynamicWidget.createEdit(degree);
+            QLabel* rankLabel = dynamicWidget.createLabel("Ученое звание");
+            QLineEdit* rankEdit = dynamicWidget.createEdit(rank);
+            widgets << degreeLabel << degreeEdit << rankLabel << rankEdit;
+            dbField = "Degree";
+            firstEdit = degreeEdit;
+            secondEdit = rankEdit;
+        } else {
+            QLabel* postLabel = dynamicWidget.createLabel("Должность");
+            QLineEdit* postEdit = dynamicWidget.createEdit(post);
+            widgets << postLabel << postEdit;
+            dbField = "Post";
+            firstEdit = postEdit;
         }
-    });
+
+        QPushButton* saveButton = dynamicWidget.createButton("Сохранить");
+        widgets << saveButton;
+
+        addWidgetsToLayout(ui->verticalLayout, widgets);
+
+        connect(saveButton, &QPushButton::clicked, this, [this, firstEdit, secondEdit, dbField]() {
+            int reply = msgbx.showWarningBoxWithCancel("Вы хотите внести изменения?");
+            if (reply == QMessageBox::Ok) {
+                db->updateUserPost(userId, dbField, firstEdit->text());
+                if (dbField == "Degree" && secondEdit && !secondEdit->text().isEmpty()) {
+                    db->updateUserPost(userId, "Rank", secondEdit->text());
+                }
+                model->updateUserPost(userId, firstEdit->text());
+            }
+        });
 }
 
 int EditUser::getRole(){
@@ -182,3 +182,5 @@ void EditUser::confirmStatus(){
         //emit updatedUnit(userID, unit);
     }
 }
+
+

@@ -30,6 +30,8 @@ private slots:
 
     void on_regButton_clicked();
 
+private:
+    void setIcons();
 
 private:
     Ui::Autho *ui;

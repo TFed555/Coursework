@@ -91,7 +91,7 @@ bool DataBase::createRolesTable(){
      else {
             insertIntoRolesTable("сотрудник");
             insertIntoRolesTable("организатор");
-            insertIntoRolesTable("администратор");
+            insertIntoRolesTable("заведующий");
          return true;
      }
      return false;
@@ -158,7 +158,6 @@ bool DataBase::createUsersTable()
                             "Rank                    NVARCHAR(255)            NULL,"
                             "Post                    NVARCHAR(255)            NULL,"
                             "FOREIGN KEY  (Role)     REFERENCES  Roles(Role_ID)  "
-//                            "FOREIGN KEY  (Salary) REFERENCES EmployeeSalary(ID) "
 
                         ")"
                     )){
@@ -166,20 +165,8 @@ bool DataBase::createUsersTable()
         qDebug() << query.lastError().text();
         return false;
     }
-//    else{
-//        return true;
-//    }
-    else {
-    query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit )"
-                    "VALUES ( 3, 'Бердин', 'Игорь', 'Олегович', '+7', :pswd, 'Преподаватель' )"
-                );
-    QString pswd = "admin";
-    query.bindValue(":pswd", pswd.toLatin1().toHex());
-    if(query.exec()){
-        QVariantList salary = {70000, checkUserID("+7")};
-        insertIntoSalaryTable(salary);
+    else{
         return true;
-    }
     }
     return false;
 }
@@ -451,7 +438,7 @@ bool DataBase::finishTasks(QVariantList idList){
     query.bindValue(":workIDs", i);
     query.exec();
     query.next();
-    pay = query.value(0).toInt();
+    pay = resps.count() > 1 ? query.value(0).toInt() / 2 : query.value(0).toInt();
     for ( QVariant j : resps ){
         updateUserSalary(j.toInt(), pay);
     }

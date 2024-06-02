@@ -103,6 +103,19 @@
     <string>Выберите сотрудника</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>290</y>
+     <width>55</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Статус</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

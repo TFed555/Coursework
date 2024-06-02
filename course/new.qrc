@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="iconki">
+    <file>icons/search_8788216.png</file>
+    <file>../../Downloads/free-icon-user-profile-10336815.png</file>
+    <file>../../Downloads/free-icon-door-key-435466.png</file>
+  </qresource>
+</RCC>
