@@ -97,12 +97,15 @@ void EditUser::change_field(QString degree, QString rank, QString post){
         QString dbField;
         QString unit = ui->comboBox->currentText();
         QList<QWidget*> widgets;
-
+        QString lineEditStyle = "QLineEdit {""background-color: rgb(185, 215, 221);"
+                                 "border-radius:10px;}";
         if (unit == teacher) {
             QLabel* degreeLabel = dynamicWidget.createLabel("Ученая степень");
             QLineEdit* degreeEdit = dynamicWidget.createEdit(degree);
+            degreeEdit->setStyleSheet(lineEditStyle);
             QLabel* rankLabel = dynamicWidget.createLabel("Ученое звание");
             QLineEdit* rankEdit = dynamicWidget.createEdit(rank);
+            rankEdit->setStyleSheet(lineEditStyle);
             widgets << degreeLabel << degreeEdit << rankLabel << rankEdit;
             dbField = "Degree";
             firstEdit = degreeEdit;
@@ -110,6 +113,7 @@ void EditUser::change_field(QString degree, QString rank, QString post){
         } else {
             QLabel* postLabel = dynamicWidget.createLabel("Должность");
             QLineEdit* postEdit = dynamicWidget.createEdit(post);
+            postEdit->setStyleSheet(lineEditStyle);
             widgets << postLabel << postEdit;
             dbField = "Post";
             firstEdit = postEdit;

@@ -10,6 +10,7 @@
 #include "abstractwork.h"
 #include "worksmodel.h"
 
+
 namespace Ui {
 class DescWork;
 }

@@ -26,7 +26,6 @@ public:
     bool insertIntoWorksTable(const QVariantList &data);
     bool insertIntoTasksTable(const int userID, const int workID);
     void deleteTable(const QString &tableName);
-    bool tableExists(const QString &tableName);
 //методы для окна авторизации
     bool loginExists(QString login);
     bool pswdCompare(QString login, QString pswd);
@@ -63,7 +62,7 @@ public:
 
 private:
     const QString dbName = "./DB.db";
-    QSqlQuery query;
+
 
 
 private:
@@ -78,6 +77,8 @@ private:
     bool createStatusTable();
     bool createTasksTable();
     bool createSalaryTable();
+    bool createTables();
+    bool executeQuery(QSqlQuery &query, const QString &queryString, const QVariantMap &bindValues);
 };
 
 #endif // DB_H

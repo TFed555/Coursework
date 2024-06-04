@@ -26,7 +26,7 @@ void Work::rejectAction(){
 }
 
 void Work::setTextBrowser(QList<QString> data, QTextBrowser *browser){
-    browser->setFont(QFont("Times", 9));
+    browser->setFont(QFont("Cascadia Code", 8));
     browser->clear();
     for (const QString& item : data){
         browser->append(item);

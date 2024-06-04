@@ -38,12 +38,9 @@ private:
     void removeUser();
 private:
     Ui::UsersWindow *ui;
-//    DataBase *db;
     UsersModel *model;
     EditUser *editUi;
     CustomBox msgbx;
-//    DataBase conn;
-//    QSqlQuery* query = new QSqlQuery(conn.db);
 };
 
 #endif // USERSWINDOW_H

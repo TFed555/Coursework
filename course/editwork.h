@@ -41,8 +41,6 @@ private:
 //    void cancel();
 private:
     Ui::EditWork *ui;
-    DataBase *db;
-    CustomBox msgbx;
     UsersModel *usersmodel;
 };
 

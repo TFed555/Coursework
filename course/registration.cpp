@@ -16,6 +16,9 @@ Registration::Registration(QWidget *parent) :
     ui->surnameEdit->setValidator(&textValidator);
     ui->patronymicEdit->setValidator(&textValidator);
 
+    QPixmap IDIcon(":/iconki/icons/consent_1076357.png");
+    ui->IDlabel->setPixmap(IDIcon);
+
 }
 
 Registration::~Registration()

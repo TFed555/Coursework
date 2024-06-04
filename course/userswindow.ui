@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>830</width>
-    <height>600</height>
+    <width>965</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,43 +16,75 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>-6</x>
+     <y>0</y>
+     <width>971</width>
+     <height>631</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:1, y1:0.0284091, x2:0.353, y2:0.733, stop:0.00497512 rgba(187, 212, 255, 255), stop:1 rgba(112, 130, 163, 255));</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <widget class="QTableView" name="tableView">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
+     <x>80</x>
+     <y>30</y>
      <width>781</width>
      <height>501</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(233, 243, 255);</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="backButton">
-   <property name="geometry">
-    <rect>
-     <x>660</x>
-     <y>550</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Назад</string>
+    <string notr="true">background-color: rgb(233, 243, 255);
+Selection-background-color: rgb(132, 170, 216);
+border: 2px groove gray;
+border-radius: 0px;
+padding: 2px 4px;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="delButton">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>550</y>
+     <x>100</x>
+     <y>560</y>
      <width>131</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(174, 202, 208);
+color: rgb(255, 255, 255);
+border-radius:10px;
+font: 8pt &quot;Cascadia Code&quot;;</string>
+   </property>
    <property name="text">
     <string>Удалить</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>560</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(174, 202, 208);
+color: rgb(0, 0, 0);
+border-radius:10px;
+font: 8pt &quot;Cascadia Code&quot;;</string>
+   </property>
+   <property name="text">
+    <string>Назад</string>
    </property>
   </widget>
  </widget>

@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0.866, y2:0.164818, stop:0.60199 rgba(214, 131, 64, 255), stop:1 rgba(255, 188, 94, 255));</string>
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:1, y1:0.0284091, x2:0.353, y2:0.733, stop:0.00497512 rgba(187, 212, 255, 255), stop:1 rgba(112, 130, 163, 255));</string>
    </property>
    <property name="text">
     <string/>
@@ -40,8 +40,10 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(233, 243, 255);
-border-top-color: rgb(174, 202, 208);
-</string>
+Selection-background-color: rgb(132, 170, 216);
+border: 2px groove gray;
+border-radius: 0px;
+padding: 2px 4px;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="backButton">
@@ -55,7 +57,7 @@ border-top-color: rgb(174, 202, 208);
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(174, 202, 208);
-color: rgb(233, 243, 255);
+color: rgb(0, 0, 0);
 border-radius:10px;
 font: 8pt &quot;Cascadia Code&quot;;</string>
    </property>

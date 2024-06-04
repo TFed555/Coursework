@@ -54,7 +54,9 @@ void EditWorksWindow::on_backButton_clicked()
 
 void EditWorksWindow::on_addButton_clicked()
 {
-    newWork = new CreateWork();
+    if (!newWork){
+        newWork = new CreateWork();
+    }
     this->close();
     newWork->show();
     connect(newWork, &CreateWork::MainWindow, this, [this](){
@@ -96,4 +98,3 @@ void EditWorksWindow::on_finishButton_clicked()
         msgbx.showWarningBox("Выберите хотя бы 1 задание");
     }
 }
-

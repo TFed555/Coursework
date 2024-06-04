@@ -1,15 +1,8 @@
 #include "db.h"
 
-DataBase::DataBase(QObject *parent) : QObject(parent)
-{
+DataBase::DataBase(QObject *parent) : QObject(parent) {}
 
-}
-
-DataBase::~DataBase()
-{
-
-}
-
+DataBase::~DataBase(){}
 
 
 void DataBase::connectToDataBase()
@@ -47,27 +40,18 @@ bool DataBase::openDataBase()
     if(db.open()){
         QSqlQuery query(db);
         query.exec("PRAGMA foreign_keys = ON;");
-        if (!tableExists("Roles")){
-            createRolesTable();
+        if (createTables()){
+            return true;
         }
-        if (!tableExists("Users")){
-            createUsersTable();
-        }
-        if (!tableExists("Status")){
-            createStatusTable();
-        }
-        if (!tableExists("Works")){
-            createWorksTable();
-        }
-        if (!tableExists("Tasks")){
-            createTasksTable();
-        }
-        createSalaryTable();
-        return true;
     } else {
         return false;
     }
+    return false;
+}
 
+bool DataBase::createTables(){
+    return createRolesTable() && createUsersTable() && createStatusTable() &&
+               createWorksTable() && createTasksTable() && createSalaryTable();
 }
 
 
@@ -75,7 +59,6 @@ void DataBase::closeDataBase()
 {
     db.close();
 }
-
 
 bool DataBase::createRolesTable(){
      QSqlQuery query;
@@ -145,7 +128,7 @@ bool DataBase::createUsersTable()
 {
 
     QSqlQuery query;
-    if(!query.exec( "CREATE TABLE Users ("
+    if(!query.exec( "CREATE TABLE IF NOT EXISTS Users ("
                             "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
                             "Role                    INTEGER                  NOT NULL,"
                             "Surname                 NVARCHAR(255)            NOT NULL,"
@@ -184,7 +167,6 @@ bool DataBase::insertIntoUsersTable(const QVariantList &data)
     query.bindValue(":phoneNumber", data[3].toString());
     query.bindValue(":password", data[4].toString());
     query.bindValue(":unit", data[5].toString());
-//    query.bindValue(":salary", data[5].toString() == "Преподаватель" ? 50000 : 30000 );
     if(!query.exec()){
             qDebug() << "error insert into " << "Users";
             qDebug() << query.lastError().text();
@@ -197,80 +179,50 @@ bool DataBase::insertIntoUsersTable(const QVariantList &data)
         return false;
 }
 
-bool DataBase::tableExists(const QString &tableName)
+bool DataBase::createWorksTable()
 {
-    if (db.tables().contains(tableName)) return true;
-    return false;
-}
 
-bool DataBase::loginExists(QString login){
     QSqlQuery query;
-    query.prepare("Select * From Users Where phoneNumber = :phoneNumber");
-    query.bindValue(":phoneNumber", login);
-
-    if(!query.exec())
-       {
-        qDebug() << "Error select from table Users";
+    if(!query.exec( "CREATE TABLE IF NOT EXISTS Works ("
+                            "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                            "Title                     NVARCHAR(255)            NOT NULL,"
+                            "Deadline                  DATE                     NOT NULL,"
+                            "Pay                       INTEGER                    NOT NULL,"
+                            "Description              NVARCHAR(255)             NULL,"
+                            "Status                    INTEGER                  NOT NULL,"
+                            "FOREIGN KEY  (Status)     REFERENCES  Status(ID) "
+                        ")"
+                    )){
+        qDebug() << "DataBase: error of create " << "Works";
         qDebug() << query.lastError().text();
         return false;
     }
-    else {
-        //qDebug() << "Selected from table Users";
-        return query.next();
+    else{
+        return true;
     }
-
     return false;
 }
 
-bool DataBase::pswdCompare(QString login, QString pswd){
-    QSqlQuery query;
-    auto ok = query.prepare("Select Password From Users "
-                            "Where PhoneNumber = :login;");
-    if (!ok) {
-        qDebug() << query.lastError();
-        return false;
-    }
-    query.bindValue(":login", login);
-    if (!query.exec()) {
-        qDebug() << query.lastError();
-        return false;
-    }
-
-    query.next();
-    QVariant res = query.value(0).toString();
-    if (pswd.toLatin1().toHex()!=res){
-        return false;
-    }
-    return true;
-}
-
-int DataBase::getRole(QString login){
-    QSqlQuery query;
-    query.prepare("Select Role From Users "
-                  "Where phoneNumber = :login;");
-    query.bindValue(":login", login);
-    if (!query.exec()){
-        qDebug()<<query.lastError().text();
-        return 0;
-    }
-
-    query.next();
-    return query.value(0).toInt();
-}
-
-
-void DataBase::deleteTable(const QString &tableName)
+bool DataBase::insertIntoWorksTable(const QVariantList &data)
 {
-    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query;
+    query.prepare("INSERT INTO Works( Title, Deadline, Pay, Description, Status ) "
+                  "   VALUES( :title, :deadline, :pay, :description, :status )"
+    );
+    query.bindValue(":title",  data[0].toString());
+    query.bindValue(":deadline", data[1].toDate());
+    query.bindValue(":pay", data[2].toInt());
+    query.bindValue(":description", data[3].toString());
+    query.bindValue(":status", data[4].toInt());
 
-     if(db.isValid() && db.isOpen()){
-
-         QSqlQuery q(db);
-         QString query= QString("DROP TABLE IF EXISTS %1;").arg(tableName);
-
-         if(q.exec(query))
-             qDebug() << "delete table";
-     }
+    if(!query.exec()){
+            qDebug() << "Error insert into " << "Works";
+            qDebug() << query.lastError().text();
+            return false;
+        } else {
+            return true;
+        }
+        return false;
 }
 
 bool DataBase::createStatusTable(){
@@ -304,87 +256,9 @@ void DataBase::insertIntoStatusTable(QString data){
         }
 }
 
-bool DataBase::createWorksTable()
-{
-
-    QSqlQuery query;
-    if(!query.exec( "CREATE TABLE Works ("
-                            "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                            "Title                     NVARCHAR(255)            NOT NULL,"
-                            "Deadline                  DATE                     NOT NULL,"
-                            "Pay                       INTEGER                    NOT NULL,"
-                            "Description              NVARCHAR(255)             NULL,"
-                            "Status                    INTEGER                  NOT NULL,"
-                            "FOREIGN KEY  (Status)     REFERENCES  Status(ID) "
-                        ")"
-                    )){
-        qDebug() << "DataBase: error of create " << "Works";
-        qDebug() << query.lastError().text();
-        return false;
-    }
-    else{
-        if (!query.exec("INSERT INTO Works( Title, Deadline, Pay, Description, Status )"
-                            "VALUES ( 'Тест', '2024-04-04', 5500, '00', 1 )"
-                        )){
-                qDebug() << "error insert work";
-                return false;
-            }
-            else{
-                return true;
-            }
-    }
-    return false;
-}
-
-bool DataBase::insertIntoWorksTable(const QVariantList &data)
-{
-    QSqlQuery query;
-    query.prepare("INSERT INTO Works( Title, Deadline, Pay, Description, Status ) "
-                  "   VALUES( :title, :deadline, :pay, :description, :status )"
-    );
-    query.bindValue(":title",  data[0].toString());
-    query.bindValue(":deadline", data[1].toDate());
-    query.bindValue(":pay", data[2].toInt());
-    query.bindValue(":description", data[3].toString());
-    query.bindValue(":status", data[4].toInt());
-
-    if(!query.exec()){
-            qDebug() << "Error insert into " << "Works";
-            qDebug() << query.lastError().text();
-            return false;
-        } else {
-            return true;
-        }
-        return false;
-}
-
-QString DataBase::getStatusName(int ID){
-    QSqlQuery query;
-    query.prepare("Select Name "
-                  "From Status Where ID = :id");
-    query.bindValue(":id", ID);
-    if (!query.exec()){
-        qDebug()<<query.lastError().text();
-    }
-    query.next();
-    return query.value(0).toString();
-}
-
-QString DataBase::getRoleName(int role){
-    QSqlQuery query;
-    query.prepare("Select Name "
-                  "From Roles Where Role_ID = :id");
-    query.bindValue(":id", role);
-    if (!query.exec()){
-        qDebug()<<query.lastError().text();
-    }
-    query.next();
-    return query.value(0).toString();
-}
-
 bool DataBase::createTasksTable(){
     QSqlQuery query;
-    if(!query.exec( "CREATE TABLE Tasks ("
+    if(!query.exec( "CREATE TABLE IF NOT EXISTS Tasks ("
                             "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
                             "Responsible       INTEGER            NOT NULL,"
                             "Work              INTEGER            NOT NULL,"
@@ -421,10 +295,91 @@ bool DataBase::insertIntoTasksTable(const int userID, const int workID)
         return false;
 }
 
+bool DataBase::executeQuery(QSqlQuery &query, const QString &queryString, const QVariantMap &bindValues) {
+    query.prepare(queryString);
+    for (auto it = bindValues.begin(); it != bindValues.end(); ++it) {
+        query.bindValue(it.key(), it.value());
+    }
+    if (!query.exec()) {
+        qDebug() << "Error executing query:" << queryString;
+        qDebug() << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+
+bool DataBase::loginExists(QString login){
+    QSqlQuery query;
+    QString queryString = "Select * From Users Where phoneNumber = :phoneNumber";
+    QVariantMap bindValues = { {":phoneNumber", login}};
+    return executeQuery(query, queryString, bindValues) && query.next();
+}
+
+bool DataBase::pswdCompare(QString login, QString pswd){
+    QSqlQuery query;
+    QString queryString = "SELECT Password FROM Users WHERE PhoneNumber = :login";
+    QVariantMap bindValues;
+    bindValues[":login"] = login;
+    if (!executeQuery(query, queryString, bindValues)) {
+            return false;
+    }
+    if (query.next() && pswd.toLatin1().toHex() == query.value(0).toString()) {
+            return true;
+     }
+     return false;
+}
+
+int DataBase::getRole(QString login){
+    QSqlQuery query;
+    QString queryString = "Select Role From Users "
+                             "Where phoneNumber = :login;";
+    QVariantMap bindValues;
+    bindValues[":login"] = login;
+    executeQuery(query, queryString, bindValues) && query.next();
+    return query.value(0).toInt();
+}
+
+
+void DataBase::deleteTable(const QString &tableName)
+{
+    QSqlDatabase db = QSqlDatabase::database();
+
+     if(db.isValid() && db.isOpen()){
+
+         QSqlQuery q(db);
+         QString query= QString("DROP TABLE IF EXISTS %1;").arg(tableName);
+
+         if(q.exec(query))
+             qDebug() << "delete table";
+     }
+}
+
+
+QString DataBase::getStatusName(int ID){
+    QSqlQuery query;
+    QString queryString = "Select Name "
+                  "From Status Where ID = :id";
+    QVariantMap bindValues = {{":id", ID}};
+    executeQuery(query, queryString, bindValues) && query.next();
+    return query.value(0).toString();
+}
+
+QString DataBase::getRoleName(int role){
+    QSqlQuery query;
+    query.prepare("Select Name "
+                  "From Roles Where Role_ID = :id");
+    query.bindValue(":id", role);
+    if (!query.exec()){
+        qDebug()<<query.lastError().text();
+    }
+    query.next();
+    return query.value(0).toString();
+}
+
 
 bool DataBase::finishTasks(QVariantList idList){
     QSqlQuery query;
-//    QList<QVariantList> list;
     for (QVariant i : idList){
     QVariantList resps;
     int pay;
@@ -450,15 +405,11 @@ bool DataBase::finishTasks(QVariantList idList){
 
 bool DataBase::updateUserSalary(const int userID, const int pay){
     QSqlQuery query;
-    query.prepare("Update EmployeeSalary "
-                   "Set Pay = Pay + :pay "
-                    "Where user_ID = :userID ");
-    query.bindValue(":userID", userID);
-    query.bindValue(":pay", pay);
-    if (!query.exec()){
-        return false;
-    }
-    return true;
+    QString queryString = "UPDATE EmployeeSalary SET Pay = Pay + :pay WHERE user_ID = :userID";
+    QVariantMap bindValues;
+    bindValues[":userID"] = userID;
+    bindValues[":pay"] = pay;
+    return executeQuery(query, queryString, bindValues);
 }
 
 
@@ -557,33 +508,30 @@ int DataBase::getResponsible(int workID){
 
 bool DataBase::updateUserRole(int userID, int role){
     QSqlQuery query;
-    query.prepare("Update Users "
-                   "Set Role = :roleID "
-                   "Where ID = :userID");
-    query.bindValue(":userID", userID);
-    query.bindValue(":roleID", role);
-    if (!query.exec()){
-        return false;
-    }
-    return true;
+    QString queryString = "UPDATE Users SET Role = :roleID WHERE ID = :userID";
+    QVariantMap bindValues;
+    bindValues[":userID"] = userID;
+    bindValues[":roleID"] = role;
+
+    return executeQuery(query, queryString, bindValues);
 }
 
 bool DataBase::updateUserUnit(int userID, QString unit){
     QSqlQuery query;
     int fixedPay = unit == "Преподаватель" ? 50000 : 30000;
-    query.prepare("Update Users "
+    QString queryString = "Update Users "
                        "Set Unit = :unit "
-                       "Where ID = :userID ");
-        query.bindValue(":userID", userID);
-        query.bindValue(":unit", unit);
-    query.exec();
-    query.prepare("Update EmployeeSalary "
+                       "Where ID = :userID ";
+    QVariantMap bindValues;
+    bindValues[":userID"] = userID;
+    bindValues[":unit"] = unit;
+    executeQuery(query, queryString, bindValues);
+    QString queryString_2 = "Update EmployeeSalary "
                     "Set FixedPay = :fixedPay "
-                        "Where user_ID = :userID ");
-    query.bindValue(":userID", userID);
-    query.bindValue(":fixedPay", fixedPay);
-    query.exec();
-    return true;
+                        "Where user_ID = :userID ";
+//    bindValues[":userID"] = userID;
+    bindValues[":fixedPay"] = fixedPay;
+    return executeQuery(query, queryString_2, bindValues);
 }
 
 bool DataBase::updateUserPost(int userID, QString label, QString post){
