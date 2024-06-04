@@ -18,7 +18,7 @@ WorksModel::WorksModel(QObject* parent) : QAbstractTableModel(parent)
 }
 
 WorksModel::~WorksModel(){
-    delete db;
+    //delete db;
 }
 
 void WorksModel::updateAddWork(){
@@ -126,25 +126,56 @@ QVariantList WorksModel::getIdList(const QModelIndexList &indexes){
     return idList;
 }
 
-void WorksModel::removeWorks(const QModelIndexList &indexes){
-      QVariantList idList = getIdList(indexes);
-      if(db->deleteWorks(idList)){
-            for (const QModelIndex &index : indexes) {
-                   works.removeAt(index.row());
-            }
-            emit layoutChanged();
+void WorksModel::removeWorks(QList<int> sourceRows){
+//      QVariantList idList = getIdList(indexes);
+//      if(db->deleteWorks(idList)){
+//       QList<int> rows;
+//       for (const QModelIndex &index : indexes) {
+//              rows.append(index.row());
+//          }
+//          std::sort(rows.rbegin(), rows.rend());
+//          for (int row : rows) {
+//                  beginRemoveRows(QModelIndex(), row, row);
+//                  works.removeAt(row);
+//                  endRemoveRows();
+//          }
+//           emit layoutChanged();
+//    }
+    std::sort(sourceRows.rbegin(), sourceRows.rend());
+
+    QVariantList idList;
+    for (int row : sourceRows) {
+        idList.append(works[row][ID]);
+    }
+
+    if (db->deleteWorks(idList)) {
+        beginResetModel();
+        for (int row : sourceRows) {
+            works.removeAt(row);
+        }
+        endResetModel();
+        emit layoutChanged();
     }
 }
 
-void WorksModel::finishWorks(const QModelIndexList &indexes){
-      QVariantList idList = getIdList(indexes);
-      if(db->finishTasks(idList)){
-            for (const QModelIndex &index : indexes) {
-                   works.removeAt(index.row());
-            }
-            emit layoutChanged();
+void WorksModel::finishWorks(QList<int> sourceRows){
+    std::sort(sourceRows.rbegin(), sourceRows.rend());
+
+    QVariantList idList;
+    for (int row : sourceRows) {
+        idList.append(works[row][ID]);
+    }
+
+    if (db->finishTasks(idList)) {
+        beginResetModel();
+        for (int row : sourceRows) {
+            works.removeAt(row);
+        }
+        endResetModel();
+        emit layoutChanged();
     }
 }
+
 
 QList<QList<QVariant>> WorksModel::getList()
 {

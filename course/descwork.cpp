@@ -21,9 +21,6 @@ DescWork::DescWork(QString currentLogin, int workID, QWidget *parent) :
 DescWork::~DescWork()
 {
     delete ui;
-    if (db){
-        delete db;
-    }
 }
 
 void DescWork::initialize(){

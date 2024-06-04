@@ -6,6 +6,7 @@
 #include <QDialog>
 #include "db.h"
 #include "custombox.h"
+#include <memory>
 
 class Work : public QDialog
 {
@@ -23,7 +24,7 @@ public:
 protected:
     int workID;
     CustomBox msgbx;
-    DataBase *db;
+    std::shared_ptr<DataBase> db;
     QList<QList<QVariant>> tasks;
 };
 

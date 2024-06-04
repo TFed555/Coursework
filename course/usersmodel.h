@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include "db.h"
+#include <memory>
 
 class UsersModel : public QAbstractTableModel
 {
@@ -56,7 +57,7 @@ private:
     UsersModel(const UsersModel&) = delete;
     UsersModel& operator = (const UsersModel&) = delete;
     static UsersModel* m_instance;
-    DataBase *db;
+    std::shared_ptr <DataBase> db;
 protected:
     ~UsersModel();
 };

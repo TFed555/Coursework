@@ -8,9 +8,11 @@
 #include "custombox.h"
 #include "registration.h"
 #include "db.h"
-#include "userswindow.h"
-#include "workswindow.h"
-#include "editworkswindow.h"
+
+#include "adminwindow.h"
+#include "organiserwindow.h"
+#include "workerwindow.h"
+#include <memory>
 
 
 QT_BEGIN_NAMESPACE
@@ -35,12 +37,11 @@ private:
 
 private:
     Ui::Autho *ui;
-    Registration *regUi;
-    DataBase *db;
-    QSqlQuery *query;
+    std::shared_ptr <Registration> regUi;
+    std::shared_ptr <DataBase> db;
     QRegExpValidator phoneValidator;
-    UsersWindow *usersUi;
-    WorksWindow *worksUi;
-    EditWorksWindow *editUi;
+    std::shared_ptr <AdminWindow> adminUi;
+    std::shared_ptr <WorkerWindow> workerUi;
+    std::shared_ptr <OrganiserWindow> orgUi;
 };
 #endif // AUTHO_H

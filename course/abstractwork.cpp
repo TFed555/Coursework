@@ -7,7 +7,6 @@ Work::Work(int workID, QWidget *parent)
 }
 
 Work::~Work(){
-    delete db;
 }
 
 bool Work::setupData(int workID){

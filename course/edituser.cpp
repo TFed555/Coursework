@@ -21,7 +21,6 @@ EditUser::EditUser(int userID, QWidget *parent) :
 EditUser::~EditUser()
 {
     delete ui;
-    delete db;
 }
 
 void EditUser::on_backButton_clicked()

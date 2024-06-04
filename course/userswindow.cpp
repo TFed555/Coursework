@@ -16,12 +16,6 @@ UsersWindow::UsersWindow(QWidget *parent) :
 UsersWindow::~UsersWindow()
 {
     delete ui;
-//    delete editUi;
-//    db->closeDataBase();
-//    delete db;
-//    delete query;
-//    delete regUi;
-//    delete model;
 }
 
 
@@ -46,9 +40,9 @@ void UsersWindow::createUI()
 
 void UsersWindow::showUser(const QModelIndex &index){
     int userID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    EditUser *editUi = new EditUser(userID);
-    connect(editUi, &EditUser::UsersWindow, this, &UsersWindow::show);
-    connect(editUi, &EditUser::updatedRole, this, [this](int id, int role){
+    editUi = std::make_shared <EditUser>(userID);
+    connect(editUi.get(), &EditUser::UsersWindow, this, &UsersWindow::show);
+    connect(editUi.get(), &EditUser::updatedRole, this, [this](int id, int role){
         model->updateUserRole(id, role);
     });
     this->close();
@@ -75,7 +69,7 @@ void UsersWindow::removeUser(){
 void UsersWindow::on_backButton_clicked()
 {
     this->close();
-    emit AuthoWindow();
+    emit AdminWindow();
 }
 
 void UsersWindow::updateModel(){

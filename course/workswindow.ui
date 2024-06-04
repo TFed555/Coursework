@@ -82,9 +82,9 @@ font: 8pt &quot;Cascadia Code&quot;;</string>
    <property name="geometry">
     <rect>
      <x>880</x>
-     <y>60</y>
+     <y>55</y>
      <width>55</width>
-     <height>16</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">

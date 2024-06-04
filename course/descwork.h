@@ -41,7 +41,7 @@ private:
     void rejectAction() override;
 private:
     Ui::DescWork *ui;
-    DataBase *db;
+    std::shared_ptr <DataBase> db;
 private:
     const QString login;
 };

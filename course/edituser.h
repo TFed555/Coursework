@@ -9,6 +9,7 @@
 #include "custombox.h"
 #include "usersmodel.h"
 #include "qdynamicedit.h"
+#include <memory>
 
 namespace Ui {
 class EditUser;
@@ -44,13 +45,13 @@ private:
 private:
     Ui::EditUser *ui;
     UsersModel *model;
-    DataBase *db;
+    std::shared_ptr <DataBase> db;
     CustomBox msgbx;
     QDynamicWidget dynamicWidget;
 private:
     const int userId;
     const QString teacher = "Преподаватель";
-    const QString employee = "Учебно-организационный отдел";
+    const QString employee = "Учебно-вспомогательный отдел";
 };
 
 #endif // EDITUSER_H

@@ -19,7 +19,6 @@ EditWork::EditWork(int workID, QWidget *parent) :
 EditWork::~EditWork()
 {
     delete ui;
-    delete db;
 }
 
 void EditWork::initialize(){
@@ -109,7 +108,7 @@ bool EditWork::updateResponsibles(){
         insertResponsible(ui->comboBox_2);
         return true;
     }
-    else if (status == 1 && ui->comboBox_2->currentIndex()==-1){
+    else if (status == 1 && ui->comboBox->currentIndex()!=-1 && ui->comboBox_2->currentIndex()==-1){
         insertResponsible(ui->comboBox);
         return true;
     }

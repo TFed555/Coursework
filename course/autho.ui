@@ -151,7 +151,7 @@ font: 8pt &quot;Cascadia Code&quot;;</string>
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="new.qrc">:/iconki/Downloads/free-icon-user-profile-10336815.png</pixmap>
+     <pixmap>:/iconki/Downloads/free-icon-user-profile-10336815.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -211,8 +211,6 @@ font: 8pt &quot;Cascadia Code&quot;;</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="new.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -38,7 +38,7 @@ private:
     void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
     bool updateResponsibles();
     void updateUser(QComboBox* box, QComboBox* compareBox);
-//    void cancel();
+
 private:
     Ui::EditWork *ui;
     UsersModel *usersmodel;

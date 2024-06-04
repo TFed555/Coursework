@@ -10,6 +10,7 @@ RESOURCES += new.qrc
 
 SOURCES += \
     abstractwork.cpp \
+    adminwindow.cpp \
     creatework.cpp \
     db.cpp \
     descwork.cpp \
@@ -18,40 +19,49 @@ SOURCES += \
     editworkswindow.cpp \
     main.cpp \
     autho.cpp \
+    organiserwindow.cpp \
     qdynamicedit.cpp \
     registration.cpp \
     usersmodel.cpp \
     userswindow.cpp \
+    workerwindow.cpp \
     worksmodel.cpp \
     workswindow.cpp
 
 HEADERS += \
     abstractwork.h \
+    adminwindow.h \
     autho.h \
     creatework.h \
     custombox.h \
-    customproxymodel.h \
     db.h \
     descwork.h \
+    editsproxymodel.h \
     edituser.h \
     editwork.h \
     editworkswindow.h \
+    organiserwindow.h \
     qdynamicedit.h \
     registration.h \
     usersmodel.h \
     userswindow.h \
+    workerwindow.h \
     worksmodel.h \
+    worksproxymodel.h \
     workswindow.h
 
 FORMS += \
+    adminwindow.ui \
     autho.ui \
     creatework.ui \
     descwork.ui \
     edituser.ui \
     editwork.ui \
     editworkswindow.ui \
+    organiserwindow.ui \
     registration.ui \
     userswindow.ui \
+    workerwindow.ui \
     workswindow.ui
 
 # Default rules for deployment.

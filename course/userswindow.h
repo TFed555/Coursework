@@ -25,21 +25,17 @@ public:
     void updateModel();
 private slots:
     void showUser(const QModelIndex &index);
-//    void updateModel();
-
-    //void on_delButton_clicked(const QModelIndex &index);
 
     void on_backButton_clicked();
 signals:
-    void AuthoWindow();
+    void AdminWindow();
 private:
-    //void setupModel(const QStringList &headers);
     void createUI();
     void removeUser();
 private:
     Ui::UsersWindow *ui;
     UsersModel *model;
-    EditUser *editUi;
+    std::shared_ptr <EditUser> editUi;
     CustomBox msgbx;
 };
 

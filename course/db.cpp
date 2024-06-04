@@ -72,9 +72,13 @@ bool DataBase::createRolesTable(){
          return false;
      }
      else {
+         if (query.exec("Select Count(*) From Roles")&&query.next()&&query.value(0).toInt()==0){
+
             insertIntoRolesTable("сотрудник");
             insertIntoRolesTable("организатор");
             insertIntoRolesTable("заведующий");
+            return true;
+         }
          return true;
      }
      return false;
@@ -120,7 +124,6 @@ void DataBase::insertIntoSalaryTable(QVariantList &data){
     query.bindValue(":userID", data[1].toInt());
     if( !query.exec() ) {
             qDebug() << db.lastError().text();
-            qDebug()<<"??????";
         }
 }
 
@@ -237,9 +240,13 @@ bool DataBase::createStatusTable(){
          return false;
      }
      else {
+         if (query.exec("Select Count(*) From Status")&&query.next()&&query.value(0).toInt()==0){
+
             insertIntoStatusTable("В ожидании");
             insertIntoStatusTable("Выполняется");
             insertIntoStatusTable("Выполнено");
+            return true;
+         }
          return true;
      }
      return false;

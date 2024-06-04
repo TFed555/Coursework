@@ -8,7 +8,7 @@
 #include "db.h"
 #include "usersmodel.h"
 #include "custombox.h"
-
+#include <memory>
 
 namespace Ui {
 class CreateWork;
@@ -33,9 +33,10 @@ private:
     void setUsers(QComboBox* box);
     bool validateFields();
     QVariantList insertData();
+
 private:
     Ui::CreateWork *ui;
-    DataBase *db;
+    std::shared_ptr <DataBase> db;
     UsersModel *usersmodel;
     QIntValidator payValidator;
     QRegExpValidator textValidator;

@@ -17,7 +17,6 @@ UsersModel::UsersModel(QObject* parent) : QAbstractTableModel(parent)
 }
 
 UsersModel::~UsersModel(){
-    delete db;
 }
 
 

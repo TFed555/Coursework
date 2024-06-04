@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include "db.h"
+#include <memory>
 
 class WorksModel : public QAbstractTableModel
 {
@@ -16,8 +17,8 @@ public:
 public:
     void updateWorkStatus(int id, int status);
     void updateAddWork();
-    void removeWorks(const QModelIndexList &indexes);
-    void finishWorks(const QModelIndexList &indexes);
+    void removeWorks(QList<int> sourceRows);
+    void finishWorks(QList<int> sourceRows);
     QList<QList<QVariant>> getList();
 private:
     void setupModel();
@@ -47,9 +48,7 @@ private:
     WorksModel(const WorksModel&) = delete;
     WorksModel& operator = (const WorksModel&) = delete;
     static WorksModel* m_instance;
-    DataBase *db;
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
+    std::shared_ptr<DataBase> db;
 protected:
     ~WorksModel();
 };

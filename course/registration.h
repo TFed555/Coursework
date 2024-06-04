@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QDebug>
 #include "db.h"
+#include <memory>
 
 namespace Ui {
 class Registration;
@@ -36,7 +37,7 @@ private slots:
 
 private:
     Ui::Registration *ui;
-    DataBase *db;
+    std::shared_ptr <DataBase> db;
     QRegularExpressionValidator phoneValidator;
     QRegularExpressionValidator textValidator;
 private:

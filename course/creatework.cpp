@@ -14,7 +14,7 @@ CreateWork::CreateWork(QWidget *parent) :
 CreateWork::~CreateWork()
 {
     delete ui;
-    delete db;
+    //delete db;
 }
 
 void CreateWork::setUI(){

@@ -1,8 +1,8 @@
 <RCC>
   <qresource prefix="iconki">
-    <file>icons/consent_1076357.png</file>
-    <file>icons/search_8788216.png</file>
-    <file>../../Downloads/free-icon-user-profile-10336815.png</file>
-    <file>../../Downloads/free-icon-door-key-435466.png</file>
+    <file>icons/consent.png</file>
+    <file>icons/door.png</file>
+    <file>icons/search.png</file>
+    <file>icons/user.png</file>
   </qresource>
 </RCC>

@@ -5,7 +5,7 @@ EditWorksWindow::EditWorksWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditWorksWindow),
     mymodel(WorksModel::instance()),
-    proxyModel(new QSortFilterProxyModel(this))
+    proxyModel(std::make_shared <EditsSortFilterProxyModel>(this))
 {
     ui->setupUi(this);
     connect(ui->tableView, &QTableView::doubleClicked, this, &EditWorksWindow::showWork);
@@ -15,14 +15,15 @@ EditWorksWindow::EditWorksWindow(QWidget *parent) :
 EditWorksWindow::~EditWorksWindow()
 {
     delete ui;
-    //delete mymodel;
 }
 
 
 
 void EditWorksWindow::createUI()
 {
-    ui->tableView->setModel(mymodel);
+    proxyModel->setFilterKeyColumn(0);
+    proxyModel->setSourceModel(mymodel);
+    ui->tableView->setModel(proxyModel.get());
     ui->tableView->setSortingEnabled(true);
     ui->tableView->setColumnHidden(0, true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -30,17 +31,42 @@ void EditWorksWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
+
+    connect(mymodel, &QAbstractItemModel::dataChanged, proxyModel.get(), &QSortFilterProxyModel::invalidate);
+    connect(mymodel, &QAbstractItemModel::layoutChanged, proxyModel.get(), &QSortFilterProxyModel::invalidate);
+    connect(mymodel, &QAbstractItemModel::modelReset, proxyModel.get(), &QSortFilterProxyModel::invalidate);
+
+
+    QPixmap userIcon(":/iconki/icons/search.png");
+    ui->searchLabel->setPixmap(userIcon);
+    QList<QList<QVariant>> status = db->selectAllStatus();
+    ui->comboBox->addItem("", 4);
+    for (int i = 0; i < status.count(); i++){
+        ui->comboBox->addItem(status[i][1].toString(), status[i][0]);
+    }
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, this, [this](const QString& text){
+        proxyModel->setSearchString(text);
+        proxyModel->setFilterMode(SearchFilter);
+    });
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
+        if (ui->comboBox->currentIndex()!=4){
+            proxyModel->setStatusFilter(ui->comboBox->currentText());
+            proxyModel->setFilterMode(StatusFilter);
+        }
+        else proxyModel->setFilterMode(SearchFilter);
+    });
 }
 
 void EditWorksWindow::showWork(const QModelIndex &index){
-    int workID = index.model()->data(index.model()->index(index.row(),0)).toInt();
-    editWork = new EditWork(workID);
+    QModelIndex sourceIndex = proxyModel->mapToSource(index);
+    int workID = sourceIndex.model()->data(sourceIndex.model()->index(sourceIndex.row(),0)).toInt();
+    editWork = std::make_shared <EditWork>(workID);
     this->close();
     editWork->initialize();
     editWork->open();
-    connect(editWork, &EditWork::accepted, this, &EditWorksWindow::show);
-    connect(editWork, &EditWork::rejected, this, &EditWorksWindow::show);
-    connect(editWork, &EditWork::updatedWorkStatus, this, [this] (int id, int status){
+    connect(editWork.get(), &EditWork::accepted, this, &EditWorksWindow::show);
+    connect(editWork.get(), &EditWork::rejected, this, &EditWorksWindow::show);
+    connect(editWork.get(), &EditWork::updatedWorkStatus, this, [this] (int id, int status){
         mymodel->updateWorkStatus(id, status);
     } );
 }
@@ -48,18 +74,16 @@ void EditWorksWindow::showWork(const QModelIndex &index){
 void EditWorksWindow::on_backButton_clicked()
 {
     this->close();
-    emit AuthoWindow();
+    emit OrganiserWindow();
 }
 
 
 void EditWorksWindow::on_addButton_clicked()
 {
-    if (!newWork){
-        newWork = new CreateWork();
-    }
+    newWork = std::make_shared <CreateWork>();
     this->close();
     newWork->show();
-    connect(newWork, &CreateWork::MainWindow, this, [this](){
+    connect(newWork.get(), &CreateWork::MainWindow, this, [this](){
         mymodel->updateAddWork();
         this->show(); }
     );
@@ -69,11 +93,16 @@ void EditWorksWindow::on_addButton_clicked()
 void EditWorksWindow::on_delButton_clicked()
 {
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
+    QList<int> sourceRows;
+    for (const QModelIndex &proxyIndex : selection) {
+        QModelIndex sourceIndex = proxyModel->mapToSource(proxyIndex);
+        sourceRows.append(sourceIndex.row());
+    }
+
     if (!selection.isEmpty()){
         int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите удалить эти задания?");
         if (reply==QMessageBox::Ok){
-            std::sort(selection.rbegin(), selection.rend());
-            mymodel->removeWorks(selection);
+            mymodel->removeWorks(sourceRows);
         }
     }
     else{
@@ -86,11 +115,15 @@ void EditWorksWindow::on_delButton_clicked()
 void EditWorksWindow::on_finishButton_clicked()
 {
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
+    QList<int> sourceRows;
+    for (const QModelIndex &proxyIndex : selection) {
+        QModelIndex sourceIndex = proxyModel->mapToSource(proxyIndex);
+        sourceRows.append(sourceIndex.row());
+    }
     if (!selection.isEmpty()){
         int reply = msgbx.showWarningBoxWithCancel("Вы уверены что хотите завершить эти задания?");
         if (reply==QMessageBox::Ok){
-            std::sort(selection.rbegin(), selection.rend());
-            mymodel->finishWorks(selection);
+            mymodel->finishWorks(sourceRows);
             emit updateUsers();
         }
     }

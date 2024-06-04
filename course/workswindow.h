@@ -3,11 +3,12 @@
 
 #include <QDialog>
 #include <QDebug>
-#include "customproxymodel.h"
+#include "worksproxymodel.h"
 
 #include "db.h"
 #include "worksmodel.h"
 #include "descwork.h"
+#include <memory>
 
 namespace Ui {
 class WorksWindow;
@@ -21,7 +22,7 @@ public:
     explicit WorksWindow(QString currentLogin, QWidget *parent = nullptr);
     ~WorksWindow();
 signals:
-    void AuthoWindow();
+    void WorkerWindow();
 private:
     void createUI();
 private slots:
@@ -30,10 +31,10 @@ private slots:
 
 private:
     Ui::WorksWindow *ui;
-    DescWork *itemUi;
+    std::shared_ptr <DescWork> workUi;
     WorksModel *mymodel;
-    CustomSortFilterProxyModel *proxyModel;
-    DataBase *db;
+    std::shared_ptr <WorksSortFilterProxyModel> proxyModel;
+    std::shared_ptr <DataBase> db;
 private:
     const QString login;
 };

@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-#include "customproxymodel.h"
+#include "editsproxymodel.h"
 #include "worksmodel.h"
 #include "custombox.h"
 #include "creatework.h"
@@ -24,7 +24,7 @@ public:
     ~EditWorksWindow();
 
 signals:
-    void AuthoWindow();
+    void OrganiserWindow();
     void updateUsers();
 private slots:
     void on_backButton_clicked();
@@ -40,10 +40,11 @@ private:
 private:
     Ui::EditWorksWindow *ui;
     WorksModel *mymodel;
-    CreateWork *newWork;
-    EditWork *editWork;
+    std::shared_ptr <CreateWork> newWork;
+    std::shared_ptr <EditWork> editWork;
     CustomBox msgbx;
-    QSortFilterProxyModel *proxyModel;
+    std::shared_ptr <DataBase> db;
+    std::shared_ptr <EditsSortFilterProxyModel> proxyModel;
 };
 
 #endif // EDITWORKSWINDOW_H

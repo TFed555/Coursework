@@ -16,7 +16,7 @@ Registration::Registration(QWidget *parent) :
     ui->surnameEdit->setValidator(&textValidator);
     ui->patronymicEdit->setValidator(&textValidator);
 
-    QPixmap IDIcon(":/iconki/icons/consent_1076357.png");
+    QPixmap IDIcon(":/iconki/icons/consent.png");
     ui->IDlabel->setPixmap(IDIcon);
 
 }
@@ -24,9 +24,6 @@ Registration::Registration(QWidget *parent) :
 Registration::~Registration()
 {
     delete ui;
-    if (db){
-        delete db;
-    }
 }
 
 //Возврат к окну авторизации
