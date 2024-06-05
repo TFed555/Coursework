@@ -127,20 +127,6 @@ QVariantList WorksModel::getIdList(const QModelIndexList &indexes){
 }
 
 void WorksModel::removeWorks(QList<int> sourceRows){
-//      QVariantList idList = getIdList(indexes);
-//      if(db->deleteWorks(idList)){
-//       QList<int> rows;
-//       for (const QModelIndex &index : indexes) {
-//              rows.append(index.row());
-//          }
-//          std::sort(rows.rbegin(), rows.rend());
-//          for (int row : rows) {
-//                  beginRemoveRows(QModelIndex(), row, row);
-//                  works.removeAt(row);
-//                  endRemoveRows();
-//          }
-//           emit layoutChanged();
-//    }
     std::sort(sourceRows.rbegin(), sourceRows.rend());
 
     QVariantList idList;

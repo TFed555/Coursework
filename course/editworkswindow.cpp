@@ -36,7 +36,9 @@ void EditWorksWindow::createUI()
     connect(mymodel, &QAbstractItemModel::layoutChanged, proxyModel.get(), &QSortFilterProxyModel::invalidate);
     connect(mymodel, &QAbstractItemModel::modelReset, proxyModel.get(), &QSortFilterProxyModel::invalidate);
 
+}
 
+void EditWorksWindow::setSearchFields(){
     QPixmap userIcon(":/iconki/icons/search.png");
     ui->searchLabel->setPixmap(userIcon);
     QList<QList<QVariant>> status = db->selectAllStatus();

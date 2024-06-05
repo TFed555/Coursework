@@ -34,7 +34,7 @@ private slots:
     void on_finishButton_clicked();
 
 private:
-
+    void setSearchFields();
     void createUI();
 
 private:

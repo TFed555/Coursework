@@ -30,7 +30,7 @@ signals:
     void MainWindow();
 private:
     void setUI();
-    void setUsers(QComboBox* box);
+    void setUsers(QComboBox* box, int unitID);
     bool validateFields();
     QVariantList insertData();
 
@@ -40,9 +40,9 @@ private:
     UsersModel *usersmodel;
     QIntValidator payValidator;
     QRegExpValidator textValidator;
-    DataBase conn;
-    QSqlQuery* query = new QSqlQuery(conn.db);
     CustomBox msgbx;
+    const QString teacher = "Преподаватель";
+    const QString employee = "Учебно-вспомогательный отдел";
 };
 
 #endif // CREATEWORK_H
