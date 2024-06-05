@@ -18,7 +18,7 @@ WorksModel::WorksModel(QObject* parent) : QAbstractTableModel(parent)
 }
 
 WorksModel::~WorksModel(){
-    //delete db;
+
 }
 
 void WorksModel::updateAddWork(){

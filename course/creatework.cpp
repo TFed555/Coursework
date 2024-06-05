@@ -14,12 +14,23 @@ CreateWork::CreateWork(QWidget *parent) :
 CreateWork::~CreateWork()
 {
     delete ui;
-    //delete db;
 }
 
 void CreateWork::setUI(){
     this->setUsers(ui->comboBox, 0);
     this->setUsers(ui->comboBox_2, 0);
+    setFilterBoxes();
+    ui->comboBox_2->setEnabled(false);
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
+            ui->comboBox_2->setEnabled(true);
+    });
+    ui->dateEdit->setMinimumDate(QDate::currentDate());
+    ui->dateEdit->setDisplayFormat("yyyy.MM.dd");
+    ui->payEdit->setValidator(&payValidator);
+}
+
+//установка сигналов между чекбоксами
+void CreateWork::setFilterBoxes(){
     connect(ui->teacherBox, &QCheckBox::stateChanged, this, [this](){
         if (ui->teacherBox->isChecked()){
             ui->employeeBox->setDisabled(true);
@@ -44,14 +55,6 @@ void CreateWork::setUI(){
         this->setUsers(ui->comboBox_2, 0);
         }
     });
-
-    ui->comboBox_2->setEnabled(false);
-    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this](){
-            ui->comboBox_2->setEnabled(true);
-    });
-    ui->dateEdit->setMinimumDate(QDate::currentDate());
-    ui->dateEdit->setDisplayFormat("yyyy.MM.dd");
-    ui->payEdit->setValidator(&payValidator);
 }
 
 bool CreateWork::on_confirmButton_clicked()
@@ -95,6 +98,7 @@ QVariantList CreateWork::insertData(){
     return data;
 }
 
+//Добавление пользователей в комбобоксы
 void CreateWork::setUsers(QComboBox* box, int unitID){
     box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     if (box->count()!=0){
@@ -120,6 +124,7 @@ void CreateWork::setUsers(QComboBox* box, int unitID){
     }
 }
 
+//валидация
 bool CreateWork::validateFields(){
     if (ui->titleEdit->text()==""){
         msgbx.showWarningBox("Введите заголовок");

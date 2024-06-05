@@ -11,8 +11,6 @@ class QDynamicWidget : public QWidget
 public:
     explicit QDynamicWidget(QWidget *parent = 0);
         ~QDynamicWidget();
-        static int ResID;
-        int getID();
 
 public slots:
 
@@ -21,8 +19,6 @@ public:
     QLineEdit* createEdit(const QString& text);
     QPushButton* createButton(const QString& text);
 
-private:
-        int ID = 0;
 };
 
 

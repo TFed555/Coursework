@@ -30,6 +30,7 @@ signals:
     void MainWindow();
 private:
     void setUI();
+    void setFilterBoxes();
     void setUsers(QComboBox* box, int unitID);
     bool validateFields();
     QVariantList insertData();

@@ -26,7 +26,6 @@ bool DataBase::restoreDataBase()
             return true;
         }
     } else {
-        qDebug() << "Не удалось восстановить базу данных";
         return false;
     }
     return false;
@@ -67,8 +66,6 @@ bool DataBase::createRolesTable(){
                              "Name     NVARCHAR(20)    NOT NULL"
                          ")"
                      )){
-         qDebug() << "DataBase: error of create " << "Roles";
-         qDebug() << query.lastError().text();
          return false;
      }
      else {
@@ -91,7 +88,6 @@ void DataBase::insertIntoRolesTable(QString data){
     );
     query.bindValue(":name", data);
     if( !query.exec() ) {
-            qDebug() << db.lastError().text();
         }
 }
 
@@ -105,8 +101,6 @@ bool DataBase::createSalaryTable(){
                           "CONSTRAINT S_Key FOREIGN KEY (user_ID) REFERENCES Users(ID) "
                          ")"
                      )){
-         qDebug() << "DataBase: error of create " << "Salary";
-         qDebug() << query.lastError().text();
          return false;
      }
      else {
@@ -123,7 +117,6 @@ void DataBase::insertIntoSalaryTable(QVariantList &data){
     query.bindValue(":pay", data[0].toInt());
     query.bindValue(":userID", data[1].toInt());
     if( !query.exec() ) {
-            qDebug() << db.lastError().text();
         }
 }
 
@@ -147,11 +140,26 @@ bool DataBase::createUsersTable()
 
                         ")"
                     )){
-        qDebug() << "DataBase: error of create " << "Users";
-        qDebug() << query.lastError().text();
         return false;
-    }
+         }
     else{
+        query.exec("Select Count(*) From Users");
+        query.next();
+        int countUsers = query.value(0).toInt();
+        if (countUsers == 0){
+            query.prepare("INSERT INTO Users( Role, Surname, Name, Patronymic, phoneNumber, Password, Unit ) "
+                          "   VALUES( 3, 'Главный', 'Заведующий', 'Главный', '+70000000000', :password, 'Преподаватель' )"
+            );
+            QString pswd = "admin";
+            query.bindValue(":password", pswd.toLatin1().toHex());
+            if (query.exec()){
+                query.prepare("INSERT INTO EmployeeSalary( FixedPay, user_ID ) "
+                              "   VALUES( 70000, :userID )");
+                int userID = checkUserID("+70000000000");
+                query.bindValue(":userID", userID);
+                if(query.exec()) return true;
+            }
+        }
         return true;
     }
     return false;
@@ -171,8 +179,6 @@ bool DataBase::insertIntoUsersTable(const QVariantList &data)
     query.bindValue(":password", data[4].toString());
     query.bindValue(":unit", data[5].toString());
     if(!query.exec()){
-            qDebug() << "error insert into " << "Users";
-            qDebug() << query.lastError().text();
             return false;
         } else {
         QVariantList salary = {data[5].toString() == "Преподаватель" ? 50000 : 30000, checkUserID(data[3].toString())};
@@ -196,8 +202,6 @@ bool DataBase::createWorksTable()
                             "FOREIGN KEY  (Status)     REFERENCES  Status(ID) "
                         ")"
                     )){
-        qDebug() << "DataBase: error of create " << "Works";
-        qDebug() << query.lastError().text();
         return false;
     }
     else{
@@ -219,8 +223,6 @@ bool DataBase::insertIntoWorksTable(const QVariantList &data)
     query.bindValue(":status", data[4].toInt());
 
     if(!query.exec()){
-            qDebug() << "Error insert into " << "Works";
-            qDebug() << query.lastError().text();
             return false;
         } else {
             return true;
@@ -235,8 +237,6 @@ bool DataBase::createStatusTable(){
                              "Name     NVARCHAR(20)    NOT NULL"
                          ")"
                      )){
-         qDebug() << "DataBase: error of create " << "Status";
-         qDebug() << query.lastError().text();
          return false;
      }
      else {
@@ -259,7 +259,6 @@ void DataBase::insertIntoStatusTable(QString data){
     );
     query.bindValue(":name", data);
     if( !query.exec() ) {
-            qDebug() << db.lastError().text();
         }
 }
 
@@ -273,8 +272,6 @@ bool DataBase::createTasksTable(){
                             "FOREIGN KEY (Work) REFERENCES Works(ID) "
                         ")"
                     )){
-        qDebug() << "DataBase: error of create " << "Tasks";
-        qDebug() << query.lastError().text();
         return false;
     }
     else{
@@ -293,8 +290,6 @@ bool DataBase::insertIntoTasksTable(const int userID, const int workID)
     query.bindValue(":workID", workID);
 
     if(!query.exec()){
-            qDebug() << "Error insert into " << "Tasks";
-            qDebug() << query.lastError().text();
             return false;
         } else {
             return true;
@@ -308,8 +303,6 @@ bool DataBase::executeQuery(QSqlQuery &query, const QString &queryString, const 
         query.bindValue(it.key(), it.value());
     }
     if (!query.exec()) {
-        qDebug() << "Error executing query:" << queryString;
-        qDebug() << query.lastError().text();
         return false;
     }
     return true;
@@ -357,8 +350,8 @@ void DataBase::deleteTable(const QString &tableName)
          QSqlQuery q(db);
          QString query= QString("DROP TABLE IF EXISTS %1;").arg(tableName);
 
-         if(q.exec(query))
-             qDebug() << "delete table";
+         q.exec(query);
+
      }
 }
 
@@ -378,7 +371,6 @@ QString DataBase::getRoleName(int role){
                   "From Roles Where Role_ID = :id");
     query.bindValue(":id", role);
     if (!query.exec()){
-        qDebug()<<query.lastError().text();
     }
     query.next();
     return query.value(0).toString();
@@ -439,9 +431,7 @@ int DataBase::getLastWorkID()
 {
     QSqlQuery query;
     query.prepare("Select ID From Works");
-    if (!query.exec()){
-        qDebug()<<query.lastError().text();
-    }
+    query.exec();
     query.last();
     return query.value(0).toInt();
 }
@@ -465,7 +455,6 @@ int DataBase::getTaskID(int workID, QString order){
     query.bindValue(":workID", workID);
     query.exec();
     query.next();
-    qDebug()<<query.value(0).toInt();
     return query.value(0).toInt();
 }
 
@@ -597,7 +586,6 @@ QList<QList<QVariant>> DataBase::selectTasks(int workID){
                            "LEFT JOIN Users On Tasks.Responsible = Users.ID Where Works.ID = :workID" );
     query.bindValue(":workID", workID);
     if(!query.exec()){
-        qDebug()<<query.lastError().text();
     }
     while (query.next()){
         QList<QVariant> task;

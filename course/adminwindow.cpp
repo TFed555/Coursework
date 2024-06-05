@@ -15,6 +15,7 @@ AdminWindow::~AdminWindow()
     delete ui;
 }
 
+//открытие окна просмотра сотрудников
 void AdminWindow::on_nextButton_clicked()
 {
     connect(adminUi.get(), &UsersWindow::AdminWindow, this, &AdminWindow::show);
@@ -22,13 +23,14 @@ void AdminWindow::on_nextButton_clicked()
     adminUi->show();
 }
 
-
+//возврат к авторизации
 void AdminWindow::on_backButton_clicked()
 {
     emit AuthoWindow();
     this->close();
 }
 
+//обновление модели сотрудников
 void AdminWindow::update_model(){
     adminUi->updateModel();
 }

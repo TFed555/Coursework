@@ -38,6 +38,8 @@ private:
     void setUsers(QComboBox* box, QComboBox* compareBox, int resp_id);
     bool updateResponsibles();
     void updateUser(QComboBox* box, QComboBox* compareBox);
+    bool noResponsiblesSelected() const;
+    bool updateSpecificResponsible(QComboBox* box);
 
 private:
     Ui::EditWork *ui;

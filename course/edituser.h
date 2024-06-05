@@ -29,7 +29,7 @@ signals:
 
 private slots:
     void on_backButton_clicked();
-    void change_field(QString degree, QString rank, QString post);;
+    void change_field(const QString degree, const QString rank, const QString post);;
 
 private:
     QList<QString> getData();

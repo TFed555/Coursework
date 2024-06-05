@@ -12,6 +12,7 @@ Autho::Autho(QWidget *parent)
 {
     ui->setupUi(this);
     this->setIcons();
+    //сигналы между окнами
     connect(regUi.get(), &Registration::AuthoWindow, this, &Autho::show);
     connect(regUi.get(), &Registration::UpdateData, adminUi.get(), &AdminWindow::update_model);
     connect(adminUi.get(), &AdminWindow::AuthoWindow, this, &Autho::show);

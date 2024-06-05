@@ -31,13 +31,14 @@ void EditWorksWindow::createUI()
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
+    //сигналы для корректного удаления/завершения задач
     connect(mymodel, &QAbstractItemModel::dataChanged, proxyModel.get(), &QSortFilterProxyModel::invalidate);
     connect(mymodel, &QAbstractItemModel::layoutChanged, proxyModel.get(), &QSortFilterProxyModel::invalidate);
     connect(mymodel, &QAbstractItemModel::modelReset, proxyModel.get(), &QSortFilterProxyModel::invalidate);
-
+    setSearchFields();
 }
 
+//строка поиска и фильтр по статусам
 void EditWorksWindow::setSearchFields(){
     QPixmap userIcon(":/iconki/icons/search.png");
     ui->searchLabel->setPixmap(userIcon);
@@ -59,6 +60,7 @@ void EditWorksWindow::setSearchFields(){
     });
 }
 
+//открытие окна просмотра работы
 void EditWorksWindow::showWork(const QModelIndex &index){
     QModelIndex sourceIndex = proxyModel->mapToSource(index);
     int workID = sourceIndex.model()->data(sourceIndex.model()->index(sourceIndex.row(),0)).toInt();
@@ -73,13 +75,14 @@ void EditWorksWindow::showWork(const QModelIndex &index){
     } );
 }
 
+//возврат к окну организатора
 void EditWorksWindow::on_backButton_clicked()
 {
     this->close();
     emit OrganiserWindow();
 }
 
-
+//открытие окна создания задачи
 void EditWorksWindow::on_addButton_clicked()
 {
     newWork = std::make_shared <CreateWork>();
@@ -91,7 +94,7 @@ void EditWorksWindow::on_addButton_clicked()
     );
 }
 
-
+//удаление работ
 void EditWorksWindow::on_delButton_clicked()
 {
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();
@@ -112,8 +115,7 @@ void EditWorksWindow::on_delButton_clicked()
     }
 }
 
-
-
+//завершение работ
 void EditWorksWindow::on_finishButton_clicked()
 {
     QModelIndexList selection = ui->tableView->selectionModel()->selectedRows();

@@ -55,7 +55,6 @@ void EditUser::setupFields()
 {
        QList<QString> data = getData();
        QString degree = data[5], rank = data[6], post = data[7];
-       qDebug()<< degree<<" "<< rank<<" "<< post;
        QList<QLabel*> labels;
        labels << ui->surname << ui->name << ui->patronymic << ui->phoneNumber << ui->post;
        for (int i = 0; i < labels.count(); ++i){
@@ -67,6 +66,8 @@ void EditUser::setupFields()
            }
        }
    fillCheckbox();
+   QString unit = data[4] == teacher ? teacher : employee;
+   ui->comboBox->setCurrentText(unit);
    this->change_field(degree, rank, post);
    connect(ui->comboBox, &QComboBox::currentTextChanged, this, [this, degree, rank, post](){
            this->change_field(degree, rank, post);
@@ -89,7 +90,8 @@ void EditUser::addWidgetsToLayout(QLayout *layout, const QList<QWidget *> &widge
         }
 }
 
-void EditUser::change_field(QString degree, QString rank, QString post){
+//добавление и изменение динамических полей для должности, звания, степени
+void EditUser::change_field(const QString degree, const QString rank, const QString post){
     clearLayout(ui->verticalLayout);
         QLineEdit* firstEdit = nullptr;
         QLineEdit* secondEdit = nullptr;
@@ -147,8 +149,9 @@ int EditUser::getRole(){
    return role;
 }
 
+//обновление роли пользователя в модели и бд
 void EditUser::updateUser(){
-    int role = 0;
+    int role;
     if (ui->checkBox->isChecked()){
             role = getRole();
             if (role == 1) role = 2;
@@ -181,8 +184,6 @@ void EditUser::confirmStatus(){
         db->updateUserUnit(userId, unit);
         ui->post->setText(unit);
         model->updateModel();
-//        model->updateUserUnit(userID, unit, salary);
-        //emit updatedUnit(userID, unit);
     }
 }
 

@@ -1,7 +1,7 @@
 #include "descwork.h"
 #include "ui_descwork.h"
 
-DescWork::DescWork(QString currentLogin, int workID, QWidget *parent) :
+DescWork::DescWork(const QString currentLogin, int workID, QWidget *parent) :
     Work(workID, parent),
     ui(new Ui::DescWork),
     login(currentLogin)

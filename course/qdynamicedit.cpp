@@ -3,8 +3,7 @@
 QDynamicWidget::QDynamicWidget(QWidget *parent) :
     QWidget(parent)
 {
-    ResID++;
-    ID = ResID;
+
 
 }
 
@@ -14,13 +13,6 @@ QDynamicWidget::~QDynamicWidget()
 }
 
 
-int QDynamicWidget::getID()
-{
-    return ID;
-}
-
-
-int QDynamicWidget::ResID = 0;
 
 QLabel* QDynamicWidget::createLabel(const QString& text) {
     QLabel* label = new QLabel(this);

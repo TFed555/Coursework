@@ -126,13 +126,16 @@ void Registration::on_pswdEdit_textChanged(const QString &arg1)
     validatePassword(ui->pswdEdit->text());
 }
 
-//дописать
+
 void Registration::validatePassword(QString pswd){
     if (pswd.length()<6){
         ui->pswdLabel->setText("Пароль должен содержать\n 6 символов");
     }
+    QRegularExpression upperCase("[A-Z]");
+    if (!pswd.contains(upperCase)) {
+        ui->pswdLabel->setText("Пароль должен содержать\n хотя бы одну заглавную букву.");
+    }
     else{
         ui->pswdLabel->clear();
     }
-    //else if (!pswd.contains(QChar()))
 }

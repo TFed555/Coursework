@@ -9,6 +9,7 @@ Work::Work(int workID, QWidget *parent)
 Work::~Work(){
 }
 
+//запрос задач в  бд
 bool Work::setupData(int workID){
     tasks = db->selectTasks(workID);
     if (tasks.isEmpty()){
@@ -17,6 +18,7 @@ bool Work::setupData(int workID){
     return true;
 }
 
+//нажатие кнопки "отмена"
 void Work::rejectAction(){
     int reply = msgbx.showWarningBoxWithCancel("Изменения не были сохранены, продолжить?");
     if (reply==QMessageBox::Ok){
@@ -24,6 +26,7 @@ void Work::rejectAction(){
     }
 }
 
+//настройки textbrowser
 void Work::setTextBrowser(QList<QString> data, QTextBrowser *browser){
     browser->setFont(QFont("Cascadia Code", 8));
     browser->clear();
